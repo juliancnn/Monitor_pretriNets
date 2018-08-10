@@ -48,5 +48,35 @@ public class RDP {
         return false;
     }
 
+    /**
+     * @brief Resultado del disparo, sin alterar el marcado
+     *
+     * @param tDisp numero de transicion a disparar
+     * @return vectorNextMark Proxima marca, sea alcanzable o no.
+     * @TODO Agregar la exepcion si no existe la transicion
+     */
+    private int[] nextMark(int tDisp){
+        // La transisicion no existe, debe largar una exepcion
+        if(tDisp>mRDP[0].length){
+            System.out.println("La transicion no existe");
+        }
+        // Vector de disparo ()
+        int[] vectorDisparo = new int[mRDP[0].length];
+        // vector Proximo marcado
+        int[] vectorNextMark = new int[mRDP.length];
+
+        // Matriz * Vector Trans = Mark trans
+        // Recorro por filas
+        for(int i=0;i<mRDP.length;++i){
+            // Recorro por columnas
+            for(int j=0;j<mRDP[0].length;++j){
+                vectorNextMark[i] += mRDP[i][j] * vectorDisparo[j];
+            }
+        }
+
+        return vectorNextMark;
+
+    }
+
 
 }
