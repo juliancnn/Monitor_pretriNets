@@ -1,6 +1,9 @@
 package tpc.monitor;
 
 import java.lang.String;
+import java.io.*;
+import java.lang.*;
+import java.util.*;
 
 
 public class RDP {
@@ -24,29 +27,47 @@ public class RDP {
      */
     public RDP(String fileMatrix) {
 
-        mRDP = new int[][]
-                {
-                        {-1, 0, 0, 1},
-                        {1, -1, 0, 0},
-                        {0, 1, 0, -1},
-                        {1, 0, 0, -1},
-                        {0, 0, 1, -1}
+        Scanner input;
+        int fila = 0;
+        int colum = 0;
 
-                };
+        try {
+            input = new Scanner(new File(fileMatrix));
+
+
+            while (input.hasNextLine()) {
+                ++fila;
+                Scanner colreader = new Scanner(input.nextLine());
+                while (colreader.hasNextInt()) {
+                    ++colum;
+                }
+
+            }
+            mRDP = new int[fila][colum];
+            input.close();
+        } catch (java.util.InputMismatchException e) {
+            System.out.println(e.toString());
+        } catch (java.io.FileNotFoundException e) {
+            System.out.println(e.toString());
+
+        }
+
+        try {
+            input = new Scanner(new File(fileMatrix));
+
+            for (int i = 0; i < fila; i++) {
+                for (int j = 0; j < colum; j++) {
+                    if (input.hasNextInt()) {
+                        mRDP[i][j] = input.nextInt();
+                    }
+                }
+            }
+        } catch (java.util.InputMismatchException e) {
+            System.out.println(e.toString());
+        } catch (java.io.FileNotFoundException e) {
+            System.out.println(e.toString());
+        }
+
     }
-
-    /**
-     * @param nMark Array del markador
-     * @brief Setea el marcador en base al array recibido
-     * @TODO leerlo desde un archivo
-     * @TODO Implementar las exepciones al leer el archivo
-     */
-    public boolean setMarkStatus(int[] nMark) {
-
-        mark = new int[]{1, 0, 0, 0, 0};
-
-        return false;
-    }
-
 
 }
