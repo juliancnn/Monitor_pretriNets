@@ -25,14 +25,54 @@ public class RDP {
      * Las filas estan separadas por saltos de linea y las columnas por espacios
      * @TODO ver el tema de excepciones si no existe el archivo
      * @TODO ver si el archivo no tiene una red de petri valida
+     * @TODO controlar que el largo del vector de marcadores sea igual a la cantidad de plazas de la RDP
      */
-    public RDP(String fileMatrix) {
+    public RDP(String fileMatrix, String filemMark) {
 
         Scanner input;
         int fila = 0;
         int colum = 0;
 
         try {
+            input = new Scanner(new File(filemMark));
+
+
+            Scanner colreader = new Scanner(input.nextLine());
+            colum = 0;
+            while (colreader.hasNextInt()) {
+                colreader.nextInt();
+                ++colum;
+            }
+
+            mark = new int[colum];
+            input.close();
+
+        } catch (java.util.InputMismatchException e) {
+            System.out.println(e.toString());
+        } catch (java.io.FileNotFoundException e) {
+            System.out.println(e.toString());
+
+        }
+
+        try {
+            input = new Scanner(new File(filemMark));
+
+            for (int j = 0; j < colum; j++) {
+                if (input.hasNextInt()) {
+                    mark[j] = input.nextInt();
+                }
+            }
+
+        } catch (java.util.InputMismatchException e) {
+            System.out.println(e.toString());
+        } catch (java.io.FileNotFoundException e) {
+            System.out.println(e.toString());
+        }
+
+
+        try {
+            fila = 0;
+            colum = 0;
             input = new Scanner(new File(fileMatrix));
 
             while (input.hasNextLine()) {
@@ -82,6 +122,18 @@ public class RDP {
             }
             System.out.print("\n");
         }
+    }
+
+    /**
+     * @brief imprime el marcador actual de la RDP
+     */
+    public void printMark() {
+        for (int i = 0; i < mark.length; i++) {
+
+            System.out.print(mark[i] + " ");
+        }
+        System.out.print("\n");
+
     }
 
     /**
