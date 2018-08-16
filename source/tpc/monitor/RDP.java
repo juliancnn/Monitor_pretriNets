@@ -173,7 +173,7 @@ public class RDP {
         System.out.println("Matriz RDP: ");
         for (int i = 0; i < mRDP.length; i++) {
             for (int j = 0; j < mRDP[0].length; j++) {
-                System.out.print(mRDP[i][j] + " ");
+                System.out.print(String.format("%5d",mRDP[i][j]));
             }
             System.out.print("\n");
         }
@@ -185,8 +185,7 @@ public class RDP {
     public void printMark() {
         System.out.println("Vector Marca de  RDP: ");
         for (int i = 0; i < mark.length; i++) {
-
-            System.out.print(mark[i] + " ");
+            System.out.print(String.format("%5d",mark[i]));
         }
         System.out.print("\n");
 
@@ -201,6 +200,7 @@ public class RDP {
      * La funcion retorna el resultado del disparo sin alterar el marcador
      * Sirve para verficiar si el disparo se puede efectuar (Marcador positivo)
      * o si el disparo no se puede efectuar, marcador negativo en algun valor
+     * Nuevo mark = mark actual + RDP * Vector Disparo
      * @TODO Agregar la exepcion si no existe la transicion
      */
     private int[] nextMark(int tDisp) {
