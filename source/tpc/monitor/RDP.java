@@ -17,13 +17,27 @@ public class RDP {
     private int[] mark;
 
     /**
-     * @param fileMatrix Nombre del archivo
+     * @param fileMatrix Nombre del archivo de la rdp
+     * @param filemMark  Nombre del archivo de la marca
      * @brief Crea la red de petri a partir de un archivo
      * <p>
      * <p>
-     * El constructor setea el marcador inicial en cero para todas las plazas
+     * El constructor setea el marcador inicial y la rdp en base al archivo
+     * El marcador debe ser una fila separado los valores de las plazas por espacios y numeros enteros positivos
+     * El primer valor es el de la plaza 1, luego el de la plaza 2 y asi susecivamente sin saltear ninguna plaza
+     * ej:
+     * p1  p2 p3  p4  p5
+     * 1  0   1   0  0
+     * La matriz esta expresada por filas y columnas separadas por saltos de linea y espacios
      * Las filas estan separadas por saltos de linea y las columnas por espacios
-     * @TODO controlar que el largo del vector de marcadores sea igual a la cantidad de plazas de la RDP
+     * La primera fila es de la primera plaza con el primer valor el de la transicion 1
+     * ej:
+     * t1  t2 t3 t4
+     * -1  0  0  1  p1
+     * 1 -1  0  0  p2
+     * 0  1  0 -1  p3
+     * 1  0  0 -1  p4
+     * 0  0  1 -1  p5
      */
     public RDP(String fileMatrix, String filemMark) {
 
@@ -31,33 +45,33 @@ public class RDP {
         int fila = 0;
         int colum = 0;
 
+        /* ********************************
+         *       Carga del marcador
+         * *********************************/
         try {
             input = new Scanner(new File(filemMark));
 
-
+            // Cuantos valores tiene para setear el array
             Scanner colreader = new Scanner(input.nextLine());
             colum = 0;
             while (colreader.hasNextInt()) {
                 colreader.nextInt();
                 ++colum;
             }
-
             mark = new int[colum];
             input.close();
-
         } catch (java.util.InputMismatchException e) {
             System.out.println("El archivo del markado esta con datos invalidos");
             System.exit(-1);
-        } catch(NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             System.out.println("El archivo del markado esta vacio");
             System.exit(-1);
-        } catch(java.io.FileNotFoundException e) {
-            System.out.print("No se encuentra el archivo del markado: "  + filemMark );
-            File miDir = new File (".");
+        } catch (java.io.FileNotFoundException e) {
+            System.out.print("No se encuentra el archivo del markado: " + filemMark);
+            File miDir = new File(".");
             try {
-                System.out.println ("En el directorio actual: " + miDir.getCanonicalPath());
-            }
-            catch(Exception ef) {
+                System.out.println("En el directorio actual: " + miDir.getCanonicalPath());
+            } catch (Exception ef) {
                 ef.printStackTrace();
             }
 
@@ -65,6 +79,7 @@ public class RDP {
 
         }
 
+        // Carga los valores del archivo
         try {
             input = new Scanner(new File(filemMark));
 
@@ -77,16 +92,15 @@ public class RDP {
         } catch (java.util.InputMismatchException e) {
             System.out.println("El archivo del rdp contiene datos invalidos");
             System.exit(-1);
-        } catch(NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             System.out.println("El archivo del rdp esta vacio");
             System.exit(-1);
-        } catch(java.io.FileNotFoundException e) {
-            System.out.print("No se encuentra el archivo de la rdp: "  + filemMark );
-            File miDir = new File (".");
+        } catch (java.io.FileNotFoundException e) {
+            System.out.print("No se encuentra el archivo de la rdp: " + filemMark);
+            File miDir = new File(".");
             try {
-                System.out.println ("En el directorio actual: " + miDir.getCanonicalPath());
-            }
-            catch(Exception ef) {
+                System.out.println("En el directorio actual: " + miDir.getCanonicalPath());
+            } catch (Exception ef) {
                 ef.printStackTrace();
             }
 
@@ -95,6 +109,9 @@ public class RDP {
         }
 
 
+        /* ********************************
+         *       Carga del la RDP
+         * *********************************/
         try {
             fila = 0;
             colum = 0;
@@ -135,7 +152,11 @@ public class RDP {
             System.out.println(e.toString());
         }
 
-        if(mRDP.length != mark.length){
+        /* ********************************************************
+         *    Chequeo de que el marcador corresponda a la RDP
+         * ********************************************************/
+
+        if (mRDP.length != mark.length) {
             System.out.println("El markador no coinside con la red de petri dada");
             this.printRDP();
             this.printMark();
