@@ -4,6 +4,7 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Hello World!" );
-        new RDP("out/testM.txt");
+        RDP rdp = new RDP("examples_rdp/ex1_rdp.txt");
+        rdp.printRDP();
     }
 }

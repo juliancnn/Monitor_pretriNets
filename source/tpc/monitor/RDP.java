@@ -23,7 +23,8 @@ public class RDP {
      * <p>
      * El constructor setea el marcador inicial en cero para todas las plazas
      * Las filas estan separadas por saltos de linea y las columnas por espacios
-     * @TODO emplentar
+     * @TODO ver el tema de excepciones si no existe el archivo
+     * @TODO ver si el archivo no tiene una red de petri valida
      */
     public RDP(String fileMatrix) {
 
@@ -34,11 +35,12 @@ public class RDP {
         try {
             input = new Scanner(new File(fileMatrix));
 
-
             while (input.hasNextLine()) {
                 ++fila;
                 Scanner colreader = new Scanner(input.nextLine());
+                colum = 0;
                 while (colreader.hasNextInt()) {
+                    colreader.nextInt();
                     ++colum;
                 }
 
@@ -71,15 +73,31 @@ public class RDP {
     }
 
     /**
-     * @brief Resultado del disparo, sin alterar el marcado
-     *
+     * @brief imprime la matriz de la red de petri
+     */
+    public void printRDP() {
+        for (int i = 0; i < mRDP.length; i++) {
+            for (int j = 0; j < mRDP[0].length; j++) {
+                System.out.print(mRDP[i][j] + " ");
+            }
+            System.out.print("\n");
+        }
+    }
+
+    /**
      * @param tDisp numero de transicion a disparar
      * @return vectorNextMark Proxima marca, sea alcanzable o no.
+     * @brief Resultado del disparo, sin alterar el marcado
+     * <p>
+     * <p>
+     * La funcion retorna el resultado del disparo sin alterar el marcador
+     * Sirve para verficiar si el disparo se puede efectuar (Marcador positivo)
+     * o si el disparo no se puede efectuar, marcador negativo en algun valor
      * @TODO Agregar la exepcion si no existe la transicion
      */
-    private int[] nextMark(int tDisp){
+    private int[] nextMark(int tDisp) {
         // La transisicion no existe, debe largar una exepcion
-        if(tDisp>mRDP[0].length){
+        if (tDisp > mRDP[0].length) {
             System.out.println("La transicion no existe");
         }
         // Vector de disparo ()
@@ -89,9 +107,9 @@ public class RDP {
 
         // Matriz * Vector Trans = Mark trans
         // Recorro por filas
-        for(int i=0;i<mRDP.length;++i){
+        for (int i = 0; i < mRDP.length; ++i) {
             // Recorro por columnas
-            for(int j=0;j<mRDP[0].length;++j){
+            for (int j = 0; j < mRDP[0].length; ++j) {
                 vectorNextMark[i] += mRDP[i][j] * vectorDisparo[j];
             }
         }
