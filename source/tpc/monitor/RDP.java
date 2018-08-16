@@ -23,8 +23,6 @@ public class RDP {
      * <p>
      * El constructor setea el marcador inicial en cero para todas las plazas
      * Las filas estan separadas por saltos de linea y las columnas por espacios
-     * @TODO ver el tema de excepciones si no existe el archivo
-     * @TODO ver si el archivo no tiene una red de petri valida
      * @TODO controlar que el largo del vector de marcadores sea igual a la cantidad de plazas de la RDP
      */
     public RDP(String fileMatrix, String filemMark) {
@@ -48,9 +46,22 @@ public class RDP {
             input.close();
 
         } catch (java.util.InputMismatchException e) {
-            System.out.println(e.toString());
-        } catch (java.io.FileNotFoundException e) {
-            System.out.println(e.toString());
+            System.out.println("El archivo del markado esta con datos invalidos");
+            System.exit(-1);
+        } catch(NoSuchElementException e){
+            System.out.println("El archivo del markado esta vacio");
+            System.exit(-1);
+        } catch(java.io.FileNotFoundException e) {
+            System.out.print("No se encuentra el archivo del markado: "  + filemMark );
+            File miDir = new File (".");
+            try {
+                System.out.println ("En el directorio actual: " + miDir.getCanonicalPath());
+            }
+            catch(Exception ef) {
+                ef.printStackTrace();
+            }
+
+            System.exit(-1);
 
         }
 
@@ -64,9 +75,23 @@ public class RDP {
             }
 
         } catch (java.util.InputMismatchException e) {
-            System.out.println(e.toString());
-        } catch (java.io.FileNotFoundException e) {
-            System.out.println(e.toString());
+            System.out.println("El archivo del rdp contiene datos invalidos");
+            System.exit(-1);
+        } catch(NoSuchElementException e){
+            System.out.println("El archivo del rdp esta vacio");
+            System.exit(-1);
+        } catch(java.io.FileNotFoundException e) {
+            System.out.print("No se encuentra el archivo de la rdp: "  + filemMark );
+            File miDir = new File (".");
+            try {
+                System.out.println ("En el directorio actual: " + miDir.getCanonicalPath());
+            }
+            catch(Exception ef) {
+                ef.printStackTrace();
+            }
+
+            System.exit(-1);
+
         }
 
 
@@ -109,6 +134,14 @@ public class RDP {
         } catch (java.io.FileNotFoundException e) {
             System.out.println(e.toString());
         }
+
+        if(mRDP.length != mark.length){
+            System.out.println("El markador no coinside con la red de petri dada");
+            this.printRDP();
+            this.printMark();
+            System.exit(-1);
+        }
+
 
     }
 
