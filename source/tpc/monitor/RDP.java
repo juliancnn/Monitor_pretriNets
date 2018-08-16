@@ -116,6 +116,7 @@ public class RDP {
      * @brief imprime la matriz de la red de petri
      */
     public void printRDP() {
+        System.out.println("Matriz RDP: ");
         for (int i = 0; i < mRDP.length; i++) {
             for (int j = 0; j < mRDP[0].length; j++) {
                 System.out.print(mRDP[i][j] + " ");
@@ -128,6 +129,7 @@ public class RDP {
      * @brief imprime el marcador actual de la RDP
      */
     public void printMark() {
+        System.out.println("Vector Marca de  RDP: ");
         for (int i = 0; i < mark.length; i++) {
 
             System.out.print(mark[i] + " ");
