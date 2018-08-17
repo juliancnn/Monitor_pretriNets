@@ -173,7 +173,7 @@ public class RDP {
         System.out.println("Matriz RDP: ");
         for (int i = 0; i < mRDP.length; i++) {
             for (int j = 0; j < mRDP[0].length; j++) {
-                System.out.print(String.format("%5d",mRDP[i][j]));
+                System.out.print(String.format("%5d", mRDP[i][j]));
             }
             System.out.print("\n");
         }
@@ -185,7 +185,7 @@ public class RDP {
     public void printMark() {
         System.out.println("Vector Marca de  RDP: ");
         for (int i = 0; i < mark.length; i++) {
-            System.out.print(String.format("%5d",mark[i]));
+            System.out.print(String.format("%5d", mark[i]));
         }
         System.out.print("\n");
 
@@ -205,13 +205,13 @@ public class RDP {
      */
     private int[] nextMark(int tDisp) {
         // La transisicion no existe, debe largar una exepcion
-        if (tDisp > mRDP[0].length || tDisp < 1 ) {
+        if (tDisp > mRDP[0].length || tDisp < 1) {
             System.out.println("La transicion no existe");
             System.exit(-1);
         }
         // Vector de disparo ()
         int[] vectorDisparo = new int[mRDP[0].length];
-        vectorDisparo[tDisp-1] = 1;
+        vectorDisparo[tDisp - 1] = 1;
         // vector Proximo marcado
         int[] vectorNextMark = new int[mRDP.length];
 
