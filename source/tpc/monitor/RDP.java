@@ -205,22 +205,35 @@ public class RDP {
      */
     private int[] nextMark(int tDisp) {
         // La transisicion no existe, debe largar una exepcion
-        if (tDisp > mRDP[0].length) {
+        if (tDisp > mRDP[0].length || tDisp < 1 ) {
             System.out.println("La transicion no existe");
+            System.exit(-1);
         }
         // Vector de disparo ()
         int[] vectorDisparo = new int[mRDP[0].length];
+        vectorDisparo[tDisp-1] = 1;
         // vector Proximo marcado
         int[] vectorNextMark = new int[mRDP.length];
 
-        // Matriz * Vector Trans = Mark trans
+        // Matriz * Vector Disparo Trans  + Mark = Mark
         // Recorro por filas
         for (int i = 0; i < mRDP.length; ++i) {
             // Recorro por columnas
             for (int j = 0; j < mRDP[0].length; ++j) {
                 vectorNextMark[i] += mRDP[i][j] * vectorDisparo[j];
             }
+            vectorNextMark[i] += mark[i];
         }
+        /*
+        System.out.println("\nVector disparo: ");
+        for (Object o : vectorDisparo) {
+            System.out.print(o + " ");
+        }
+        System.out.println("\nVector mark: ");
+        for (Object o : vectorNextMark) {
+            System.out.print(o + " ");
+        }
+        */
 
         return vectorNextMark;
 
