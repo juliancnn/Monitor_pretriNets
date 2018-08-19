@@ -5,7 +5,22 @@ import java.io.*;
 import java.lang.*;
 import java.util.*;
 
-
+/**
+ * Manejador de la red de petri
+ *
+ * La clase se encarga de instanciar la red de petri con su marcado desde archivos.
+ * Tiene la posibilidad de:
+ *      - Dispara las transiciones y alterar el estado de la red
+ *      - Informar las transiciones disponibles para disparar
+ *      - Informar si se puede disparar o no una transicion
+ *
+ * @WARNING No implementa ningun mecanismo de proteccion de recursos para hilos multiples (como semaforo),
+ * debe ser implementado externamente
+ *
+ * @TODO Implementar arcos lectores e inibidores
+ * @TODO Implementar pesos de los arcos
+ * @TODO Implementar las transiciones temporales
+ */
 public class RDP {
     /**
      * Matriz de la red de petri
@@ -38,6 +53,7 @@ public class RDP {
      *
      * @param fileMatrix Nombre del archivo de la rdp
      * @param filemMark  Nombre del archivo de la marca
+     * @TODO Chequear que la matriz tenga siempre la misma cantidad de columnas cuando se cargan
      */
     public RDP(String fileMatrix, String filemMark) {
 
