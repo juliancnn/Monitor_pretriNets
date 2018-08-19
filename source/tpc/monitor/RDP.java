@@ -8,19 +8,16 @@ import java.util.*;
 
 public class RDP {
     /**
-     * @brief Matriz de la red de petri
+     * Matriz de la red de petri
      */
     private int[][] mRDP;
     /**
-     * @brief Marcador de la red de petri
+     * Marcador de la red de petri
      */
     private int[] mark;
 
     /**
-     * @param fileMatrix Nombre del archivo de la rdp
-     * @param filemMark  Nombre del archivo de la marca
-     * @brief Crea la red de petri a partir de un archivo
-     * <p>
+     * Crea la red de petri a partir de un archivo
      * <p>
      * El constructor setea el marcador inicial y la rdp en base al archivo
      * El marcador debe ser una fila separado los valores de las plazas por espacios y numeros enteros positivos
@@ -38,6 +35,9 @@ public class RDP {
      * 0  1  0 -1  p3
      * 1  0  0 -1  p4
      * 0  0  1 -1  p5
+     *
+     * @param fileMatrix Nombre del archivo de la rdp
+     * @param filemMark  Nombre del archivo de la marca
      */
     public RDP(String fileMatrix, String filemMark) {
 
@@ -167,7 +167,7 @@ public class RDP {
     }
 
     /**
-     * @brief imprime la matriz de la red de petri
+     * Imprime la matriz de la red de petri
      */
     public void printRDP() {
         System.out.println("Matriz RDP: ");
@@ -180,7 +180,7 @@ public class RDP {
     }
 
     /**
-     * @brief imprime el marcador actual de la RDP
+     * Imprime el marcador actual de la RDP
      */
     public void printMark() {
         System.out.println("Vector Marca de  RDP: ");
@@ -192,15 +192,16 @@ public class RDP {
     }
 
     /**
-     * @param tDisp numero de transicion a disparar
-     * @return vectorNextMark Proxima marca, sea alcanzable o no.
-     * @brief Resultado del disparo, sin alterar el marcado
+     * Resultado del disparo, sin alterar el marcado
      * <p>
      * <p>
      * La funcion retorna el resultado del disparo sin alterar el marcador
      * Sirve para verficiar si el disparo se puede efectuar (Marcador positivo)
      * o si el disparo no se puede efectuar, marcador negativo en algun valor
      * Nuevo mark = mark actual + RDP * Vector Disparo
+     *
+     * @param   tDisp           numero de transicion a disparar
+     * @return  vectorNextMark  Proxima marca, sea alcanzable o no.
      * @TODO Agregar la exepcion si no existe la transicion
      */
     private int[] nextMark(int tDisp) {
@@ -234,8 +235,6 @@ public class RDP {
             System.out.print(o + " ");
         }
         */
-
         return vectorNextMark;
-
     }
 }
