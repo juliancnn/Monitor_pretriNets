@@ -18,7 +18,6 @@ import java.util.*;
  * debe ser implementado externamente
  *
  * @TODO Implementar arcos lectores e inibidores
- * @TODO Implementar pesos de los arcos
  * @TODO Implementar las transiciones temporales
  */
 public class RDP {
@@ -204,7 +203,14 @@ public class RDP {
             System.out.print(String.format("%5d", mark[i]));
         }
         System.out.print("\n");
+    }
 
+    /**
+     * Obtiene un array con el estado de marcado de la red de petri
+     * @return Una copia del array con el marcado actual del sistema
+     */
+    public int[] getMark(){
+        return mark.clone();
     }
 
     /**
@@ -218,14 +224,12 @@ public class RDP {
      *
      * @param   tDisp           numero de transicion a disparar
      * @return  vectorNextMark  Proxima marca, sea alcanzable o no.
-     * @TODO Agregar la exepcion si no existe la transicion
      */
-    private int[] nextMark(int tDisp) {
-        // La transisicion no existe, debe largar una exepcion
-        if (tDisp > mRDP[0].length || tDisp < 1) {
-            System.out.println("La transicion no existe");
-            System.exit(-1);
-        }
+    public int[] nextMark(int tDisp) throws ShotException {
+        // Si la transicion no existe lanza la excepcion
+        if (tDisp > mRDP[0].length || tDisp < 1)
+            throw new ShotException(this.mark,tDisp,this.mRDP[0].length);
+
         // Vector de disparo ()
         int[] vectorDisparo = new int[mRDP[0].length];
         vectorDisparo[tDisp - 1] = 1;
@@ -252,5 +256,66 @@ public class RDP {
         }
         */
         return vectorNextMark;
+    }
+
+    /**
+     * La excepcion se produce al intentar realizar un disparo invalido en la red de petri,
+     * El disparo es invalido por que el numero de transicion es menor que 1 o mayor que el numero de
+     * transiciones que tiene la red. Es decir cuando la transicion es inexistente
+     */
+    public class ShotException extends Exception{
+
+        /**
+         * Marca al momento del disparo
+         */
+        private final int[] marca;
+        /**
+         * Numero de transicion que se intento disparar
+         */
+        private final int tDisparo;
+        /**
+         * Cantidad de transiciones que tiene la red de petri
+         */
+        private final int nTrans;
+
+        /**
+         * Se crea con la informacion del estado del sistema en el momento del intento de disparo y el disparo fallido
+         * @param mark
+         * @param tDisp
+         */
+        public ShotException(int[] mark,int tDisp,int cantidadTrans){
+            this.marca = mark;
+            this.tDisparo = tDisp;
+            this.nTrans = cantidadTrans;
+        }
+
+        /**
+         * Obtiene la informacion de la marca al momento del disparo
+         * @return vector de disparo que fallo
+         */
+        public int[] getMarca(){
+            return this.marca;
+        }
+
+        /**
+         * Obtiene la informacion del disparo fallido
+         * @return El numero de transicion fallida
+         */
+        public int gettDisparo(){
+            return this.tDisparo;
+        }
+        /**
+         * Imprime la informacion del disparo fallido junto con el estado del sistema
+         */
+        public void printInfo(){
+            System.out.println("Disparo fallido para la transicion: " + this.tDisparo);
+            System.out.println("Marca del sistema al momento del fallo:");
+            for (int o : this.marca) {
+                System.out.print(String.format("%5d", o));
+            }
+            System.out.println("\nCantidad de transiciones de la RDP: "+ this.nTrans);
+
+        }
+
     }
 }
