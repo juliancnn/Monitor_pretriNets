@@ -18,6 +18,7 @@ import java.util.*;
  * debe ser implementado externamente
  *
  * @TODO Implementar arcos lectores e inibidores
+ * @TODO Implementar max tokens por plaza
  * @TODO Implementar las transiciones temporales
  */
 public class RDP {
@@ -225,7 +226,7 @@ public class RDP {
      * @param   tDisp           numero de transicion a disparar
      * @return  vectorNextMark  Proxima marca, sea alcanzable o no.
      */
-    public int[] nextMark(int tDisp) throws ShotException {
+    private int[] nextMark(int tDisp) throws ShotException {
         // Si la transicion no existe lanza la excepcion
         if (tDisp > mRDP[0].length || tDisp < 1)
             throw new ShotException(this.mark,tDisp,this.mRDP[0].length);
