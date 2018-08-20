@@ -185,7 +185,6 @@ public class RDP {
      * Imprime la matriz de la red de petri
      */
     public void printRDP() {
-        System.out.println("Matriz RDP: ");
         for (int i = 0; i < mRDP.length; i++) {
             /* Cabezera de tabla */
             if(i==0){
@@ -207,11 +206,28 @@ public class RDP {
      * Imprime el marcador actual de la RDP
      */
     public void printMark() {
-        System.out.println("Vector Marca de  RDP: ");
+        for (int i = 0; i < mark.length; i++) {
+            System.out.print(String.format("%5s", "P"+(i+1)));
+        }
+        System.out.print("\n");
         for (int i = 0; i < mark.length; i++) {
             System.out.print(String.format("%5d", mark[i]));
         }
         System.out.print("\n");
+    }
+
+    public void printSensitizedVector(){
+
+        boolean[] sense = this.getSensitizedArray();
+        for (int i = 0; i < sense.length; i++) {
+            System.out.print(String.format("%5s", "T"+(i+1)));
+        }
+        System.out.print("\n");
+        for (int i = 0; i < sense.length; i++) {
+            System.out.print(String.format("%5s", sense[i] ? "SI" : "NO"));
+        }
+        System.out.print("\n");
+
     }
 
     /**

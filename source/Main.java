@@ -5,10 +5,11 @@ public class Main {
     public static void main(String[] args) {
         RDP rdp = new RDP("examples_rdp/ex1_rdp.txt", "examples_rdp/ex1_mark.txt");
         rdp.printRDP();
+        System.out.println("========================");
         rdp.printMark();
-        for(boolean sense : rdp.getSensitizedArray()){
-            System.out.print(sense + " ");
-        }
+        System.out.println("========================");
+        rdp.printSensitizedVector();
+
 
     }
 }
