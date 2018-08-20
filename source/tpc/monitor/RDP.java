@@ -187,10 +187,19 @@ public class RDP {
     public void printRDP() {
         System.out.println("Matriz RDP: ");
         for (int i = 0; i < mRDP.length; i++) {
+            /* Cabezera de tabla */
+            if(i==0){
+                String line = new String("");
+                for (int j = 0; j < mRDP[0].length; j++) {
+                    System.out.print(String.format("%5s", "T"+(j+1)));
+                    line += "------";
+                }
+                System.out.print("\n" + line + "\n");
+            }
             for (int j = 0; j < mRDP[0].length; j++) {
                 System.out.print(String.format("%5d", mRDP[i][j]));
             }
-            System.out.print("\n");
+            System.out.println(String.format(" |%4s", "P"+(i+1)));
         }
     }
 
