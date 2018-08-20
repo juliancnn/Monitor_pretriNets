@@ -7,16 +7,15 @@ import java.util.*;
 
 /**
  * Manejador de la red de petri
- *
+ * <p>
  * La clase se encarga de instanciar la red de petri con su marcado desde archivos.
  * Tiene la posibilidad de:
- *      - Dispara las transiciones y alterar el estado de la red
- *      - Informar las transiciones disponibles para disparar
- *      - Informar si se puede disparar o no una transicion
+ * - Dispara las transiciones y alterar el estado de la red
+ * - Informar las transiciones disponibles para disparar
+ * - Informar si se puede disparar o no una transicion
  *
  * @WARNING No implementa ningun mecanismo de proteccion de recursos para hilos multiples (como semaforo),
  * debe ser implementado externamente
- *
  * @TODO Implementar arcos lectores e inibidores
  * @TODO Implementar max tokens por plaza
  * @TODO Implementar las transiciones temporales
@@ -208,10 +207,63 @@ public class RDP {
 
     /**
      * Obtiene un array con el estado de marcado de la red de petri
+     *
      * @return Una copia del array con el marcado actual del sistema
      */
-    public int[] getMark(){
+    public int[] getMark() {
         return mark.clone();
+    }
+
+    /**
+     * Realiza el disparo en la red de petri, este puede ser un disparo de prueba o puede guardar los resultados
+     *
+     * @param tDisp Numero de transicion a disparar
+     * @param test  Falso si no quiere alterar el estado de la red de petri
+     *              Verdadero si en caso de que se pueda disparar se altere el estado de la red
+     * @return Verdadero en caso de exito en el disparo de la transicion
+     * Falso en caso de que la transicion no este sencibilidaza
+     * @throws ShotException Excepcion por inexistencia de la transicion
+     */
+    public boolean shotT(int tDisp, boolean test) throws ShotException {
+        boolean validShot = true;
+
+        int[] newMark = this.nextMark(tDisp); // Puede lanzar la exepcion de inexistencia de transicion
+        // Validez del nuevo marcado
+        for (int token : newMark) {
+            if (token < 0) {
+                validShot = false;
+                break;
+            }
+        }
+
+        // Marcado valido y salvo nueva marca
+        if (!test && validShot) {
+            this.mark = newMark;
+        }
+
+        return validShot;
+    }
+
+    /**
+     * Retorna el vector de transiciones sensibilizadas, cada lugar del vector representa una transicion
+     * donde el primer lugar corresponde a la primera transicion.
+     * @return  Verdadero si la transicion esta sensibilizada
+     *          Falso en caso contrario
+     */
+    public boolean[] getSensitizedArray() {
+        boolean[] sensitizedArray = new boolean[mRDP[0].length];
+
+        try{
+            for (int i = 0; i < sensitizedArray.length; i++) {
+                sensitizedArray[i] = this.shotT(i+1,true);
+            }
+        }catch (RDP.ShotException e){
+            // No deberia pasar nunca ya que se testea solo la cantidad de transiciones disponibles segun la matriz
+            e.printInfo();
+        }
+
+
+        return sensitizedArray;
     }
 
     /**
@@ -223,13 +275,15 @@ public class RDP {
      * o si el disparo no se puede efectuar, marcador negativo en algun valor
      * Nuevo mark = mark actual + RDP * Vector Disparo
      *
-     * @param   tDisp           numero de transicion a disparar
-     * @return  vectorNextMark  Proxima marca, sea alcanzable o no.
+     * @param tDisp numero de transicion a disparar
+     * @return vectorNextMark  Proxima marca, sea alcanzable o no.
+     * @throws ShotException Excepcion por inexistencia de la transicion
      */
+
     private int[] nextMark(int tDisp) throws ShotException {
         // Si la transicion no existe lanza la excepcion
         if (tDisp > mRDP[0].length || tDisp < 1)
-            throw new ShotException(this.mark,tDisp,this.mRDP[0].length);
+            throw new ShotException(this.mark, tDisp, this.mRDP[0].length);
 
         // Vector de disparo ()
         int[] vectorDisparo = new int[mRDP[0].length];
@@ -264,7 +318,7 @@ public class RDP {
      * El disparo es invalido por que el numero de transicion es menor que 1 o mayor que el numero de
      * transiciones que tiene la red. Es decir cuando la transicion es inexistente
      */
-    public class ShotException extends Exception{
+    public class ShotException extends Exception {
 
         /**
          * Marca al momento del disparo
@@ -281,10 +335,11 @@ public class RDP {
 
         /**
          * Se crea con la informacion del estado del sistema en el momento del intento de disparo y el disparo fallido
+         *
          * @param mark
          * @param tDisp
          */
-        public ShotException(int[] mark,int tDisp,int cantidadTrans){
+        public ShotException(int[] mark, int tDisp, int cantidadTrans) {
             this.marca = mark;
             this.tDisparo = tDisp;
             this.nTrans = cantidadTrans;
@@ -292,29 +347,32 @@ public class RDP {
 
         /**
          * Obtiene la informacion de la marca al momento del disparo
+         *
          * @return vector de disparo que fallo
          */
-        public int[] getMarca(){
+        public int[] getMarca() {
             return this.marca;
         }
 
         /**
          * Obtiene la informacion del disparo fallido
+         *
          * @return El numero de transicion fallida
          */
-        public int gettDisparo(){
+        public int gettDisparo() {
             return this.tDisparo;
         }
+
         /**
          * Imprime la informacion del disparo fallido junto con el estado del sistema
          */
-        public void printInfo(){
+        public void printInfo() {
             System.out.println("Disparo fallido para la transicion: " + this.tDisparo);
             System.out.println("Marca del sistema al momento del fallo:");
             for (int o : this.marca) {
                 System.out.print(String.format("%5d", o));
             }
-            System.out.println("\nCantidad de transiciones de la RDP: "+ this.nTrans);
+            System.out.println("\nCantidad de transiciones de la RDP: " + this.nTrans);
 
         }
 
