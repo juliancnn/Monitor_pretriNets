@@ -3,7 +3,7 @@ import tpc.monitor.RDP;
 public class Main {
 
     public static void main(String[] args) {
-        RDP rdp = new RDP("examples_rdp/ex1_rdp.txt", "examples_rdp/ex1_mark.txt");
+        RDP rdp = new RDP("examples_rdp/ex1_rdp", "examples_rdp/ex1_mark");
         rdp.printRDP();
         System.out.println("========================");
         rdp.printMark();

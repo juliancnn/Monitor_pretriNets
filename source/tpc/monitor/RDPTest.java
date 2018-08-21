@@ -13,8 +13,8 @@ class RDPTest {
     /*
     * Lista de archivos usados en los test
     * */
-    private static final String FILE_RDP1_MATRIX = "examples_rdp/ex1_rdp.txt";
-    private static final String FILE_RDP1_MARK = "examples_rdp/ex1_mark.txt";
+    private static final String FILE_RDP1_MATRIX = "examples_rdp/ex1_rdp";
+    private static final String FILE_RDP1_MARK = "examples_rdp/ex1_mark";
 
     /**
      * Verifica que los archivos de la red sean los esperados para los test
