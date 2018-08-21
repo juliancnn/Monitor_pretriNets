@@ -215,6 +215,9 @@ public class RDP {
         }
         System.out.print("\n");
     }
+    /**
+     * Imprime el vector de sensibilizado de la red en el estado actual
+     * */
 
     public void printSensitizedVector(){
 
@@ -236,8 +239,15 @@ public class RDP {
      * @return Una copia del array con el marcado actual del sistema
      */
     public int[] getMark() {
-        return mark.clone();
+        return this.mark.clone();
     }
+
+    /**
+     * Obtiene la matriz de la red de petri
+     *
+     * @return Devuelve una copia de la matriz de la red de petri
+     */
+    public int[][] getMatrix(){return this.mRDP.clone();}
 
     /**
      * Realiza el disparo en la red de petri, este puede ser un disparo de prueba o puede guardar los resultados
