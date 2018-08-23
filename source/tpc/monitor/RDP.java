@@ -18,7 +18,7 @@ import java.util.*;
  * debe ser implementado externamente
  * @TODO Implementar max tokens por plaza (public Load, protect Set,Get), Arreglar el disparo y el sensibilizado (Max)
  * @TODO Implementar metodo protect boolean(Puede o no) setTokens(plaza, cantidad>0): Exepcion si la plaza no existe
- *                                                                                    Exepcion si la cantidad es invalida (<1)
+ * Exepcion si la cantidad es invalida (<1)
  * @TODO Implementar metodo protect boolean(Puede o no) addToken(plaza): Exepcion si la plaza no existe
  * @TODO Implementar arcos lectores e inibidores
  * @TODO Implementar las transiciones temporales
@@ -34,14 +34,45 @@ public class RDP {
     private int[] mark;
 
     /**
+     * [Feature: Red de petri extendida]:  Indica si  hay un maximo de token por plaza
+     */
+    private boolean extendedMaxToken = false;
+    /**
+     * [Feature: Red de petri extendida]:  Vector de maximo de tokens por plaza
+     */
+    private int[] extMaxToken;
+
+    /**
+     * Lista de errores de configuracion al cargar la red de petri
+     * */
+    protected enum errorTypeConfig {
+        /**
+         * El marcado maximo para cada plaza debe ser mayor a cero
+         * */
+        invalidMaxToken,
+        /**
+         * La cantidad la cantidad de datos es invalida o mal ordenada
+         * */
+        invalidFormatMatrix,
+        invalidFormatArray
+    }
+
+    /**
      * Crea la red de petri a partir de un archivo
      * <p>
-     * El constructor setea el marcador inicial y la rdp en base al archivo
-     * El marcador debe ser una fila separado los valores de las plazas por espacios y numeros enteros positivos
-     * El primer valor es el de la plaza 1, luego el de la plaza 2 y asi susecivamente sin saltear ninguna plaza
-     * ej:
-     * p1  p2 p3  p4  p5
-     * 1  0   1   0  0
+     * El constructor setea el marcador inicial y la rdp en base a archivos. Opcionalmente el marcacado tambien setea
+     * un maximo de tokens por plaza, extendiendo la funcionaldidad de la red.
+     * El archivo del marcador debe ser una fila separado los valores de las plazas por espacios y numeros enteros
+     * positivos.
+     * El primer valor es el de la plaza 1, luego el de la plaza 2 y asi susecivamente sin saltear ninguna plaza.
+     * Opcionalmente puede tener una segunda indicando que la red de petri es extendida con la funcionalidad de un
+     * maximo de tokens por plaza. Donde la plaza no tenga limite correspondera un 0.
+     * ej para un marcado de 5 plaazas inicial donde p1 tendra 3 tokens y solo la plaza 2 tendra un maximo de 2 tokens,
+     * el archivo tiene la siguiente estructura (Salta la primera linea):
+     * p1  p2 p3  p4 p5
+     * 3  0   0   0  0
+     * 0  2   0   0  0
+     * <p>
      * La matriz esta expresada por filas y columnas separadas por saltos de linea y espacios
      * Las filas estan separadas por saltos de linea y las columnas por espacios
      * La primera fila es de la primera plaza con el primer valor el de la transicion 1
@@ -57,27 +88,30 @@ public class RDP {
      * @param filemMark  Nombre del archivo de la marca
      * @TODO Chequear que la matriz tenga siempre la misma cantidad de columnas cuando se cargan
      */
-    public RDP(String fileMatrix, String filemMark) {
+    public RDP(String fileMatrix, String filemMark) throws ConfigException{
 
-        Scanner input;
-        int fila = 0;
-        int colum = 0;
+        Scanner inputFile;
+        int filas = 0;
+        int columnas = 0;
 
         /* ********************************
          *       Carga del marcador
          * *********************************/
         try {
-            input = new Scanner(new File(filemMark));
+            // Buscamos cuantos valores tenemos que setear en el array
+            // No usamos array list por que es mucho mas lento, ocupa mas memoria y es ineficiente en los calculos
+            inputFile = new Scanner(new File(filemMark));
+            Scanner colReader = new Scanner(inputFile.nextLine());
 
-            // Cuantos valores tiene para setear el array
-            Scanner colreader = new Scanner(input.nextLine());
-            colum = 0;
-            while (colreader.hasNextInt()) {
-                colreader.nextInt();
-                ++colum;
+            columnas = 0;
+            while (colReader.hasNextInt()) {
+                colReader.nextInt();
+                ++columnas;
             }
-            mark = new int[colum];
-            input.close();
+
+            inputFile.close();
+            this.mark = new int[columnas];
+
         } catch (java.util.InputMismatchException e) {
             System.out.println("El archivo del markado esta con datos invalidos");
             System.exit(-1);
@@ -92,38 +126,53 @@ public class RDP {
             } catch (Exception ef) {
                 ef.printStackTrace();
             }
-
             System.exit(-1);
-
         }
 
         // Carga los valores del archivo
         try {
-            input = new Scanner(new File(filemMark));
+            inputFile = new Scanner(new File(filemMark));
+            Scanner markInput = new Scanner(inputFile.nextLine());
 
-            for (int j = 0; j < colum; j++) {
-                if (input.hasNextInt()) {
-                    mark[j] = input.nextInt();
+            for (int j = 0; j < columnas && markInput.hasNextInt(); j++) {
+                this.mark[j] = markInput.nextInt();
+            }
+            if (inputFile.hasNextLine()) {
+                markInput = new Scanner(inputFile.nextLine());
+                this.extendedMaxToken = true;
+                this.extMaxToken = new int[columnas];
+                int j;
+
+                for (j = 0; j < columnas && markInput.hasNextInt(); j++) {
+                    this.extMaxToken[j] = markInput.nextInt();
+                    if( this.extMaxToken[j] < 0 ){
+                        throw new ConfigException("Numeros negativos en limite marcadores maximos",
+                                errorTypeConfig.invalidMaxToken);
+                    }
+                }
+                if (j != columnas) {
+                    throw new ConfigException("Mal formado el marcador de maximos, " +
+                            "no pusee la cantidad de plaazas correcta",
+                            errorTypeConfig.invalidFormatArray);
                 }
             }
+            inputFile.close();
 
         } catch (java.util.InputMismatchException e) {
-            System.out.println("El archivo del rdp contiene datos invalidos");
+            System.out.println("El archivo del markado esta con datos invalidos");
             System.exit(-1);
         } catch (NoSuchElementException e) {
-            System.out.println("El archivo del rdp esta vacio");
+            System.out.println("El archivo del markado esta vacio");
             System.exit(-1);
         } catch (java.io.FileNotFoundException e) {
-            System.out.print("No se encuentra el archivo de la rdp: " + filemMark);
+            System.out.print("No se encuentra el archivo del markado: " + filemMark);
             File miDir = new File(".");
             try {
                 System.out.println("En el directorio actual: " + miDir.getCanonicalPath());
             } catch (Exception ef) {
                 ef.printStackTrace();
             }
-
             System.exit(-1);
-
         }
 
 
@@ -131,22 +180,22 @@ public class RDP {
          *       Carga del la RDP
          * *********************************/
         try {
-            fila = 0;
-            colum = 0;
-            input = new Scanner(new File(fileMatrix));
+            filas = 0;
+            columnas = 0;
+            inputFile = new Scanner(new File(fileMatrix));
 
-            while (input.hasNextLine()) {
-                ++fila;
-                Scanner colreader = new Scanner(input.nextLine());
-                colum = 0;
+            while (inputFile.hasNextLine()) {
+                ++filas;
+                Scanner colreader = new Scanner(inputFile.nextLine());
+                columnas = 0;
                 while (colreader.hasNextInt()) {
                     colreader.nextInt();
-                    ++colum;
+                    ++columnas;
                 }
 
             }
-            mRDP = new int[fila][colum];
-            input.close();
+            mRDP = new int[filas][columnas];
+            inputFile.close();
         } catch (java.util.InputMismatchException e) {
             System.out.println(e.toString());
         } catch (java.io.FileNotFoundException e) {
@@ -155,12 +204,12 @@ public class RDP {
         }
 
         try {
-            input = new Scanner(new File(fileMatrix));
+            inputFile = new Scanner(new File(fileMatrix));
 
-            for (int i = 0; i < fila; i++) {
-                for (int j = 0; j < colum; j++) {
-                    if (input.hasNextInt()) {
-                        mRDP[i][j] = input.nextInt();
+            for (int i = 0; i < filas; i++) {
+                for (int j = 0; j < columnas; j++) {
+                    if (inputFile.hasNextInt()) {
+                        mRDP[i][j] = inputFile.nextInt();
                     }
                 }
             }
@@ -190,10 +239,10 @@ public class RDP {
     public void printRDP() {
         for (int i = 0; i < mRDP.length; i++) {
             /* Cabezera de tabla */
-            if(i==0){
+            if (i == 0) {
                 String line = new String("");
                 for (int j = 0; j < mRDP[0].length; j++) {
-                    System.out.print(String.format("%5s", "T"+(j+1)));
+                    System.out.print(String.format("%5s", "T" + (j + 1)));
                     line += "------";
                 }
                 System.out.print("\n" + line + "\n");
@@ -201,7 +250,7 @@ public class RDP {
             for (int j = 0; j < mRDP[0].length; j++) {
                 System.out.print(String.format("%5d", mRDP[i][j]));
             }
-            System.out.println(String.format(" |%4s", "P"+(i+1)));
+            System.out.println(String.format(" |%4s", "P" + (i + 1)));
         }
     }
 
@@ -210,7 +259,7 @@ public class RDP {
      */
     public void printMark() {
         for (int i = 0; i < mark.length; i++) {
-            System.out.print(String.format("%5s", "P"+(i+1)));
+            System.out.print(String.format("%5s", "P" + (i + 1)));
         }
         System.out.print("\n");
         for (int i = 0; i < mark.length; i++) {
@@ -218,15 +267,16 @@ public class RDP {
         }
         System.out.print("\n");
     }
+
     /**
      * Imprime el vector de sensibilizado de la red en el estado actual
-     * */
+     */
 
-    public void printSensitizedVector(){
+    public void printSensitizedVector() {
 
         boolean[] sense = this.getSensitizedArray();
         for (int i = 0; i < sense.length; i++) {
-            System.out.print(String.format("%5s", "T"+(i+1)));
+            System.out.print(String.format("%5s", "T" + (i + 1)));
         }
         System.out.print("\n");
         for (int i = 0; i < sense.length; i++) {
@@ -245,12 +295,25 @@ public class RDP {
         return this.mark.clone();
     }
 
+
+    /**
+     * Obtiene un array con la informacion de maximos toquens por plaza
+     *
+     * @return Una copia del array con el marcado maximo por plaza
+     *          Null Si no es extendida la red
+     */
+    public int[] getExtMaxToken() {
+        return this.extendedMaxToken ? this.extMaxToken.clone() : null;
+    }
+
     /**
      * Obtiene la matriz de la red de petri
      *
      * @return Devuelve una copia de la matriz de la red de petri
      */
-    public int[][] getMatrix(){return this.mRDP.clone();}
+    public int[][] getMatrix() {
+        return this.mRDP.clone();
+    }
 
     /**
      * Realiza el disparo en la red de petri, este puede ser un disparo de prueba o puede guardar los resultados
@@ -285,17 +348,18 @@ public class RDP {
     /**
      * Retorna el vector de transiciones sensibilizadas, cada lugar del vector representa una transicion
      * donde el primer lugar corresponde a la primera transicion.
-     * @return  Verdadero si la transicion esta sensibilizada
-     *          Falso en caso contrario
+     *
+     * @return Verdadero si la transicion esta sensibilizada
+     * Falso en caso contrario
      */
     public boolean[] getSensitizedArray() {
         boolean[] sensitizedArray = new boolean[mRDP[0].length];
 
-        try{
+        try {
             for (int i = 0; i < sensitizedArray.length; i++) {
-                sensitizedArray[i] = this.shotT(i+1,true);
+                sensitizedArray[i] = this.shotT(i + 1, true);
             }
-        }catch (RDP.ShotException e){
+        } catch (RDP.ShotException e) {
             // No deberia pasar nunca ya que se testea solo la cantidad de transiciones disponibles segun la matriz
             e.printInfo();
         }
@@ -338,16 +402,7 @@ public class RDP {
             }
             vectorNextMark[i] += mark[i];
         }
-        /*
-        System.out.println("\nVector disparo: ");
-        for (Object o : vectorDisparo) {
-            System.out.print(o + " ");
-        }
-        System.out.println("\nVector mark: ");
-        for (Object o : vectorNextMark) {
-            System.out.print(o + " ");
-        }
-        */
+
         return vectorNextMark;
     }
 
@@ -414,5 +469,27 @@ public class RDP {
 
         }
 
+    }
+
+    /**
+     * La excepcion se produce por errores en la carga de datos,
+     * como datos invalidos y falta de datos
+     * */
+    public class ConfigException extends Exception{
+
+        private String moreInfo;
+        private errorTypeConfig e;
+
+
+        public ConfigException(String description, errorTypeConfig e){
+            this.moreInfo = description;
+            this.e = e;
+        }
+        /**
+         * Imprime la informacion del disparo fallido junto con el estado del sistema
+         */
+        public void printInfo(){
+            System.out.println("[ERROR " + e + "] " +moreInfo);
+        }
     }
 }

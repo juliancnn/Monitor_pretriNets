@@ -29,17 +29,23 @@ class RDPTest {
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
-        RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
-        Assertions.assertArrayEquals(new int[][]
-                {
-                        {-1, 0, 0, 1},
-                        {1, -1, 0, 0},
-                        {0, 1, 0, -1},
-                        {1, 0, -1, 0},
-                        {0, 0, 1, -1}
-                }, rdp1.getMatrix(), "Red de petri 1 alterada para el test");
-        Assertions.assertArrayEquals(new int[]{1, 0, 0, 0, 0}, rdp1.getMark(),
-                "Marca inicial 1 alterada para el test");
+
+        try {
+            RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
+            Assertions.assertArrayEquals(new int[][]
+                    {
+                            {-1, 0, 0, 1},
+                            {1, -1, 0, 0},
+                            {0, 1, 0, -1},
+                            {1, 0, -1, 0},
+                            {0, 0, 1, -1}
+                    }, rdp1.getMatrix(), "Red de petri 1 alterada para el test");
+            Assertions.assertArrayEquals(new int[]{1, 0, 0, 0, 0}, rdp1.getMark(),
+                    "Marca inicial 1 alterada para el test");
+        }catch (RDP.ConfigException e){
+            Assertions.fail("No se puede crear la red de petri");
+        }
+
     }
 
     /**
@@ -52,20 +58,25 @@ class RDPTest {
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
-        RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
-        Assertions.assertArrayEquals(new int[]{1,0,0,0,0}, rdp1.getMark());
-
         try{
-            Assertions.assertTrue(rdp1.shotT(1,true), "No se disparo y debia");
-            Assertions.assertArrayEquals(new int[]{1,0,0,0,0}, rdp1.getMark(),
-                    "La red evoluciono y no debia");
+            RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
+            Assertions.assertArrayEquals(new int[]{1,0,0,0,0}, rdp1.getMark());
 
-            Assertions.assertTrue(rdp1.shotT(1,false),"No se disparo y debia");
-            Assertions.assertArrayEquals(new int[]{0,1,0,1,0}, rdp1.getMark(),
-                    "La red evoluciono mal o no evoluciono");
-        }catch (RDP.ShotException e){
-            Assertions.fail("La transicion es inexistente, error grave");
+            try{
+                Assertions.assertTrue(rdp1.shotT(1,true), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1,0,0,0,0}, rdp1.getMark(),
+                        "La red evoluciono y no debia");
+
+                Assertions.assertTrue(rdp1.shotT(1,false),"No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{0,1,0,1,0}, rdp1.getMark(),
+                        "La red evoluciono mal o no evoluciono");
+            }catch (RDP.ShotException e){
+                Assertions.fail("La transicion es inexistente, error grave");
+            }
+        }catch (RDP.ConfigException e){
+            Assertions.fail("No se puede crear la red de petri");
         }
+
 
     }
 
@@ -79,19 +90,24 @@ class RDPTest {
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
-        RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
-        Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray());
-
         try{
-            Assertions.assertFalse(rdp1.shotT(2,true), "Se disparo y no debia");
-            Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray(),
-                    "La red evoluciono y no debia");
+            RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
+            Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray());
 
-            Assertions.assertFalse(rdp1.shotT(3,false),"Se disparo y no debia");
-            Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray(),
-                    "La red evoluciono mal");
-        }catch (RDP.ShotException e){
-            Assertions.fail();
+            try{
+                Assertions.assertFalse(rdp1.shotT(2,true), "Se disparo y no debia");
+                Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray(),
+                        "La red evoluciono y no debia");
+
+                Assertions.assertFalse(rdp1.shotT(3,false),"Se disparo y no debia");
+                Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray(),
+                        "La red evoluciono mal");
+            }catch (RDP.ShotException e){
+                Assertions.fail();
+            }
+
+        }catch (RDP.ConfigException e){
+            Assertions.fail("No se puede crear la red de petri");
         }
 
     }
@@ -105,17 +121,21 @@ class RDPTest {
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
-        RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
         try{
-            Assertions.assertFalse(rdp1.shotT(2,true), "Se disparo y no debia");
-            Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray(),
-                    "La red no evoluciono y el vector de sensibilidad es incorrecto");
+            RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
+            try{
+                Assertions.assertFalse(rdp1.shotT(2,true), "Se disparo y no debia");
+                Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
 
-            Assertions.assertFalse(rdp1.shotT(3,false),"Se disparo y no debia");
-            Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray(),
-                    "La red evoluciono y el vector de sensibilidad es incorrecto");
-        }catch (RDP.ShotException e){
-            Assertions.fail();
+                Assertions.assertFalse(rdp1.shotT(3,false),"Se disparo y no debia");
+                Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray(),
+                        "La red evoluciono y el vector de sensibilidad es incorrecto");
+            }catch (RDP.ShotException e){
+                Assertions.fail();
+            }
+        }catch (RDP.ConfigException e){
+            Assertions.fail("No se puede crear la red de petri");
         }
 
     }
@@ -132,11 +152,16 @@ class RDPTest {
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
-        RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
-        Assertions.assertThrows(RDP.ShotException.class,()->rdp1.shotT(0,true));
-        Assertions.assertThrows(RDP.ShotException.class,()->rdp1.shotT(0,false));
-        Assertions.assertThrows(RDP.ShotException.class,()->rdp1.shotT(5,true));
-        Assertions.assertThrows(RDP.ShotException.class,()->rdp1.shotT(5,false));
+        try{
+            RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
+            Assertions.assertThrows(RDP.ShotException.class,()->rdp1.shotT(0,true));
+            Assertions.assertThrows(RDP.ShotException.class,()->rdp1.shotT(0,false));
+            Assertions.assertThrows(RDP.ShotException.class,()->rdp1.shotT(5,true));
+            Assertions.assertThrows(RDP.ShotException.class,()->rdp1.shotT(5,false));
+        }catch (RDP.ConfigException e){
+            Assertions.fail("No se puede crear la red de petri");
+        }
+
     }
 
 }
