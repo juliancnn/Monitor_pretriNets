@@ -53,8 +53,8 @@ public class RDP {
         /**
          * La cantidad la cantidad de datos es invalida o mal ordenada
          * */
-        invalidFormatMatrix,
-        invalidFormatArray
+        invalidFormatArray,
+        invalidFormatMatrix
     }
 
     /**
@@ -93,6 +93,7 @@ public class RDP {
         Scanner inputFile;
         int filas = 0;
         int columnas = 0;
+        int columAux = 0;
 
         /* ********************************
          *       Carga del marcador
@@ -182,6 +183,7 @@ public class RDP {
         try {
             filas = 0;
             columnas = 0;
+            columAux = 0;
             inputFile = new Scanner(new File(fileMatrix));
 
             while (inputFile.hasNextLine()) {
@@ -191,6 +193,14 @@ public class RDP {
                 while (colreader.hasNextInt()) {
                     colreader.nextInt();
                     ++columnas;
+                }
+                if(filas == 1)
+                {
+                    columAux = columnas;
+                }
+                else if(columAux != columAux)
+                {
+                    throw new ConfigException("La cantidad de columnas no es constante", errorTypeConfig.invalidFormatMatrix);
                 }
 
             }
