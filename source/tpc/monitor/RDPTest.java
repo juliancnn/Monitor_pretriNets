@@ -82,7 +82,7 @@ class RDPTest {
 
     /**
      * Teste el disparo (shotT) con transiciones no sensibilizadas, disparos de prueba y con disparos de
-     * evolucion de red, chequea que no evolucione el marcado
+     * evolucion de red, chequea que no evolucione el vector de marcado
      */
     @Test
     @DisplayName("Disparos no acertados chequeo de marcado")
@@ -90,22 +90,20 @@ class RDPTest {
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
+
         try{
             RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
-            Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray());
-
+            Assertions.assertArrayEquals(new int[]{1,0,0,0,0}, rdp1.getMark());
             try{
                 Assertions.assertFalse(rdp1.shotT(2,true), "Se disparo y no debia");
-                Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray(),
+                Assertions.assertArrayEquals(new int[]{1,0,0,0,0}, rdp1.getMark(),
                         "La red evoluciono y no debia");
-
                 Assertions.assertFalse(rdp1.shotT(3,false),"Se disparo y no debia");
-                Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray(),
-                        "La red evoluciono mal");
+                Assertions.assertArrayEquals(new int[]{1,0,0,0,0}, rdp1.getMark(),
+                        "La red evoluciono y no debia");
             }catch (RDP.ShotException e){
                 Assertions.fail();
             }
-
         }catch (RDP.ConfigException e){
             Assertions.fail("No se puede crear la red de petri");
         }
