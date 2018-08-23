@@ -86,7 +86,6 @@ public class RDP {
      *
      * @param fileMatrix Nombre del archivo de la rdp
      * @param filemMark  Nombre del archivo de la marca
-     * @TODO Chequear que la matriz tenga siempre la misma cantidad de columnas cuando se cargan
      */
     public RDP(String fileMatrix, String filemMark) throws ConfigException{
 
@@ -198,7 +197,7 @@ public class RDP {
                 {
                     columAux = columnas;
                 }
-                else if(columAux != columAux)
+                else if(columAux != columnas)
                 {
                     throw new ConfigException("La cantidad de columnas no es constante", errorTypeConfig.invalidFormatMatrix);
                 }
