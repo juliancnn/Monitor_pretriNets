@@ -15,6 +15,7 @@ class RDPTest {
     * */
     private static final String FILE_RDP1_MATRIX = "examples_rdp/ex1_rdp";
     private static final String FILE_RDP1_MARK = "examples_rdp/ex1_mark";
+    private static final String FILE_RDP1_MAXTOKENS = "examples_rdp/ex1_extend_maxTokens";
 
     /**
      * Verifica que los archivos de la red sean los esperados para los test
@@ -46,7 +47,28 @@ class RDPTest {
             Assertions.fail("No se puede crear la red de petri");
         }
 
+          /*================================================
+            RDP 1_extend: Extiende los valores maximos de
+                        tokens por plaza
+          ================================================ */
+        try {
+            RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
+            Assertions.assertArrayEquals(new int[][]
+                    {
+                            {-1, 0, 0, 1},
+                            {1, -1, 0, 0},
+                            {0, 1, 0, -1},
+                            {1, 0, -1, 0},
+                            {0, 0, 1, -1}
+                    }, rdp1_extend.getMatrix(), "Red de petri 1 alterada para el test");
+            Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1_extend.getMark(),
+                    "Marca inicial 1 alterada para el test");
+            assertArrayEquals(new int[]{0,2,0,0,0}, rdp1_extend.getExtMaxToken(), "Tokens maximos alterados para test" );
+        }catch (RDP.ConfigException e){
+            Assertions.fail("No se puede crear la red de petri");
+        }
     }
+
 
     /**
      * Teste el disparo (shotT), con disparos de prueba y con disparos de evolucion de red
@@ -111,6 +133,49 @@ class RDPTest {
     }
 
     /**
+     * Testea el disparo (shotT) con transiciones sensibilizadas, con un limite de tokens maximos por plaza,
+     * se intentara disparar a una plaza que se encuentre con el limite de tokens. Chequeara que el disparo no
+     * se lleve a cabo.
+     */
+    @Test
+    @Tag("extMT")
+    @DisplayName("[ext MaxTokens] Disparos no acertado por cantidad maxima de tokens")
+    void shotT_extendMarkTokens() {
+        /*=========================================================
+            RDP 1_extend: Extendida, con maxima cantidad de plazas
+          ========================================================= */
+        try{
+            RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
+            Assertions.assertArrayEquals(new int[]{3,0,0,0,0}, rdp1_extend.getMark());
+            try{
+                Assertions.assertTrue(rdp1_extend.shotT(1,false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{2,1,0,1,0}, rdp1_extend.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp1_extend.shotT(1,false),"No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1,2,0,2,0}, rdp1_extend.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertFalse(rdp1_extend.shotT(1,false),"Se disparo y no debia");
+                Assertions.assertArrayEquals(new int[]{1,2,0,2,0}, rdp1_extend.getMark(),
+                        "La red evoluciono y no debia");
+                Assertions.assertTrue(rdp1_extend.shotT(2,false),"No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1,1,1,2,0}, rdp1_extend.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp1_extend.shotT(2,false),"No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1,0,2,2,0}, rdp1_extend.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp1_extend.shotT(1,false),"No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{0,1,2,3,0}, rdp1_extend.getMark(),
+                        "La red no evoluciono y debia");
+            }catch (RDP.ShotException e){
+                Assertions.fail();
+            }
+        }catch (RDP.ConfigException e){
+            Assertions.fail("No se puede crear la red de petri");
+        }
+
+    }
+
+    /**
      * Chequea los vectores de sensibilidad de la red antes y despues del disparo
      * */
     @Test
@@ -129,6 +194,37 @@ class RDPTest {
                 Assertions.assertFalse(rdp1.shotT(3,false),"Se disparo y no debia");
                 Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray(),
                         "La red evoluciono y el vector de sensibilidad es incorrecto");
+            }catch (RDP.ShotException e){
+                Assertions.fail();
+            }
+        }catch (RDP.ConfigException e){
+            Assertions.fail("No se puede crear la red de petri");
+        }
+
+    }
+
+    /**
+     *
+     */
+    @Test
+    @Tag("extMT")
+    @DisplayName("[ext MaxTokens]Checkeos de sensibilidad de transiciones antes y despues de disparos")
+    void getSensitizedArray_2Shot_extendMaxTokens() {
+        /*=========================================================
+            RDP 1_extend: Extendida, con limite de token por plazas
+          ========================================================= */
+        try{
+            RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
+            try{
+                Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1_extend.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+                Assertions.assertTrue(rdp1_extend.shotT(1,false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new boolean[]{true, true, true, false}, rdp1_extend.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+
+                Assertions.assertTrue(rdp1_extend.shotT(1,false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new boolean[]{false, true, true, false}, rdp1_extend.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
             }catch (RDP.ShotException e){
                 Assertions.fail();
             }

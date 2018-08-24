@@ -16,7 +16,7 @@ import java.util.*;
  *
  * @WARNING No implementa ningun mecanismo de proteccion de recursos para hilos multiples (como semaforo),
  * debe ser implementado externamente
- * @TODO Implementar max tokens por plaza (public Load, protect Set,Get), Arreglar el disparo y el sensibilizado (Max)
+ * @TODO Implementar max tokens por plaza, Arreglar el disparo
  * @TODO Implementar metodo protect boolean(Puede o no) setTokens(plaza, cantidad>0): Exepcion si la plaza no existe
  * Exepcion si la cantidad es invalida (<1)
  * @TODO Implementar metodo protect boolean(Puede o no) addToken(plaza): Exepcion si la plaza no existe
@@ -338,14 +338,22 @@ public class RDP {
         boolean validShot = true;
 
         int[] newMark = this.nextMark(tDisp); // Puede lanzar la exepcion de inexistencia de transicion
-        // Validez del nuevo marcado
-        for (int token : newMark) {
-            if (token < 0) {
+
+        for(int i=0; i<newMark.length; i++)
+        {
+            if(newMark[i] < 0 )
+            {
                 validShot = false;
                 break;
             }
+            else if(this.extendedMaxToken){
+                 if(extMaxToken[i] != 0 && newMark[i] > extMaxToken[i])
+                {
+                    validShot = false;
+                    break;
+                }
+            }
         }
-
         // Marcado valido y salvo nueva marca
         if (!test && validShot) {
             this.mark = newMark;
