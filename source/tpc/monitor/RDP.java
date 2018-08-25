@@ -424,6 +424,35 @@ public class RDP {
     }
 
     /**
+     * Metodo encargado de agregar tokens a determinada plaza.
+     * Devolvera verdadero en caso de que se puedan agregar dichos tokens
+     * o falso en caso contrario.
+     * @param Plaz plaza que se quiere agregar token
+     * @param cant numero entero de tokens a agregar
+     */
+     protected boolean AddToken(int Plaz, int cant) throws TokenException {
+
+         boolean agregar;
+         //Si la plaza no existe lanza la execepcion
+         if(Plaz> mRDP.length || Plaz <= 0){
+             throw new TokenException(this.mark, Plaz+1, mRDP.length, cant);
+         //Si la cantidad a agregar es negativa lanza la excepcion
+         }else if(cant<0){
+             throw new TokenException(this.mark, Plaz+1, mRDP.length, cant);
+         //Si la cantidad es mayor al limite de la plaza devuelve un false
+         }else if(cant + this.mark[Plaz-1] > this.extMaxToken[Plaz-1] && this.extMaxToken[Plaz-1] != 0){
+             agregar = false;
+             return agregar;
+         }
+         //Modifico el vector de marcado y devuelvo true
+         this.mark[Plaz-1] = cant + this.mark[Plaz-1];
+         agregar = true;
+         return agregar;
+
+     }
+
+
+    /**
      * La excepcion se produce al intentar realizar un disparo invalido en la red de petri,
      * El disparo es invalido por que el numero de transicion es menor que 1 o mayor que el numero de
      * transiciones que tiene la red. Es decir cuando la transicion es inexistente

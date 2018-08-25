@@ -235,27 +235,68 @@ class RDPTest {
     }
 
     /**
-     * Cheque que no se puedan disparar transiciones inexistentes y que ademas se lanze la excepcion adecuada
-     * al realizar esto, esto es cuando la transicion no esta entre el rango de transiciones permitidas
-     * desde la 1, hasta la ultima que posee
+     * Chequea el metodo de agregado de tokens a plazas que es posible agregar tokens, para
+     * despues intentar agregar a la misma superando el numero maximo de tokens para dicha plaza.
+     */
+    @Test
+    @Tag("extMT")
+    @DisplayName("[ext MaxTokens]Checkeo del agregado de tokens a una determinada plaza:")
+    void AddTokens_extendMaxTokens() {
+         /*=========================================================
+            RDP 1_extend: Extendida, con maxima cantidad de plazas
+          ========================================================= */
+        try {
+            RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
+            try {
+                Assertions.assertTrue(rdp1_extend.AddToken(2, 1), "No se agrego y debia");
+                Assertions.assertArrayEquals(new int[]{3,1,0,0,0},rdp1_extend.getMark(), "La red no cambio, y debia");
+                Assertions.assertFalse(rdp1_extend.AddToken(2, 5), "Se agregaron tokens y no debia");
+                Assertions.assertArrayEquals(new int[]{3,1,0,0,0},rdp1_extend.getMark(), "La red cambio, y  no debia");
+                Assertions.assertTrue(rdp1_extend.AddToken(5, 3), "No se agrego y debia");
+                Assertions.assertArrayEquals(new int[]{3,1,0,0,3},rdp1_extend.getMark(), "La red no cambio, y debia");
+            }
+            catch (RDP.TokenException e) {
+                Assertions.fail();
+            }
+        }
+        catch (RDP.ConfigException e) {
+            Assertions.fail("No se pudo crear la red de petri.");
+        }
+    }
+    /**
+     * Chequea las excepciones del programa
      * */
     @Test
-    @DisplayName("Exepciones en inexistencia de transicion")
+    @DisplayName("Testeo de excepciones")
     @Tag("exception")
-    void checkThrowExepcionWronShot(){
+    void checkThrowExepcion() {
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
-        try{
+        try {
             RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
-            Assertions.assertThrows(RDP.ShotException.class,()->rdp1.shotT(0,true));
-            Assertions.assertThrows(RDP.ShotException.class,()->rdp1.shotT(0,false));
-            Assertions.assertThrows(RDP.ShotException.class,()->rdp1.shotT(5,true));
-            Assertions.assertThrows(RDP.ShotException.class,()->rdp1.shotT(5,false));
-        }catch (RDP.ConfigException e){
+            Assertions.assertThrows(RDP.ShotException.class, () -> rdp1.shotT(0, true));
+            Assertions.assertThrows(RDP.ShotException.class, () -> rdp1.shotT(0, false));
+            Assertions.assertThrows(RDP.ShotException.class, () -> rdp1.shotT(5, true));
+            Assertions.assertThrows(RDP.ShotException.class, () -> rdp1.shotT(5, false));
+        } catch (RDP.ConfigException e) {
             Assertions.fail("No se puede crear la red de petri");
         }
-
+        /*================================================
+            RDP 1: Extendida, maximo de tokens por plaza
+          ================================================ */
+        try
+        {
+            RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
+            Assertions.assertThrows(RDP.TokenException.class,()-> rdp1_extend.AddToken(1, -1));
+            Assertions.assertThrows(RDP.TokenException.class,()-> rdp1_extend.AddToken(0, 3));
+        }
+        catch (RDP.ConfigException e) {
+            Assertions.fail("No se puede crear la red de Petri");
+        }
     }
+
+
+
 
 }
