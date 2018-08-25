@@ -18,7 +18,6 @@ import java.util.*;
  * debe ser implementado externamente
  * @TODO Implementar metodo protect boolean(Puede o no) setTokens(plaza, cantidad>0): Exepcion si la plaza no existe
  * Exepcion si la cantidad es invalida (<1)
- * @TODO Implementar metodo protect boolean(Puede o no) addToken(plaza): Exepcion si la plaza no existe
  * @TODO Implementar arcos lectores e inibidores
  * @TODO Implementar las transiciones temporales
  *
