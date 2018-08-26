@@ -466,7 +466,7 @@ public class RDP {
         }else if(Cant<0){
             throw new TokenException(this.mark, Plaz+1, mRDP.length, Cant);
             //Si la cantidad es mayor al limite de la plaza devuelve un false
-        }else if(Cant + this.mark[Plaz-1] > this.extMaxToken[Plaz-1] && this.extMaxToken[Plaz-1] != 0){
+        }else if(Cant > this.extMaxToken[Plaz-1] && this.extMaxToken[Plaz-1] != 0){
             agreg = false;
             return agreg;
         }

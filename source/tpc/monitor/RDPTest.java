@@ -280,14 +280,14 @@ class RDPTest {
             try {
                 Assertions.assertTrue(rdp1_extend.SetToken(2, 1), "No se modifico la marca y debia");
                 Assertions.assertArrayEquals(new int[]{3,1,0,0,0},rdp1_extend.getMark(), "La red no cambio, y debia");
-                Assertions.assertTrue(rdp1_extend.SetToken(2, 0), "No se modifico la marca y debia");
-                Assertions.assertArrayEquals(new int[]{3,0,0,0,0},rdp1_extend.getMark(), "La red no cambio, y debia");
+                Assertions.assertTrue(rdp1_extend.SetToken(2, 2), "No se modifico la marca y debia");
+                Assertions.assertArrayEquals(new int[]{3,2,0,0,0},rdp1_extend.getMark(), "La red no cambio, y debia");
                 Assertions.assertTrue(rdp1_extend.SetToken(5, 3), "No se agrego y debia");
-                Assertions.assertArrayEquals(new int[]{3,0,0,0,3},rdp1_extend.getMark(), "La red no cambio, y debia");
+                Assertions.assertArrayEquals(new int[]{3,2,0,0,3},rdp1_extend.getMark(), "La red no cambio, y debia");
                 Assertions.assertTrue(rdp1_extend.SetToken(5, 0), "No se modifico la marca y debia");
-                Assertions.assertArrayEquals(new int[]{3,0,0,0,0},rdp1_extend.getMark(), "La red no cambio, y debia");
+                Assertions.assertArrayEquals(new int[]{3,2,0,0,0},rdp1_extend.getMark(), "La red no cambio, y debia");
                 Assertions.assertFalse(rdp1_extend.SetToken(2, 9), "Se modifico la marca y no debia");
-                Assertions.assertArrayEquals(new int[]{3,0,0,0,0},rdp1_extend.getMark(), "La red cambio, y no debia");
+                Assertions.assertArrayEquals(new int[]{3,2,0,0,0},rdp1_extend.getMark(), "La red cambio, y no debia");
             }
             catch (RDP.TokenException e) {
                 Assertions.fail();
