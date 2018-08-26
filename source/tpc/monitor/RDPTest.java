@@ -264,6 +264,40 @@ class RDPTest {
         }
     }
     /**
+     * Chequea el metodo de seteo de tokens a plazas. Se verifica que no sea negativa la
+     * cantidad y que la plaza exista. Si se cumplen las respectivas condiciones se reemplaza
+     * el numero de tokens por el elegido.
+     */
+    @Test
+    @Tag("extMT")
+    @DisplayName("[ext MaxTokens]Checkeo del seteo de tokens a una determinada plaza:")
+    void SetTokens_extendMaxTokens() {
+         /*=========================================================
+            RDP 1_extend: Extendida, con maxima cantidad de plazas
+          ========================================================= */
+        try {
+            RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
+            try {
+                Assertions.assertTrue(rdp1_extend.SetToken(2, 1), "No se modifico la marca y debia");
+                Assertions.assertArrayEquals(new int[]{3,1,0,0,0},rdp1_extend.getMark(), "La red no cambio, y debia");
+                Assertions.assertTrue(rdp1_extend.SetToken(2, 0), "No se modifico la marca y debia");
+                Assertions.assertArrayEquals(new int[]{3,0,0,0,0},rdp1_extend.getMark(), "La red no cambio, y debia");
+                Assertions.assertTrue(rdp1_extend.SetToken(5, 3), "No se agrego y debia");
+                Assertions.assertArrayEquals(new int[]{3,0,0,0,3},rdp1_extend.getMark(), "La red no cambio, y debia");
+                Assertions.assertTrue(rdp1_extend.SetToken(5, 0), "No se modifico la marca y debia");
+                Assertions.assertArrayEquals(new int[]{3,0,0,0,0},rdp1_extend.getMark(), "La red no cambio, y debia");
+                Assertions.assertFalse(rdp1_extend.SetToken(2, 9), "Se modifico la marca y no debia");
+                Assertions.assertArrayEquals(new int[]{3,0,0,0,0},rdp1_extend.getMark(), "La red cambio, y no debia");
+            }
+            catch (RDP.TokenException e) {
+                Assertions.fail();
+            }
+        }
+        catch (RDP.ConfigException e) {
+            Assertions.fail("No se pudo crear la red de petri.");
+        }
+    }
+    /**
      * Chequea las excepciones del programa
      * */
     @Test
@@ -290,6 +324,18 @@ class RDPTest {
             RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
             Assertions.assertThrows(RDP.TokenException.class,()-> rdp1_extend.AddToken(1, -1));
             Assertions.assertThrows(RDP.TokenException.class,()-> rdp1_extend.AddToken(0, 3));
+        }
+        catch (RDP.ConfigException e) {
+            Assertions.fail("No se puede crear la red de Petri");
+        }
+          /*================================================
+            RDP 1: Extendida, maximo de tokens por plaza
+          ================================================ */
+        try
+        {
+            RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
+            Assertions.assertThrows(RDP.TokenException.class,()-> rdp1_extend.SetToken(1, -1));
+            Assertions.assertThrows(RDP.TokenException.class,()-> rdp1_extend.SetToken(0, 3));
         }
         catch (RDP.ConfigException e) {
             Assertions.fail("No se puede crear la red de Petri");

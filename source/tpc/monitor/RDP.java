@@ -449,6 +449,35 @@ public class RDP {
          return agregar;
 
      }
+    /**
+     * Metodo encargado de agregar tokens a determinada plaza.
+     * Devolvera verdadero en caso de que se puedan agregar dichos tokens
+     * o falso en caso contrario. Principal diferencia con respecto a AddTokens
+     * es que no tiene en cuenta los Tokens que se encuentran en dicha plaza, estos
+     * son reemplazados por el numero especifico a agregar.
+     * @param Plaz plaza que se quiere agregar token
+     * @param Cant numero entero de tokens a agregar
+     */
+    protected boolean SetToken(int Plaz, int Cant) throws TokenException {
+
+        boolean agreg;
+        //Si la plaza no existe lanza la execepcion
+        if(Plaz> mRDP.length || Plaz <= 0){
+            throw new TokenException(this.mark, Plaz+1, mRDP.length, Cant);
+            //Si la cantidad a agregar es negativa lanza la excepcion
+        }else if(Cant<0){
+            throw new TokenException(this.mark, Plaz+1, mRDP.length, Cant);
+            //Si la cantidad es mayor al limite de la plaza devuelve un false
+        }else if(Cant + this.mark[Plaz-1] > this.extMaxToken[Plaz-1] && this.extMaxToken[Plaz-1] != 0){
+            agreg = false;
+            return agreg;
+        }
+        //Modifico el vector de marcado y devuelvo true
+        this.mark[Plaz-1] = Cant;
+        agreg = true;
+        return agreg;
+
+    }
 
 
     /**
