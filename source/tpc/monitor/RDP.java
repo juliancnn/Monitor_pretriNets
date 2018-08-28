@@ -18,7 +18,6 @@ import java.util.*;
  * debe ser implementado externamente
  * @TODO Implementar arcos lectores e inibidores
  * @TODO Implementar las transiciones temporales
- *
  */
 public class RDP {
     /**
@@ -41,15 +40,15 @@ public class RDP {
 
     /**
      * Lista de errores de configuracion al cargar la red de petri
-     * */
+     */
     protected enum errorTypeConfig {
         /**
          * El marcado maximo para cada plaza debe ser mayor a cero
-         * */
+         */
         invalidMaxToken,
         /**
          * La cantidad la cantidad de datos es invalida o mal ordenada
-         * */
+         */
         invalidFormatArray,
         invalidFormatMatrix
     }
@@ -83,8 +82,9 @@ public class RDP {
      *
      * @param fileMatrix Nombre del archivo de la rdp
      * @param filemMark  Nombre del archivo de la marca
+     * @throws ConfigException Producida por una mala configuracion
      */
-    public RDP(String fileMatrix, String filemMark) throws ConfigException{
+    public RDP(String fileMatrix, String filemMark) throws ConfigException {
 
         Scanner inputFile;
         int filas = 0;
@@ -142,7 +142,7 @@ public class RDP {
 
                 for (j = 0; j < columnas && markInput.hasNextInt(); j++) {
                     this.extMaxToken[j] = markInput.nextInt();
-                    if( this.extMaxToken[j] < 0 ){
+                    if (this.extMaxToken[j] < 0) {
                         throw new ConfigException("Numeros negativos en limite marcadores maximos",
                                 errorTypeConfig.invalidMaxToken);
                     }
@@ -190,12 +190,9 @@ public class RDP {
                     colreader.nextInt();
                     ++columnas;
                 }
-                if(filas == 1)
-                {
+                if (filas == 1) {
                     columAux = columnas;
-                }
-                else if(columAux != columnas)
-                {
+                } else if (columAux != columnas) {
                     throw new ConfigException("La cantidad de columnas no es constante", errorTypeConfig.invalidFormatMatrix);
                 }
 
@@ -306,7 +303,7 @@ public class RDP {
      * Obtiene un array con la informacion de maximos toquens por plaza
      *
      * @return Una copia del array con el marcado maximo por plaza
-     *          Null Si no es extendida la red
+     * Null Si no es extendida la red
      */
     public int[] getExtMaxToken() {
         return this.extendedMaxToken ? this.extMaxToken.clone() : null;
@@ -336,16 +333,12 @@ public class RDP {
 
         int[] newMark = this.nextMark(tDisp); // Puede lanzar la exepcion de inexistencia de transicion
 
-        for(int i=0; i<newMark.length; i++)
-        {
-            if(newMark[i] < 0 )
-            {
+        for (int i = 0; i < newMark.length; i++) {
+            if (newMark[i] < 0) {
                 validShot = false;
                 break;
-            }
-            else if(this.extendedMaxToken){
-                 if(extMaxToken[i] != 0 && newMark[i] > extMaxToken[i])
-                {
+            } else if (this.extendedMaxToken) {
+                if (extMaxToken[i] != 0 && newMark[i] > extMaxToken[i]) {
                     validShot = false;
                     break;
                 }
@@ -420,58 +413,68 @@ public class RDP {
         return vectorNextMark;
     }
 
+
     /**
      * Metodo encargado de agregar tokens a determinada plaza.
-     * Devolvera verdadero en caso de que se puedan agregar dichos tokens
-     * o falso en caso contrario.
+     * <p>
+     * Si la plaza tiene un maximo de tokens y esta llena no los agregara
+     * Si se intentan agregar mas tokens y el resultado final sobrepasa la cantidad
+     * maxima no agrega ninguno
+     *
      * @param Plaz plaza que se quiere agregar token
      * @param cant numero entero de tokens a agregar
+     * @return boolean True: dadero en caso de que se puedan agregar dichos tokens
+     * False: Caso contrario
+     * @throws TokenException producida por inexistencia de la plaza o una cantidad negativa de tokens
      */
-     protected boolean AddToken(int Plaz, int cant) throws TokenException {
+    protected boolean AddToken(int Plaz, int cant) throws TokenException {
 
-         boolean agregar;
-         //Si la plaza no existe lanza la execepcion
-         if(Plaz> mRDP.length || Plaz <= 0){
-             throw new TokenException(this.mark, Plaz+1, mRDP.length, cant);
-         //Si la cantidad a agregar es negativa lanza la excepcion
-         }else if(cant<0){
-             throw new TokenException(this.mark, Plaz+1, mRDP.length, cant);
-         //Si la cantidad es mayor al limite de la plaza devuelve un false
-         }else if(cant + this.mark[Plaz-1] > this.extMaxToken[Plaz-1] && this.extMaxToken[Plaz-1] != 0){
-             agregar = false;
-             return agregar;
-         }
-         //Modifico el vector de marcado y devuelvo true
-         this.mark[Plaz-1] = cant + this.mark[Plaz-1];
-         agregar = true;
-         return agregar;
+        boolean agregar;
+        //Si la plaza no existe lanza la execepcion
+        if (Plaz > mRDP.length || Plaz <= 0) {
+            throw new TokenException(this.mark, Plaz + 1, mRDP.length, cant);
+            //Si la cantidad a agregar es negativa lanza la excepcion
+        } else if (cant < 0) {
+            throw new TokenException(this.mark, Plaz + 1, mRDP.length, cant);
+            //Si la cantidad es mayor al limite de la plaza devuelve un false
+        } else if (cant + this.mark[Plaz - 1] > this.extMaxToken[Plaz - 1] && this.extMaxToken[Plaz - 1] != 0) {
+            agregar = false;
+            return agregar;
+        }
+        //Modifico el vector de marcado y devuelvo true
+        this.mark[Plaz - 1] = cant + this.mark[Plaz - 1];
+        agregar = true;
+        return agregar;
 
-     }
+    }
+
     /**
-     * Metodo encargado de agregar tokens a determinada plaza.
-     * Devolvera verdadero en caso de que se puedan agregar dichos tokens
-     * o falso en caso contrario. Principal diferencia con respecto a AddTokens
-     * es que no tiene en cuenta los Tokens que se encuentran en dicha plaza, estos
-     * son reemplazados por el numero especifico a agregar.
+     * Metodo encargado de setear tokens a determinada plaza.
+     *
      * @param Plaz plaza que se quiere agregar token
      * @param Cant numero entero de tokens a agregar
+     * @return True en caso de que se puedan agregar dichos tokens
+     * Falso en caso contrario (debido a que no tiene lugar suficiente la plaza)
+     * @throws TokenException producida por inexistencia de la plaza o una cantidad negativa de tokens
+     * @apiNote Principal diferencia con respecto a AddTokens es que no tiene en cuenta los Tokens que se encuentran en
+     * dicha plaza, estos son reemplazados por el numero especifico a agregar.
      */
     protected boolean SetToken(int Plaz, int Cant) throws TokenException {
 
         boolean agreg;
         //Si la plaza no existe lanza la execepcion
-        if(Plaz> mRDP.length || Plaz <= 0){
-            throw new TokenException(this.mark, Plaz+1, mRDP.length, Cant);
+        if (Plaz > mRDP.length || Plaz <= 0) {
+            throw new TokenException(this.mark, Plaz + 1, mRDP.length, Cant);
             //Si la cantidad a agregar es negativa lanza la excepcion
-        }else if(Cant<0){
-            throw new TokenException(this.mark, Plaz+1, mRDP.length, Cant);
+        } else if (Cant < 0) {
+            throw new TokenException(this.mark, Plaz + 1, mRDP.length, Cant);
             //Si la cantidad es mayor al limite de la plaza devuelve un false
-        }else if(Cant > this.extMaxToken[Plaz-1] && this.extMaxToken[Plaz-1] != 0){
+        } else if (Cant > this.extMaxToken[Plaz - 1] && this.extMaxToken[Plaz - 1] != 0) {
             agreg = false;
             return agreg;
         }
         //Modifico el vector de marcado y devuelvo true
-        this.mark[Plaz-1] = Cant;
+        this.mark[Plaz - 1] = Cant;
         agreg = true;
         return agreg;
 
@@ -501,8 +504,9 @@ public class RDP {
         /**
          * Se crea con la informacion del estado del sistema en el momento del intento de disparo y el disparo fallido
          *
-         * @param mark recibe el estado de la RDP al momento de la excepcion
+         * @param mark  recibe el estado de la RDP al momento de la excepcion
          * @param tDisp numero de transicion a disparar
+         * @param cantidadTrans Cantidad de transiciones de la RDP
          */
         public ShotException(int[] mark, int tDisp, int cantidadTrans) {
             this.marca = mark;
@@ -545,7 +549,6 @@ public class RDP {
 
     /**
      * La excepcion se produce al intentar agregar un token a una plaza inexistente.
-     *
      */
     public class TokenException extends Exception {
         /**
@@ -564,13 +567,14 @@ public class RDP {
          * Marca al momento de agregar token
          */
         private final int[] marca;
+
         /**
          * Se crea con la informacion del estado del sistema en el momento del intento de disparo y el disparo fallido
          *
-         * @param mark recibe el estado de la RDP al momento de la excepcion
+         * @param mark  recibe el estado de la RDP al momento de la excepcion
          * @param tPlaz numero de plaza que se quiso agregar token/s
-         * @param nPla numero de plazas existentes en la RDP
-         * @param Cant token/s que se quiso agregar
+         * @param nPla  numero de plazas existentes en la RDP
+         * @param Cant  token/s que se quiso agregar
          */
         public TokenException(int[] mark, int tPlaz, int nPla, int Cant) {
             this.marca = mark;
@@ -578,6 +582,7 @@ public class RDP {
             this.Cantidad = Cant;
             this.nPlaza = nPla;
         }
+
         /**
          * Obtiene la informacion de la marca al momento del agregado
          *
@@ -586,6 +591,7 @@ public class RDP {
         public int[] gettMarca() {
             return this.marca;
         }
+
         /**
          * Obtiene la informacion de la plaza que no se pudo incrementar
          * su cantidad de tokens
@@ -595,6 +601,7 @@ public class RDP {
         public int getDisparo() {
             return this.tPlaza;
         }
+
         /**
          * Imprime la informacion del agregado fallido junto con el estado del sistema
          */
@@ -614,22 +621,28 @@ public class RDP {
     /**
      * La excepcion se produce por errores en la carga de datos,
      * como datos invalidos y falta de datos
-     * */
-    public class ConfigException extends Exception{
+     */
+    public class ConfigException extends Exception {
 
         private String moreInfo;
         private errorTypeConfig e;
 
-
-        public ConfigException(String description, errorTypeConfig e){
+        /**
+         * Se produce ante un mal formateo de datos en la carga de la red de petri,
+         * falta de datos, matriz que no tiene cantidad de filas y columnas cnt
+         * @param description Breve descrpcion
+         * @param e Tipo de error
+         */
+        public ConfigException(String description, errorTypeConfig e) {
             this.moreInfo = description;
             this.e = e;
         }
+
         /**
          * Imprime la informacion del disparo fallido junto con el estado del sistema
          */
-        public void printInfo(){
-            System.out.println("[ERROR " + e + "] " +moreInfo);
+        public void printInfo() {
+            System.out.println("[ERROR " + e + "] " + moreInfo);
         }
     }
 }
