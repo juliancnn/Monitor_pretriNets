@@ -1,0 +1,3 @@
+La matriz representa la RDP de un productor y consumidor.
+La matriz esta constituida por 2 productores (P1), 3 consumidores (P7), 1 semaforo (P5), y un Buffer de produccion con
+un maximo de 5 tokens (P4 y P6).
