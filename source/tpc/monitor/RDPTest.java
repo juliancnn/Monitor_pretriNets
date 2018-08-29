@@ -16,6 +16,8 @@ class RDPTest {
     private static final String FILE_RDP1_MATRIX = "examples_rdp/ex1_rdp";
     private static final String FILE_RDP1_MARK = "examples_rdp/ex1_mark";
     private static final String FILE_RDP1_MAXTOKENS = "examples_rdp/ex1_extend_maxTokens";
+    private static final String FILE_RDP2_MATRIX = "examples_rdp/ex2_rdp";
+    private static final String FILE_RDP2_MARXTOKENS = "examples_rdp/ex2_extend_maxTokens";
 
     /**
      * Verifica que los archivos de la red sean los esperados para los test
@@ -67,6 +69,31 @@ class RDPTest {
         }catch (RDP.ConfigException e){
             Assertions.fail("No se puede crear la red de petri");
         }
+          /*================================================
+            RDP 2_extend: Extiende los valores maximos de
+                        tokens por plaza
+          ================================================ */
+        try {
+            RDP rdp2_extend = new RDP(FILE_RDP2_MATRIX, FILE_RDP2_MARXTOKENS);
+            Assertions.assertArrayEquals(new int[][]
+                    {
+                            {-1, 0, 1, 0, 0, 0},
+                            {1, -1, -1, 0, 0, 0},
+                            {0, 1, 0, 0, 0, 0},
+                            {-1, 0, 0, 0, 1, 0},
+                            {-1, 1, 0, -1, 1,0},
+                            {0, 1, 0, -1, 0, 0},
+                            {0, 0, 0, -1, 0, 1},
+                            {0, 0, 0, 1, -1, 0},
+                            {0, 0, 0, 0, 1, -1}
+                    }, rdp2_extend.getMatrix(), "Red de petri 2 alterada para el test");
+            Assertions.assertArrayEquals(new int[]{2,0,0,5,1,0,3,0,0}, rdp2_extend.getMark(),
+                    "Marca inicial 2 alterada para el test");
+            assertArrayEquals(new int[]{0,0,0,5,1,0,0,0,0}, rdp2_extend.getExtMaxToken(), "Tokens maximos alterados para test" );
+        }catch (RDP.ConfigException e){
+            Assertions.fail("No se puede crear la red de petri");
+        }
+
     }
 
 
