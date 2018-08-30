@@ -323,10 +323,11 @@ public class RDP {
      *
      * @param tDisp Numero de transicion a disparar
      * @param test  Falso si no quiere alterar el estado de la red de petri
-     *              Verdadero si en caso de que se pueda disparar se altere el estado de la red
+     *              Verdadero si en caso de que se pueda disparar se altere el estado de la redes
      * @return Verdadero en caso de exito en el disparo de la transicion
      * Falso en caso de que la transicion no este sencibilidaza
      * @throws ShotException Excepcion por inexistencia de la transicion
+     * @TODO Verificar antes de diparar que: la transicion exista, que no este inhbida o desabilitada por arcos lectores
      */
     public boolean shotT(int tDisp, boolean test) throws ShotException {
         boolean validShot = true;
@@ -479,7 +480,6 @@ public class RDP {
         return agreg;
 
     }
-
 
     /**
      * La excepcion se produce al intentar realizar un disparo invalido en la red de petri,
