@@ -127,6 +127,7 @@ public class RDP {
 
     /**
      * Obtiene un array con el estado de marcado de la red de petri
+     *
      * @return Una copia del array con el marcado actual del sistema
      */
     public int[] getMark() {
@@ -142,7 +143,7 @@ public class RDP {
      * </pre>
      */
     public int[] getExtMaxToken() {
-        return  this.isExtMaxToken() ? raw.extMaxToken.clone() : null;
+        return this.isExtMaxToken() ? raw.extMaxToken.clone() : null;
     }
 
     /**
@@ -153,7 +154,7 @@ public class RDP {
      * </pre>
      */
     public boolean isExtMaxToken() {
-        return  (raw.extMaxToken != null);
+        return (raw.extMaxToken != null);
     }
 
     /**
@@ -168,13 +169,15 @@ public class RDP {
     /**
      * Realiza el disparo en la red de petri, este puede ser un disparo de prueba o puede guardar los resultados
      *
+     * <pre>
      * @param tDisp Numero de transicion a disparar
-     * @param test  Falso si no quiere alterar el estado de la red de petri
-     *              Verdadero si en caso de que se pueda disparar se altere el estado de la redes
-     * @return Verdadero en caso de exito en el disparo de la transicion
-     * Falso en caso de que la transicion no este sencibilidaza
+     * @param test  Falso si no quiere alterar el estado de la red de petri <br>
+     *              True si en caso de que se pueda disparar se altere el estado de la redes
+     * @return True en caso de exito en el disparo de la transicion <br>
+     *         Falso en caso de que la transicion no este sencibilidaza
      * @throws ShotException Excepcion por inexistencia de la transicion
      * @TODO Verificar antes de diparar que: la transicion exista, que no este inhbida o desabilitada por arcos lectores
+     * </pre>
      */
     public boolean shotT(int tDisp, boolean test) throws ShotException {
         boolean validShot = true;
@@ -185,7 +188,7 @@ public class RDP {
             if (newMark[i] < 0) {
                 validShot = false;
                 break;
-            } else if ( this.isExtMaxToken()) {
+            } else if (this.isExtMaxToken()) {
                 if (raw.extMaxToken[i] != 0 && newMark[i] > raw.extMaxToken[i]) {
                     validShot = false;
                     break;
@@ -204,8 +207,10 @@ public class RDP {
      * Retorna el vector de transiciones sensibilizadas, cada lugar del vector representa una transicion
      * donde el primer lugar corresponde a la primera transicion.
      *
-     * @return Verdadero si la transicion esta sensibilizada
-     * Falso en caso contrario
+     * <pre>
+     * @return True si la transicion esta sensibilizada <br>
+     *         False en caso contrario
+     * </pre>
      */
     public boolean[] getSensitizedArray() {
         boolean[] sensitizedArray = new boolean[raw.matrixW[0].length];
@@ -297,14 +302,15 @@ public class RDP {
 
     /**
      * Metodo encargado de setear tokens a determinada plaza.
-     *
+     * <pre>
      * @param Plaz plaza que se quiere agregar token
      * @param Cant numero entero de tokens a agregar
-     * @return True en caso de que se puedan agregar dichos tokens
-     * Falso en caso contrario (debido a que no tiene lugar suficiente la plaza)
+     * @return True en caso de que se puedan agregar dichos tokens <br>
+     *         False en caso contrario (debido a que no tiene lugar suficiente la plaza)
      * @throws TokenException producida por inexistencia de la plaza o una cantidad negativa de tokens
-     *                        Principal diferencia con respecto a AddTokens es que no tiene en cuenta los Tokens que se encuentran en
-     *                        dicha plaza, estos son reemplazados por el numero especifico a agregar.
+     * Principal diferencia con respecto a AddTokens es que no tiene en cuenta los
+     * Tokens que se encuentran en dicha plaza, estos son reemplazados por el numero especifico a agregar.
+     * </pre>
      */
     protected boolean SetToken(int Plaz, int Cant) throws TokenException {
 
