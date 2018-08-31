@@ -69,9 +69,6 @@ public class RDP {
         JsonReader reader = new JsonReader(new FileReader(jsonFile));
         raw = json.fromJson(reader, rawRDP.class);
 
-        if (raw.extMaxToken == null) {
-            raw.extendedMaxToken = false;
-        }
 
     }
 
@@ -145,17 +142,18 @@ public class RDP {
      * </pre>
      */
     public int[] getExtMaxToken() {
-        return raw.extendedMaxToken ? raw.extMaxToken.clone() : null;
+        return  (raw.extMaxToken != null) ? raw.extMaxToken.clone() : null;
     }
 
     /**
      * Consulta si la red de petri es extendida para maxima cantidad de tokens
-     *
-     * @return true:  Si estan limitadas las plazas a un numero maximo de tokens
-     * false: Caso contrario
+     * <pre>
+     * @return true:  Si estan limitadas las plazas a un numero maximo de tokens <br>
+     *         false: Caso contrario
+     * </pre>
      */
     public boolean isExtMaxToken() {
-        return raw.extendedMaxToken;
+        return  (raw.extMaxToken != null);
     }
 
     /**
@@ -187,7 +185,7 @@ public class RDP {
             if (newMark[i] < 0) {
                 validShot = false;
                 break;
-            } else if (raw.extendedMaxToken) {
+            } else if ( (raw.extMaxToken != null)) {
                 if (raw.extMaxToken[i] != 0 && newMark[i] > raw.extMaxToken[i]) {
                     validShot = false;
                     break;

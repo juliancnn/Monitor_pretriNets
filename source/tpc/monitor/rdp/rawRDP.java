@@ -32,7 +32,6 @@ package tpc.monitor.rdp;
  *       [0, 0, 1, -1]
  *     ],
  *     "mark"     : [3, 0, 0, 0, 0],            # marcado inicial de la red
- *     "extendedMaxToken" : true,               # (Opcional) True si es extendida para limites de token por plaza
  *     "extMaxToken" : [0, 2, 0, 0, 0]          # (Opcional) Limite por plaza
  *   }
  * </pre>
@@ -56,10 +55,6 @@ public class rawRDP {
      */
     protected int[] mark;
 
-    /**
-     * [Feature: Red de petri extendida]:  Indica si  hay un maximo de token por plaza
-     */
-    protected boolean extendedMaxToken;
     /**
      * [Feature: Red de petri extendida]:  Vector de maximo de tokens por plaza
      */
