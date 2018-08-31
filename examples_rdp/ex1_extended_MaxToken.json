@@ -1,0 +1,14 @@
+{
+  "brief" : "Ejemplo 1: proceso paralelo",
+  "info"  : "Para hasta 3 veces se puede ejecutar pero uno de los 2 procesos tiene un maximo de 2 tokens",
+  "matrixW" : [
+    [-1, 0, 0, 1],
+    [1, -1, 0, 0],
+    [0, 1, 0, -1],
+    [1, 0, -1, 0],
+    [0, 0, 1, -1]
+  ],
+  "mark"     : [3, 0, 0, 0, 0],
+  "extendedMaxToken" : true,
+  "extMaxToken" : [0, 2, 0, 0, 0]
+}

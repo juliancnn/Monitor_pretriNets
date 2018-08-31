@@ -13,11 +13,9 @@ class RDPTest {
     /*
     * Lista de archivos usados en los test
     * */
-    private static final String FILE_RDP1_MATRIX = "examples_rdp/ex1_rdp";
-    private static final String FILE_RDP1_MARK = "examples_rdp/ex1_mark";
-    private static final String FILE_RDP1_MAXTOKENS = "examples_rdp/ex1_extend_maxTokens";
-    private static final String FILE_RDP2_MATRIX = "examples_rdp/ex2_rdp";
-    private static final String FILE_RDP2_MARXTOKENS = "examples_rdp/ex2_extend_maxTokens";
+    private static final String JFILE_RDP1_MAXTOKENS = "examples_rdp/ex1_extended_MaxToken.json";
+    private static final String JFILE_RDP1 = "examples_rdp/ex1_basic.json";
+    private static final String JFILE_RDP2_MAXTOKENS = "examples_rdp/ex2_extended_maxToken.json";
 
     /**
      * Verifica que los archivos de la red sean los esperados para los test
@@ -34,7 +32,7 @@ class RDPTest {
           ================================================ */
 
         try {
-            RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
+            RDP rdp1 = new RDP(JFILE_RDP1);
             Assertions.assertArrayEquals(new int[][]
                     {
                             {-1, 0, 0, 1},
@@ -45,8 +43,8 @@ class RDPTest {
                     }, rdp1.getMatrix(), "Red de petri 1 alterada para el test");
             Assertions.assertArrayEquals(new int[]{1, 0, 0, 0, 0}, rdp1.getMark(),
                     "Marca inicial 1 alterada para el test");
-        }catch (ConfigException e){
-            Assertions.fail("No se puede crear la red de petri");
+        }catch (java.io.FileNotFoundException e){
+            Assertions.fail("No existe el archivo");
         }
 
           /*================================================
@@ -54,7 +52,7 @@ class RDPTest {
                         tokens por plaza
           ================================================ */
         try {
-            RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
+            RDP rdp1_extend = new RDP(JFILE_RDP1_MAXTOKENS);
             Assertions.assertArrayEquals(new int[][]
                     {
                             {-1, 0, 0, 1},
@@ -65,16 +63,22 @@ class RDPTest {
                     }, rdp1_extend.getMatrix(), "Red de petri 1 alterada para el test");
             Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1_extend.getMark(),
                     "Marca inicial 1 alterada para el test");
-            assertArrayEquals(new int[]{0,2,0,0,0}, rdp1_extend.getExtMaxToken(), "Tokens maximos alterados para test" );
-        }catch (ConfigException e){
-            Assertions.fail("No se puede crear la red de petri");
+            if(!rdp1_extend.isExtMaxToken()){
+                Assertions.fail("La red de petri no es extendida");
+            }else{
+                assertArrayEquals(new int[]{0,2,0,0,0}, rdp1_extend.getExtMaxToken(), "Tokens maximos alterados para test" );
+            }
+
+        }catch (java.io.FileNotFoundException e){
+            Assertions.fail("No existe el archivo JSON");
+
         }
           /*================================================
             RDP 2_extend: Extiende los valores maximos de
                         tokens por plaza
           ================================================ */
         try {
-            RDP rdp2_extend = new RDP(FILE_RDP2_MATRIX, FILE_RDP2_MARXTOKENS);
+            RDP rdp2_extend = new RDP(JFILE_RDP2_MAXTOKENS);
             Assertions.assertArrayEquals(new int[][]
                     {
                             {-1, 0, 1, 0, 0, 0},
@@ -90,8 +94,8 @@ class RDPTest {
             Assertions.assertArrayEquals(new int[]{2,0,0,5,1,0,3,0,0}, rdp2_extend.getMark(),
                     "Marca inicial 2 alterada para el test");
             assertArrayEquals(new int[]{0,0,0,5,1,0,0,0,0}, rdp2_extend.getExtMaxToken(), "Tokens maximos alterados para test" );
-        }catch (ConfigException e){
-            Assertions.fail("No se puede crear la red de petri");
+        }catch (java.io.FileNotFoundException e){
+            Assertions.fail("No existe el archivo JSON");
         }
 
     }
@@ -108,7 +112,7 @@ class RDPTest {
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
         try{
-            RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
+            RDP rdp1 = new RDP(JFILE_RDP1);
             Assertions.assertArrayEquals(new int[]{1,0,0,0,0}, rdp1.getMark());
 
             try{
@@ -122,7 +126,7 @@ class RDPTest {
             }catch (ShotException e){
                 Assertions.fail("La transicion es inexistente, error grave");
             }
-        }catch (ConfigException e){
+        }catch (java.io.FileNotFoundException e){
             Assertions.fail("No se puede crear la red de petri");
         }
 
@@ -141,7 +145,7 @@ class RDPTest {
           ================================================ */
 
         try{
-            RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
+            RDP rdp1 = new RDP(JFILE_RDP1);
             Assertions.assertArrayEquals(new int[]{1,0,0,0,0}, rdp1.getMark());
             try{
                 Assertions.assertFalse(rdp1.shotT(2,true), "Se disparo y no debia");
@@ -153,8 +157,8 @@ class RDPTest {
             }catch (ShotException e){
                 Assertions.fail();
             }
-        }catch (ConfigException e){
-            Assertions.fail("No se puede crear la red de petri");
+        }catch (java.io.FileNotFoundException e){
+            Assertions.fail("No existe el archivo");
         }
 
     }
@@ -172,7 +176,7 @@ class RDPTest {
             RDP 1_extend: Extendida, con maxima cantidad de plazas
           ========================================================= */
         try{
-            RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
+            RDP rdp1_extend = new RDP(JFILE_RDP1_MAXTOKENS);
             Assertions.assertArrayEquals(new int[]{3,0,0,0,0}, rdp1_extend.getMark());
             try{
                 Assertions.assertTrue(rdp1_extend.shotT(1,false), "No se disparo y debia");
@@ -196,8 +200,8 @@ class RDPTest {
             }catch (ShotException e){
                 Assertions.fail();
             }
-        }catch (ConfigException e){
-            Assertions.fail("No se puede crear la red de petri");
+        }catch (java.io.FileNotFoundException e){
+            Assertions.fail("No existe el archivo");
         }
 
     }
@@ -212,7 +216,7 @@ class RDPTest {
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
         try{
-            RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
+            RDP rdp1 = new RDP(JFILE_RDP1);
             try{
                 Assertions.assertFalse(rdp1.shotT(2,true), "Se disparo y no debia");
                 Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray(),
@@ -224,8 +228,8 @@ class RDPTest {
             }catch (ShotException e){
                 Assertions.fail();
             }
-        }catch (ConfigException e){
-            Assertions.fail("No se puede crear la red de petri");
+        }catch (java.io.FileNotFoundException e){
+            Assertions.fail("No existe el archivo");
         }
 
     }
@@ -241,7 +245,7 @@ class RDPTest {
             RDP 1_extend: Extendida, con limite de token por plazas
           ========================================================= */
         try{
-            RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
+            RDP rdp1_extend = new RDP(JFILE_RDP1_MAXTOKENS);
             try{
                 Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1_extend.getSensitizedArray(),
                         "La red no evoluciono y el vector de sensibilidad es incorrecto");
@@ -255,7 +259,7 @@ class RDPTest {
             }catch (ShotException e){
                 Assertions.fail();
             }
-        }catch (ConfigException e){
+        }catch (java.io.FileNotFoundException e){
             Assertions.fail("No se puede crear la red de petri");
         }
 
@@ -273,7 +277,7 @@ class RDPTest {
             RDP 1_extend: Extendida, con maxima cantidad de plazas
           ========================================================= */
         try {
-            RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
+            RDP rdp1_extend = new RDP(JFILE_RDP1_MAXTOKENS);
             try {
                 Assertions.assertTrue(rdp1_extend.AddToken(2, 1), "No se agrego y debia");
                 Assertions.assertArrayEquals(new int[]{3,1,0,0,0},rdp1_extend.getMark(), "La red no cambio, y debia");
@@ -286,7 +290,7 @@ class RDPTest {
                 Assertions.fail();
             }
         }
-        catch (ConfigException e) {
+        catch (java.io.FileNotFoundException e) {
             Assertions.fail("No se pudo crear la red de petri.");
         }
     }
@@ -297,13 +301,13 @@ class RDPTest {
      */
     @Test
     @Tag("extMT")
-    @DisplayName("[ext MaxTokens]Checkeo del seteo de tokens a una determinada plaza:")
+    @DisplayName("[ext MaxTokens] Checkeo del seteo de tokens a una determinada plaza:")
     void SetTokens_extendMaxTokens() {
          /*=========================================================
             RDP 1_extend: Extendida, con maxima cantidad de plazas
           ========================================================= */
         try {
-            RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
+            RDP rdp1_extend = new RDP(JFILE_RDP1_MAXTOKENS);
             try {
                 Assertions.assertTrue(rdp1_extend.SetToken(2, 1), "No se modifico la marca y debia");
                 Assertions.assertArrayEquals(new int[]{3,1,0,0,0},rdp1_extend.getMark(), "La red no cambio, y debia");
@@ -320,7 +324,7 @@ class RDPTest {
                 Assertions.fail();
             }
         }
-        catch (ConfigException e) {
+        catch (java.io.FileNotFoundException e) {
             Assertions.fail("No se pudo crear la red de petri.");
         }
     }
@@ -331,28 +335,31 @@ class RDPTest {
     @DisplayName("Testeo de excepciones")
     @Tag("exception")
     void checkThrowExepcion() {
+
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
+
         try {
-            RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
+            RDP rdp1 = new RDP(JFILE_RDP1);
             Assertions.assertThrows(ShotException.class, () -> rdp1.shotT(0, true));
             Assertions.assertThrows(ShotException.class, () -> rdp1.shotT(0, false));
             Assertions.assertThrows(ShotException.class, () -> rdp1.shotT(5, true));
             Assertions.assertThrows(ShotException.class, () -> rdp1.shotT(5, false));
-        } catch (ConfigException e) {
-            Assertions.fail("No se puede crear la red de petri");
+        } catch (java.io.FileNotFoundException e){
+            Assertions.fail("No existe el archivo");
         }
+
         /*================================================
             RDP 1: Extendida, maximo de tokens por plaza
           ================================================ */
         try
         {
-            RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
+            RDP rdp1_extend = new RDP(JFILE_RDP1_MAXTOKENS);
             Assertions.assertThrows(TokenException.class,()-> rdp1_extend.AddToken(1, -1));
             Assertions.assertThrows(TokenException.class,()-> rdp1_extend.AddToken(0, 3));
         }
-        catch (ConfigException e) {
+        catch (java.io.FileNotFoundException e) {
             Assertions.fail("No se puede crear la red de Petri");
         }
           /*================================================
@@ -360,11 +367,11 @@ class RDPTest {
           ================================================ */
         try
         {
-            RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
+            RDP rdp1_extend = new RDP(JFILE_RDP1_MAXTOKENS);
             Assertions.assertThrows(TokenException.class,()-> rdp1_extend.SetToken(1, -1));
             Assertions.assertThrows(TokenException.class,()-> rdp1_extend.SetToken(0, 3));
         }
-        catch (ConfigException e) {
+        catch (java.io.FileNotFoundException e) {
             Assertions.fail("No se puede crear la red de Petri");
         }
     }
