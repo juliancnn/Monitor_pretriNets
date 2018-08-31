@@ -1,4 +1,4 @@
-package tpc.monitor;
+package tpc.monitor.rdp;
 
 import org.junit.jupiter.api.*;
 
@@ -45,7 +45,7 @@ class RDPTest {
                     }, rdp1.getMatrix(), "Red de petri 1 alterada para el test");
             Assertions.assertArrayEquals(new int[]{1, 0, 0, 0, 0}, rdp1.getMark(),
                     "Marca inicial 1 alterada para el test");
-        }catch (RDP.ConfigException e){
+        }catch (ConfigException e){
             Assertions.fail("No se puede crear la red de petri");
         }
 
@@ -66,7 +66,7 @@ class RDPTest {
             Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1_extend.getMark(),
                     "Marca inicial 1 alterada para el test");
             assertArrayEquals(new int[]{0,2,0,0,0}, rdp1_extend.getExtMaxToken(), "Tokens maximos alterados para test" );
-        }catch (RDP.ConfigException e){
+        }catch (ConfigException e){
             Assertions.fail("No se puede crear la red de petri");
         }
           /*================================================
@@ -90,7 +90,7 @@ class RDPTest {
             Assertions.assertArrayEquals(new int[]{2,0,0,5,1,0,3,0,0}, rdp2_extend.getMark(),
                     "Marca inicial 2 alterada para el test");
             assertArrayEquals(new int[]{0,0,0,5,1,0,0,0,0}, rdp2_extend.getExtMaxToken(), "Tokens maximos alterados para test" );
-        }catch (RDP.ConfigException e){
+        }catch (ConfigException e){
             Assertions.fail("No se puede crear la red de petri");
         }
 
@@ -119,10 +119,10 @@ class RDPTest {
                 Assertions.assertTrue(rdp1.shotT(1,false),"No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{0,1,0,1,0}, rdp1.getMark(),
                         "La red evoluciono mal o no evoluciono");
-            }catch (RDP.ShotException e){
+            }catch (ShotException e){
                 Assertions.fail("La transicion es inexistente, error grave");
             }
-        }catch (RDP.ConfigException e){
+        }catch (ConfigException e){
             Assertions.fail("No se puede crear la red de petri");
         }
 
@@ -150,10 +150,10 @@ class RDPTest {
                 Assertions.assertFalse(rdp1.shotT(3,false),"Se disparo y no debia");
                 Assertions.assertArrayEquals(new int[]{1,0,0,0,0}, rdp1.getMark(),
                         "La red evoluciono y no debia");
-            }catch (RDP.ShotException e){
+            }catch (ShotException e){
                 Assertions.fail();
             }
-        }catch (RDP.ConfigException e){
+        }catch (ConfigException e){
             Assertions.fail("No se puede crear la red de petri");
         }
 
@@ -193,10 +193,10 @@ class RDPTest {
                 Assertions.assertTrue(rdp1_extend.shotT(1,false),"No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{0,1,2,3,0}, rdp1_extend.getMark(),
                         "La red no evoluciono y debia");
-            }catch (RDP.ShotException e){
+            }catch (ShotException e){
                 Assertions.fail();
             }
-        }catch (RDP.ConfigException e){
+        }catch (ConfigException e){
             Assertions.fail("No se puede crear la red de petri");
         }
 
@@ -221,10 +221,10 @@ class RDPTest {
                 Assertions.assertFalse(rdp1.shotT(3,false),"Se disparo y no debia");
                 Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray(),
                         "La red evoluciono y el vector de sensibilidad es incorrecto");
-            }catch (RDP.ShotException e){
+            }catch (ShotException e){
                 Assertions.fail();
             }
-        }catch (RDP.ConfigException e){
+        }catch (ConfigException e){
             Assertions.fail("No se puede crear la red de petri");
         }
 
@@ -252,10 +252,10 @@ class RDPTest {
                 Assertions.assertTrue(rdp1_extend.shotT(1,false), "No se disparo y debia");
                 Assertions.assertArrayEquals(new boolean[]{false, true, true, false}, rdp1_extend.getSensitizedArray(),
                         "La red no evoluciono y el vector de sensibilidad es incorrecto");
-            }catch (RDP.ShotException e){
+            }catch (ShotException e){
                 Assertions.fail();
             }
-        }catch (RDP.ConfigException e){
+        }catch (ConfigException e){
             Assertions.fail("No se puede crear la red de petri");
         }
 
@@ -282,11 +282,11 @@ class RDPTest {
                 Assertions.assertTrue(rdp1_extend.AddToken(5, 3), "No se agrego y debia");
                 Assertions.assertArrayEquals(new int[]{3,1,0,0,3},rdp1_extend.getMark(), "La red no cambio, y debia");
             }
-            catch (RDP.TokenException e) {
+            catch (TokenException e) {
                 Assertions.fail();
             }
         }
-        catch (RDP.ConfigException e) {
+        catch (ConfigException e) {
             Assertions.fail("No se pudo crear la red de petri.");
         }
     }
@@ -316,11 +316,11 @@ class RDPTest {
                 Assertions.assertFalse(rdp1_extend.SetToken(2, 9), "Se modifico la marca y no debia");
                 Assertions.assertArrayEquals(new int[]{3,2,0,0,0},rdp1_extend.getMark(), "La red cambio, y no debia");
             }
-            catch (RDP.TokenException e) {
+            catch (TokenException e) {
                 Assertions.fail();
             }
         }
-        catch (RDP.ConfigException e) {
+        catch (ConfigException e) {
             Assertions.fail("No se pudo crear la red de petri.");
         }
     }
@@ -336,11 +336,11 @@ class RDPTest {
           ================================================ */
         try {
             RDP rdp1 = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MARK);
-            Assertions.assertThrows(RDP.ShotException.class, () -> rdp1.shotT(0, true));
-            Assertions.assertThrows(RDP.ShotException.class, () -> rdp1.shotT(0, false));
-            Assertions.assertThrows(RDP.ShotException.class, () -> rdp1.shotT(5, true));
-            Assertions.assertThrows(RDP.ShotException.class, () -> rdp1.shotT(5, false));
-        } catch (RDP.ConfigException e) {
+            Assertions.assertThrows(ShotException.class, () -> rdp1.shotT(0, true));
+            Assertions.assertThrows(ShotException.class, () -> rdp1.shotT(0, false));
+            Assertions.assertThrows(ShotException.class, () -> rdp1.shotT(5, true));
+            Assertions.assertThrows(ShotException.class, () -> rdp1.shotT(5, false));
+        } catch (ConfigException e) {
             Assertions.fail("No se puede crear la red de petri");
         }
         /*================================================
@@ -349,10 +349,10 @@ class RDPTest {
         try
         {
             RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
-            Assertions.assertThrows(RDP.TokenException.class,()-> rdp1_extend.AddToken(1, -1));
-            Assertions.assertThrows(RDP.TokenException.class,()-> rdp1_extend.AddToken(0, 3));
+            Assertions.assertThrows(TokenException.class,()-> rdp1_extend.AddToken(1, -1));
+            Assertions.assertThrows(TokenException.class,()-> rdp1_extend.AddToken(0, 3));
         }
-        catch (RDP.ConfigException e) {
+        catch (ConfigException e) {
             Assertions.fail("No se puede crear la red de Petri");
         }
           /*================================================
@@ -361,10 +361,10 @@ class RDPTest {
         try
         {
             RDP rdp1_extend = new RDP(FILE_RDP1_MATRIX, FILE_RDP1_MAXTOKENS);
-            Assertions.assertThrows(RDP.TokenException.class,()-> rdp1_extend.SetToken(1, -1));
-            Assertions.assertThrows(RDP.TokenException.class,()-> rdp1_extend.SetToken(0, 3));
+            Assertions.assertThrows(TokenException.class,()-> rdp1_extend.SetToken(1, -1));
+            Assertions.assertThrows(TokenException.class,()-> rdp1_extend.SetToken(0, 3));
         }
-        catch (RDP.ConfigException e) {
+        catch (ConfigException e) {
             Assertions.fail("No se puede crear la red de Petri");
         }
     }

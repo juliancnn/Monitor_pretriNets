@@ -1,4 +1,6 @@
-import tpc.monitor.RDP;
+import tpc.monitor.rdp.ConfigException;
+import tpc.monitor.rdp.RDP;
+import tpc.monitor.rdp.ShotException;
 
 public class Main {
 
@@ -18,7 +20,7 @@ public class Main {
                 rdp.shotT(2, false);
                 rdp.shotT(3, false);
                 //rdp.shotT(0, false);
-            }catch (RDP.ShotException e){
+            }catch (ShotException e){
                 e.printInfo();
             }
 
@@ -26,7 +28,7 @@ public class Main {
             rdp.printMark();
             System.out.println("========================");
 
-        }catch (RDP.ConfigException e){
+        }catch (ConfigException e){
             e.printInfo();
 
         }

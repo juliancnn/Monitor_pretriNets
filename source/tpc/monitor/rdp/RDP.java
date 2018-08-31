@@ -1,4 +1,4 @@
-package tpc.monitor;
+package tpc.monitor.rdp;
 
 import java.lang.String;
 import java.io.*;
@@ -37,21 +37,6 @@ public class RDP {
      * [Feature: Red de petri extendida]:  Vector de maximo de tokens por plaza
      */
     private int[] extMaxToken;
-
-    /**
-     * Lista de errores de configuracion al cargar la red de petri
-     */
-    protected enum errorTypeConfig {
-        /**
-         * El marcado maximo para cada plaza debe ser mayor a cero
-         */
-        invalidMaxToken,
-        /**
-         * La cantidad la cantidad de datos es invalida o mal ordenada
-         */
-        invalidFormatArray,
-        invalidFormatMatrix
-    }
 
     /**
      * Crea la red de petri a partir de un archivo
@@ -367,7 +352,7 @@ public class RDP {
             for (int i = 0; i < sensitizedArray.length; i++) {
                 sensitizedArray[i] = this.shotT(i + 1, true);
             }
-        } catch (RDP.ShotException e) {
+        } catch (ShotException e) {
             // No deberia pasar nunca ya que se testea solo la cantidad de transiciones disponibles segun la matriz
             e.printInfo();
         }
@@ -481,168 +466,4 @@ public class RDP {
 
     }
 
-    /**
-     * La excepcion se produce al intentar realizar un disparo invalido en la red de petri,
-     * El disparo es invalido por que el numero de transicion es menor que 1 o mayor que el numero de
-     * transiciones que tiene la red. Es decir cuando la transicion es inexistente
-     */
-    public class ShotException extends Exception {
-
-        /**
-         * Marca al momento del disparo
-         */
-        private final int[] marca;
-        /**
-         * Numero de transicion que se intento disparar
-         */
-        private final int tDisparo;
-        /**
-         * Cantidad de transiciones que tiene la red de petri
-         */
-        private final int nTrans;
-
-        /**
-         * Se crea con la informacion del estado del sistema en el momento del intento de disparo y el disparo fallido
-         *
-         * @param mark  recibe el estado de la RDP al momento de la excepcion
-         * @param tDisp numero de transicion a disparar
-         * @param cantidadTrans Cantidad de transiciones de la RDP
-         */
-        public ShotException(int[] mark, int tDisp, int cantidadTrans) {
-            this.marca = mark;
-            this.tDisparo = tDisp;
-            this.nTrans = cantidadTrans;
-        }
-
-        /**
-         * Obtiene la informacion de la marca al momento del disparo
-         *
-         * @return vector de disparo que fallo
-         */
-        public int[] getMarca() {
-            return this.marca;
-        }
-
-        /**
-         * Obtiene la informacion del disparo fallido
-         *
-         * @return El numero de transicion fallida
-         */
-        public int gettDisparo() {
-            return this.tDisparo;
-        }
-
-        /**
-         * Imprime la informacion del disparo fallido junto con el estado del sistema
-         */
-        public void printInfo() {
-            System.out.println("Disparo fallido para la transicion: " + this.tDisparo);
-            System.out.println("Marca del sistema al momento del fallo:");
-            for (int o : this.marca) {
-                System.out.print(String.format("%5d", o));
-            }
-            System.out.println("\nCantidad de transiciones de la RDP: " + this.nTrans);
-
-        }
-
-    }
-
-    /**
-     * La excepcion se produce al intentar agregar un token a una plaza inexistente.
-     */
-    public class TokenException extends Exception {
-        /**
-         * Cantidad de tokens que se quieren agregar.
-         */
-        private final int Cantidad;
-        /**
-         * Plaza a la cual se quizo agregar el/los token.
-         */
-        private final int tPlaza;
-        /**
-         * Cantidad de plazas que tiene la red de petri
-         */
-        private final int nPlaza;
-        /**
-         * Marca al momento de agregar token
-         */
-        private final int[] marca;
-
-        /**
-         * Se crea con la informacion del estado del sistema en el momento del intento de disparo y el disparo fallido
-         *
-         * @param mark  recibe el estado de la RDP al momento de la excepcion
-         * @param tPlaz numero de plaza que se quiso agregar token/s
-         * @param nPla  numero de plazas existentes en la RDP
-         * @param Cant  token/s que se quiso agregar
-         */
-        public TokenException(int[] mark, int tPlaz, int nPla, int Cant) {
-            this.marca = mark;
-            this.tPlaza = tPlaz;
-            this.Cantidad = Cant;
-            this.nPlaza = nPla;
-        }
-
-        /**
-         * Obtiene la informacion de la marca al momento del agregado
-         *
-         * @return vector de marca al momento del fallo
-         */
-        public int[] gettMarca() {
-            return this.marca;
-        }
-
-        /**
-         * Obtiene la informacion de la plaza que no se pudo incrementar
-         * su cantidad de tokens
-         *
-         * @return El numero de plaza fallida
-         */
-        public int getDisparo() {
-            return this.tPlaza;
-        }
-
-        /**
-         * Imprime la informacion del agregado fallido junto con el estado del sistema
-         */
-        public void printInfo2() {
-            System.out.println("Agregado fallido en la plaza: " + this.tPlaza);
-            System.out.println("Se intento agregar " + this.Cantidad + " de Token/s");
-            System.out.println("Marca del sistema al momento del fallo:");
-            for (int o : this.marca) {
-                System.out.print(String.format("%5d", o));
-            }
-            System.out.println("\nCantidad de Plazas de la RDP: " + this.nPlaza);
-
-        }
-
-    }
-
-    /**
-     * La excepcion se produce por errores en la carga de datos,
-     * como datos invalidos y falta de datos
-     */
-    public class ConfigException extends Exception {
-
-        private String moreInfo;
-        private errorTypeConfig e;
-
-        /**
-         * Se produce ante un mal formateo de datos en la carga de la red de petri,
-         * falta de datos, matriz que no tiene cantidad de filas y columnas cnt
-         * @param description Breve descrpcion
-         * @param e Tipo de error
-         */
-        public ConfigException(String description, errorTypeConfig e) {
-            this.moreInfo = description;
-            this.e = e;
-        }
-
-        /**
-         * Imprime la informacion del disparo fallido junto con el estado del sistema
-         */
-        public void printInfo() {
-            System.out.println("[ERROR " + e + "] " + moreInfo);
-        }
-    }
 }
