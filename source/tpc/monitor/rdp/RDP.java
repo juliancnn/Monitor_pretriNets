@@ -142,7 +142,7 @@ public class RDP {
      * </pre>
      */
     public int[] getExtMaxToken() {
-        return  (raw.extMaxToken != null) ? raw.extMaxToken.clone() : null;
+        return  this.isExtMaxToken() ? raw.extMaxToken.clone() : null;
     }
 
     /**
@@ -185,7 +185,7 @@ public class RDP {
             if (newMark[i] < 0) {
                 validShot = false;
                 break;
-            } else if ( (raw.extMaxToken != null)) {
+            } else if ( this.isExtMaxToken()) {
                 if (raw.extMaxToken[i] != 0 && newMark[i] > raw.extMaxToken[i]) {
                     validShot = false;
                     break;
