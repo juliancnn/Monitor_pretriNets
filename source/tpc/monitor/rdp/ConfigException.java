@@ -23,7 +23,7 @@ public class ConfigException extends Exception {
     /**
      * Imprime la informacion del disparo fallido junto con el estado del sistema
      */
-    public void printInfo() {
-        System.out.println("[ERROR " + e + "] " + moreInfo);
+    public String toString() {
+        return "[ERROR " + e + "] " + moreInfo;
     }
 }

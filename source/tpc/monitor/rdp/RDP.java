@@ -63,13 +63,50 @@ public class RDP {
      * @throws FileNotFoundException Lanzado cuando no se encuentra el archivo JSON
      * @see rawRDP Ver estructura completa del JSON
      */
-    public RDP(String jsonFile) throws FileNotFoundException {
+    public RDP(String jsonFile) throws FileNotFoundException, ConfigException {
 
         Gson json = new Gson();
         JsonReader reader = new JsonReader(new FileReader(jsonFile));
         raw = json.fromJson(reader, rawRDP.class);
 
+        /* Chequeo de estructura JSON.  */
+        if (raw.matrixW == null || raw.mark == null) {
+            throw new ConfigException("Error en la estructura JSON", errorTypeConfig.missingDataInJASON);
+        }
 
+        /* Chequeo de longuitud de matriz constante. */
+        int conlconst = -1;
+        for (int i = 0; i < raw.matrixW.length; ++i) {
+            if (conlconst == -1) {
+                conlconst = raw.matrixW[0].length;
+            } else if (conlconst != raw.matrixW[i].length) {
+                throw new ConfigException("La matriz no es constante", errorTypeConfig.invalidFormatMatrix);
+            }
+        }
+
+        /* Chequeo de loguitud del vector y elementos positivos */
+        if (raw.matrixW.length != raw.mark.length) {
+            throw new ConfigException("La cantidad de plazas no es correcta", errorTypeConfig.invalidFormatArray);
+        } else {
+            for (int i = 0; i < raw.mark.length; ++i) {
+                if (raw.mark[i] < 0) {
+                    throw new ConfigException("Elemento negativo en la marca", errorTypeConfig.invalidFormatArray);
+                }
+            }
+        }
+
+        /* Chequeo de longuitud del vector de maximo de plazas y elementos positivos */
+        if (this.isExtMaxToken()) {
+            if (raw.extMaxToken.length != raw.mark.length) {
+                throw new ConfigException("La cantidad de plazas no es correcta", errorTypeConfig.invalidFormatArray);
+            } else {
+                for (int i = 0; i < raw.extMaxToken.length; ++i) {
+                    if (raw.extMaxToken[0] < 0) {
+                        throw new ConfigException("Elemento negativo", errorTypeConfig.invalidFormatArray);
+                    }
+                }
+            }
+        }
     }
 
     /**
