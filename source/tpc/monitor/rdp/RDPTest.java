@@ -410,11 +410,11 @@ class RDPTest {
     }
 
     /**
-     *
+     *  Chequeo de sensivilidad para transiciones en redes limitadas en plaza
      */
     @Test
     @Tag("extMT")
-    @DisplayName("[ext MaxTokens]Checkeos de sensibilidad de transiciones antes y despues de disparos")
+    @DisplayName("[ext MaxTokens] Checkeos de sensibilidad de transiciones antes y despues de disparos")
     void getSensitizedArray_2Shot_extendMaxTokens() {
         /*=========================================================
             RDP 1_extend: Extendida, con limite de token por plazas
@@ -443,12 +443,57 @@ class RDPTest {
     }
 
     /**
+     * Chequeo en sensibilizado para transiciones en redes de lectores inhibidores y max plazas
+     */
+    @Test
+    @Tag("extMT")
+    @DisplayName("[ext MaxTokens] Checkeos de sensibilidad de transiciones antes y despues de disparos")
+    void getSensitizedArray_2Shot_extendReaderInh() {
+        /*=========================================================
+            RDP 1_extend: Extendida, con limite de token por plazas
+                    con arcos lectores e inhibidores
+          ========================================================= */
+        try {
+            RDP rdp1_extendRH = new RDP(JFILE_RDP1_READERINH);
+            try {
+                Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1_extendRH.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+
+                Assertions.assertTrue(rdp1_extendRH.shotT(1, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new boolean[]{true, true, false, false}, rdp1_extendRH.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+                Assertions.assertTrue(rdp1_extendRH.shotT(1, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new boolean[]{false, true, true, false}, rdp1_extendRH.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+
+                Assertions.assertTrue(rdp1_extendRH.shotT(3, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new boolean[]{false, true, true, false}, rdp1_extendRH.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+                Assertions.assertTrue(rdp1_extendRH.shotT(2, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new boolean[]{true, true, false, false}, rdp1_extendRH.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+                Assertions.assertTrue(rdp1_extendRH.shotT(2, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new boolean[]{true, false, false, true}, rdp1_extendRH.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+            } catch (ShotException e) {
+                Assertions.fail();
+            }
+        } catch (java.io.FileNotFoundException e) {
+            Assertions.fail("No se puede crear la red de petri");
+        } catch (ConfigException e) {
+            Assertions.fail(e.toString());
+        }
+
+    }
+
+
+    /**
      * Chequea el metodo de agregado de tokens a plazas que es posible agregar tokens, para
      * despues intentar agregar a la misma superando el numero maximo de tokens para dicha plaza.
      */
     @Test
     @Tag("extMT")
-    @DisplayName("[ext MaxTokens]Checkeo del agregado de tokens a una determinada plaza:")
+    @DisplayName("[ext MaxTokens] Checkeo del agregado de tokens a una determinada plaza:")
     void AddTokens_extendMaxTokens() {
          /*=========================================================
             RDP 1_extend: Extendida, con maxima cantidad de plazas
