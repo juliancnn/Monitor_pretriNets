@@ -302,7 +302,7 @@ public class RDP {
 
         /* Si el tiro sigue siendo valido chequeo nueva marca */
         newMark = validShot ? this.nextMark(tDisp) : null;
-        for (int i = 0; i < newMark.length && validShot; i++) {
+        for (int i = 0; validShot && i < newMark.length; i++) {
             if (newMark[i] < 0) {
                 validShot = false;
                 break;
