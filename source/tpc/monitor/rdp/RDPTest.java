@@ -2,6 +2,8 @@ package tpc.monitor.rdp;
 
 import org.junit.jupiter.api.*;
 
+import java.io.FileNotFoundException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -16,6 +18,7 @@ class RDPTest {
     private static final String JFILE_RDP1_MAXTOKENS = "examples_rdp/ex1_extended_MaxToken.json";
     private static final String JFILE_RDP1 = "examples_rdp/ex1_basic.json";
     private static final String JFILE_RDP2_MAXTOKENS = "examples_rdp/ex2_extended_maxToken.json";
+    private static final String JFILE_RDP3_MAXTOKENS = "examples_rdp/ex3_extended_maxToken.json";
 
     /**
      * Verifica que los archivos de la red sean los esperados para los test
@@ -215,6 +218,41 @@ class RDPTest {
         } catch (ConfigException e) {
             Assertions.fail(e.toString());
         }
+        /*=========================================================
+            RDP 3_extend: Extendida, con maxima cantidad de plazas
+          ========================================================= */
+        /*
+        Testeo para verificar la eliminacion de Tokens de la red
+         */
+        try {
+            RDP rdp3_extend = new RDP(JFILE_RDP3_MAXTOKENS);
+            Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp3_extend.getMark());
+            try {
+                Assertions.assertTrue(rdp3_extend.shotT(1, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{2, 1, 0, 1, 0}, rdp3_extend.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp3_extend.shotT(1, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1, 2, 0, 2, 0}, rdp3_extend.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp3_extend.shotT(2, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1, 1, 1, 2, 0}, rdp3_extend.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp3_extend.shotT(3, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1, 1, 1, 1, 1}, rdp3_extend.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp3_extend.shotT(4, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1, 1, 0, 1, 0}, rdp3_extend.getMark(),
+                        "La red no evoluciono y debia");
+
+            } catch (ShotException e) {
+                Assertions.fail();
+            }
+        } catch (FileNotFoundException e) {
+            Assertions.fail("No existe el archivo");
+        } catch (ConfigException e) {
+            Assertions.fail(e.toString());
+        }
+
 
     }
 
