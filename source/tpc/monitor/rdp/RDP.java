@@ -122,11 +122,10 @@ public class RDP {
             if (raw.extReaderInh.length != raw.matrixW.length) {
                 throw new ConfigException("La cantidad de plazas  en la matriz de arcos lectores e inhibidores " +
                         "no es correcta", errorTypeConfig.invalidFormatArray);
-            }else if (raw.extReaderInh[0].length != raw.matrixW[0].length) {
+            } else if (raw.extReaderInh[0].length != raw.matrixW[0].length) {
                 throw new ConfigException("La cantidad de transiciones  en la matriz de arcos lectores e inhibidores " +
                         "no es correcta", errorTypeConfig.invalidFormatArray);
-            }
-            else {
+            } else {
                 /* Chequeo de longuitud de matriz constante. */
                 conlconst = -1;
                 for (int i = 0; i < raw.extReaderInh.length; ++i) {
@@ -281,24 +280,22 @@ public class RDP {
             throw new ShotException(raw.mark, tDisp, this.raw.matrixW[0].length);
 
         /* Chequeo arcos lectores e inhibidores */
-        if(this.isExtReaderInh()){
-            for(int i=0; i < this.raw.extReaderInh.length ; i++){
-                if (this.raw.extReaderInh[i][tDisp-1] == 0) {
+        if (this.isExtReaderInh()) {
+            for (int i = 0; i < this.raw.extReaderInh.length; i++) {
+                if (this.raw.extReaderInh[i][tDisp - 1] == 0) {
                     continue; // Sale sin chequear los if, es el mas probable por eso esta aca
-                } else if (this.raw.extReaderInh[i][tDisp-1] < 0 && this.raw.mark[i] != 0) {
+                } else if (this.raw.extReaderInh[i][tDisp - 1] < 0 && this.raw.mark[i] != 0) {
                     // La transicion tDisp se encuentra inhibida por la plaza i+1
                     validShot = false;
                     break;
-                } else if (this.raw.extReaderInh[i][tDisp-1] > 0 &&
-                        this.raw.mark[i] >= this.raw.extReaderInh[i][tDisp-1]) {
+                } else if (this.raw.extReaderInh[i][tDisp - 1] > 0 &&
+                        this.raw.mark[i] >= this.raw.extReaderInh[i][tDisp - 1]) {
                     // La transicion tDisp se encuentra inhibida por  el arco lector
                     validShot = false;
                     break;
                 }
             }
         }
-
-
 
         /* Si el tiro sigue siendo valido chequeo nueva marca */
         newMark = validShot ? this.nextMark(tDisp) : null;
