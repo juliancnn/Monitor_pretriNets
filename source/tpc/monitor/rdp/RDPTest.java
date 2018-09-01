@@ -13,6 +13,7 @@ class RDPTest {
     /*
      * Lista de archivos usados en los test
      * */
+    private static final String JFILE_RDP1_READERINH = "examples_rdp/ex1_extended_ReaderInh.json";
     private static final String JFILE_RDP1_MAXTOKENS = "examples_rdp/ex1_extended_MaxToken.json";
     private static final String JFILE_RDP1 = "examples_rdp/ex1_basic.json";
     private static final String JFILE_RDP2_MAXTOKENS = "examples_rdp/ex2_extended_maxToken.json";
@@ -77,6 +78,48 @@ class RDPTest {
         } catch (ConfigException e) {
             Assertions.fail(e.toString());
         }
+        /*================================================
+            RDP 1_extend: Extiende los valores maximos de
+           tokens por plaza y suma arcos inhibidores y lectores
+          ================================================ */
+        try {
+            RDP rdp1_extend_RH = new RDP(JFILE_RDP1_READERINH);
+            Assertions.assertArrayEquals(new int[][]
+                    {
+                            {-1, 0, 0, 1},
+                            {1, -1, 0, 0},
+                            {0, 1, 0, -1},
+                            {1, 0, -1, 0},
+                            {0, 0, 1, -1}
+                    }, rdp1_extend_RH.getMatrix(), "Red de petri 1 alterada para el test");
+            Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1_extend_RH.getMark(),
+                    "Marca inicial 1 alterada para el test");
+            if (!rdp1_extend_RH.isExtMaxToken()) {
+                Assertions.fail("La red de petri no es extendida");
+            } else {
+                assertArrayEquals(new int[]{0, 2, 0, 0, 0}, rdp1_extend_RH.getExtMaxToken(),
+                        "Tokens maximos alterados para test");
+            }
+            if (!rdp1_extend_RH.isExtReaderInh()) {
+                Assertions.fail("La red de petri no es extendida para lectores escritores");
+            } else {
+                assertArrayEquals(new int[][]{
+                                {0, 0, 0,  0},
+                                {0, 0, 2, -1},
+                                {0, 0, 0,  0},
+                                {0, 0, 0,  0},
+                                {0, 0, 0,  0}
+                        }, rdp1_extend_RH.getExtReaaderInh(),
+                        "Tokens maximos alterados para test");
+            }
+
+        } catch (java.io.FileNotFoundException e) {
+            Assertions.fail("No existe el archivo JSON");
+
+        } catch (ConfigException e) {
+            Assertions.fail(e.toString());
+        }
+
           /*================================================
             RDP 2_extend: Extiende los valores maximos de
                         tokens por plaza

@@ -218,6 +218,18 @@ public class RDP {
     }
 
     /**
+     * Obtiene una matriz con la informacion de los arcos lectores e inhibidores
+     * <pre>
+     * @return Una copia de la matriz con arcos lectores e inhibidores. <br>
+     *         Null Si no es extendida la red
+     * </pre>
+     */
+    public int[][] getExtReaaderInh() {
+        return this.isExtReaderInh() ? raw.extReaderInh.clone() : null;
+    }
+
+
+    /**
      * Consulta si la red de petri es extendida para maxima cantidad de tokens
      * <pre>
      * @return true:  Si estan limitadas las plazas a un numero maximo de tokens <br>
