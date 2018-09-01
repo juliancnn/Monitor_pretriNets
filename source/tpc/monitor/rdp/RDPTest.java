@@ -115,7 +115,7 @@ class RDPTest {
                                 {0, 0, 0,  0},
                                 {0, 0, 0,  0}
                         }, rdp1_extend_RH.getExtReaaderInh(),
-                        "Tokens maximos alterados para test");
+                        "Arcos lectores/inhibidores alterados para el test");
             }
 
         } catch (java.io.FileNotFoundException e) {
@@ -151,6 +151,43 @@ class RDPTest {
         } catch (ConfigException e) {
             Assertions.fail(e.toString());
         }
+        /*================================================
+            RDP 4_extend: Extiende los arcos inhibidores
+          ================================================ */
+        try {
+            RDP rdp1_extend_RH = new RDP(JFILE_RDP4_READINH);
+            Assertions.assertArrayEquals(new int[][]
+                    {
+                            {-1, -1, 1, 1},
+                            {1, 0, -1, 0},
+                            {0, 1, 0, -1}
+                    }, rdp1_extend_RH.getMatrix(), "Red de petri 4 alterada para el test");
+            Assertions.assertArrayEquals(new int[]{5, 0, 0}, rdp1_extend_RH.getMark(),
+                    "Marca inicial 4 alterada para el test");
+            if (!rdp1_extend_RH.isExtMaxToken()) {
+                Assertions.fail("La red de petri no es extendida");
+            } else {
+                assertArrayEquals(new int[]{0, 0, 3}, rdp1_extend_RH.getExtMaxToken(),
+                        "Tokens maximos alterados para test");
+            }
+            if (!rdp1_extend_RH.isExtReaderInh()) {
+                Assertions.fail("La red de petri no es extendida para arcos inhibidores");
+            } else {
+                assertArrayEquals(new int[][]{
+                                {0, 0, 0, 0},
+                                {-1, -1, 0, 0},
+                                {-1, 0, 0,  0}
+                        }, rdp1_extend_RH.getExtReaaderInh(),
+                        "Arcos inhibidores alterados para el test");
+            }
+
+        } catch (java.io.FileNotFoundException e) {
+            Assertions.fail("No existe el archivo JSON");
+
+        } catch (ConfigException e) {
+            Assertions.fail(e.toString());
+        }
+
 
     }
 
