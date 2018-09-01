@@ -19,6 +19,8 @@ class RDPTest {
     private static final String JFILE_RDP1 = "examples_rdp/ex1_basic.json";
     private static final String JFILE_RDP2_MAXTOKENS = "examples_rdp/ex2_extended_maxToken.json";
     private static final String JFILE_RDP3_MAXTOKENS = "examples_rdp/ex3_extended_maxToken.json";
+    private static final String JFILE_RDP4_READINH = "examples_rdp/ex4_extended_ReaderInh.json";
+
 
     /**
      * Verifica que los archivos de la red sean los esperados para los test
@@ -254,6 +256,47 @@ class RDPTest {
         }
 
 
+    }
+
+    /**
+     * Testea el disparo (shotT) con transiciones sensibilizadas, con un limite de tokens maximos por plaza y con la
+     * presencia de arcos inhibidores. Se intentara disparar una plaza con limite de tokens y otra con la influencia
+     * del arco inhibidor. Chequeara que el disparo no se lleve a cabo.
+     */
+    @Test
+    @Tag("extINH")
+    @DisplayName("[ext ReaderInh] Disparos con arcos inhibidores")
+    void shotT_extendedReaderInh() {
+        /*=========================================================
+            RDP 4_extend: Extendida, con arcos inhibidores
+          ========================================================= */
+        try {
+            RDP rdp4_extend = new RDP(JFILE_RDP4_READINH);
+            Assertions.assertArrayEquals(new int[]{5, 0, 0}, rdp4_extend.getMark());
+            try {
+                Assertions.assertTrue(rdp4_extend.shotT(2, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{4, 0, 1}, rdp4_extend.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp4_extend.shotT(2, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{3, 0, 2}, rdp4_extend.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertFalse(rdp4_extend.shotT(1, false), "Se disparo y no debia");
+                Assertions.assertArrayEquals(new int[]{3, 0, 2}, rdp4_extend.getMark(),
+                        "La red evoluciono y no debia");
+                Assertions.assertTrue(rdp4_extend.shotT(2, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{2, 0, 3}, rdp4_extend.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertFalse(rdp4_extend.shotT(2, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{2, 0, 3}, rdp4_extend.getMark(),
+                        "La red no evoluciono y debia");
+            } catch (ShotException e) {
+                Assertions.fail();
+            }
+        } catch (java.io.FileNotFoundException e) {
+            Assertions.fail("No existe el archivo");
+        } catch (ConfigException e) {
+            Assertions.fail(e.toString());
+        }
     }
 
     /**
