@@ -446,9 +446,10 @@ class RDPTest {
      * Chequeo en sensibilizado para transiciones en redes de lectores inhibidores y max plazas
      */
     @Test
-    @Tag("extMT")
-    @DisplayName("[ext MaxTokens] Checkeos de sensibilidad de transiciones antes y despues de disparos")
+    @Tag("extINH")
+    @DisplayName("[ext ReaderInh] Checkeos de sensibilidad de transiciones antes y despues de disparos")
     void getSensitizedArray_2Shot_extendReaderInh() {
+
         /*=========================================================
             RDP 1_extend: Extendida, con limite de token por plazas
                     con arcos lectores e inhibidores
@@ -483,6 +484,39 @@ class RDPTest {
         } catch (ConfigException e) {
             Assertions.fail(e.toString());
         }
+
+        /*=========================================================
+            RDP 4_extend: Extendida, con limite de token por plazas
+                    con arcos inhibidores
+          ========================================================= */
+        try {
+            RDP rdp4_extendRH = new RDP(JFILE_RDP4_READINH);
+            try {
+                Assertions.assertArrayEquals(new boolean[]{true, true, false, false}, rdp4_extendRH.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+
+                Assertions.assertTrue(rdp4_extendRH.shotT(2, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new boolean[]{false, true, false, true}, rdp4_extendRH.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+                Assertions.assertTrue(rdp4_extendRH.shotT(4, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new boolean[]{true, true, false, false}, rdp4_extendRH.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+
+                Assertions.assertTrue(rdp4_extendRH.shotT(1, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new boolean[]{false, false, true, false}, rdp4_extendRH.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+                Assertions.assertTrue(rdp4_extendRH.shotT(3, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new boolean[]{true, true, false, false}, rdp4_extendRH.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+            } catch (ShotException e) {
+                Assertions.fail();
+            }
+        } catch (java.io.FileNotFoundException e) {
+            Assertions.fail("No se puede crear la red de petri");
+        } catch (ConfigException e) {
+            Assertions.fail(e.toString());
+        }
+
 
     }
 
