@@ -32,7 +32,14 @@ package tpc.monitor.rdp;
  *       [0, 0, 1, -1]
  *     ],
  *     "mark"     : [3, 0, 0, 0, 0],            # marcado inicial de la red
- *     "extMaxToken" : [0, 2, 0, 0, 0]          # (Opcional) Limite por plaza
+ *     "extMaxToken" : [0, 2, 0, 0, 0],         # (Opcional) Limite por plaza
+ *     "extReaderInh" : [
+ *     [0, 0, 0, 0],   # Matriz de arcos lectores e inhibidores
+ *     [0, 0, 2,-1],   # El 2 representa que un arco lector de peso 2 desde la plaza 2 a la transicion 3
+ *     [0, 0, 0, 0],   # El -1 representa un arco inhibidor de la plaza 2  a la transicion 4
+ *     [0, 0, 0, 0],
+ *     [0, 0, 0, 0]
+ *   ]
  *   }
  * </pre>
  */
@@ -59,6 +66,9 @@ public class rawRDP {
      * [Feature: Red de petri extendida]:  Vector de maximo de tokens por plaza
      */
     protected int[] extMaxToken;
-
+    /**
+     * [Feature: Red de petri extendida]: Matriz de arcos lectores e inhibidores
+     */
+    protected int[][] extReaderInh;
 
 }

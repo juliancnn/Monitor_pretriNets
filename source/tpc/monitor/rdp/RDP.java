@@ -65,9 +65,16 @@ public class RDP {
      */
     public RDP(String jsonFile) throws FileNotFoundException, ConfigException {
 
+        /* INICIO DE CARGA DE DATOS */
         Gson json = new Gson();
         JsonReader reader = new JsonReader(new FileReader(jsonFile));
         raw = json.fromJson(reader, rawRDP.class);
+        /* FIN DE CARGA DE DATOS */
+
+
+        /* =========================================================
+            Chequeos de datos validos de estructura del archivo JSON.
+           ========================================================= */
 
         /* Chequeo de estructura JSON.  */
         if (raw.matrixW == null || raw.mark == null) {
@@ -80,13 +87,13 @@ public class RDP {
             if (conlconst == -1) {
                 conlconst = raw.matrixW[0].length;
             } else if (conlconst != raw.matrixW[i].length) {
-                throw new ConfigException("La matriz no es constante", errorTypeConfig.invalidFormatMatrix);
+                throw new ConfigException("La matriz de insidencia no es constante", errorTypeConfig.invalidFormatMatrix);
             }
         }
 
         /* Chequeo de loguitud del vector y elementos positivos */
         if (raw.matrixW.length != raw.mark.length) {
-            throw new ConfigException("La cantidad de plazas no es correcta", errorTypeConfig.invalidFormatArray);
+            throw new ConfigException("La cantidad de plazas  de marcado no es correcta", errorTypeConfig.invalidFormatArray);
         } else {
             for (int i = 0; i < raw.mark.length; ++i) {
                 if (raw.mark[i] < 0) {
@@ -98,15 +105,42 @@ public class RDP {
         /* Chequeo de longuitud del vector de maximo de plazas y elementos positivos */
         if (this.isExtMaxToken()) {
             if (raw.extMaxToken.length != raw.mark.length) {
-                throw new ConfigException("La cantidad de plazas no es correcta", errorTypeConfig.invalidFormatArray);
+                throw new ConfigException("La cantidad de plazas no es correcta en " +
+                        "los elementos de maximo por plaza", errorTypeConfig.invalidFormatArray);
             } else {
                 for (int i = 0; i < raw.extMaxToken.length; ++i) {
                     if (raw.extMaxToken[0] < 0) {
-                        throw new ConfigException("Elemento negativo", errorTypeConfig.invalidFormatArray);
+                        throw new ConfigException("Elemento negativo en la marca por plaza",
+                                errorTypeConfig.invalidFormatArray);
                     }
                 }
             }
         }
+
+        /* Chequeo de longuitud del vector de arcos lectores o inhibidores */
+        if (this.isExtReaderInh()) {
+            if (raw.extReaderInh.length != raw.matrixW.length) {
+                throw new ConfigException("La cantidad de plazas  en la matriz de arcos lectores e inhibidores " +
+                        "no es correcta", errorTypeConfig.invalidFormatArray);
+            }else if (raw.extReaderInh[0].length != raw.matrixW[0].length) {
+                throw new ConfigException("La cantidad de transiciones  en la matriz de arcos lectores e inhibidores " +
+                        "no es correcta", errorTypeConfig.invalidFormatArray);
+            }
+            else {
+                /* Chequeo de longuitud de matriz constante. */
+                conlconst = -1;
+                for (int i = 0; i < raw.extReaderInh.length; ++i) {
+                    if (conlconst == -1) {
+                        conlconst = raw.extReaderInh[0].length;
+                    } else if (conlconst != raw.extReaderInh[i].length) {
+                        throw new ConfigException("La matriz en la matriz de arcos lectores e inhibidores " +
+                                "no es constante", errorTypeConfig.invalidFormatMatrix);
+                    }
+                }
+            }
+        }
+
+
     }
 
     /**
@@ -195,6 +229,17 @@ public class RDP {
     }
 
     /**
+     * Consulta si la red de petri es extendida arcos inhibidores y lectores
+     * <pre>
+     * @return true:  Si hay matriz de arcos lectores e inhibidores <br>
+     *         false: Caso contrario
+     * </pre>
+     */
+    public boolean isExtReaderInh() {
+        return (raw.extReaderInh != null);
+    }
+
+    /**
      * Obtiene la matriz de la red de petri
      *
      * @return Devuelve una copia de la matriz de la red de petri
@@ -208,20 +253,44 @@ public class RDP {
      *
      * <pre>
      * @param tDisp Numero de transicion a disparar
-     * @param test  Falso si no quiere alterar el estado de la red de petri <br>
-     *              True si en caso de que se pueda disparar se altere el estado de la redes
+     * @param test  True si no quiere alterar el estado de la red de petri <br>
+     *              False si en caso de que se pueda disparar se altere el estado de la redes
      * @return True en caso de exito en el disparo de la transicion <br>
      *         Falso en caso de que la transicion no este sencibilidaza
      * @throws ShotException Excepcion por inexistencia de la transicion
-     * @TODO Verificar antes de diparar que: la transicion exista, que no este inhbida o desabilitada por arcos lectores
      * </pre>
      */
     public boolean shotT(int tDisp, boolean test) throws ShotException {
         boolean validShot = true;
+        int[] newMark;
 
-        int[] newMark = this.nextMark(tDisp); // Puede lanzar la exepcion de inexistencia de transicion
+        // Excepcion por inexistencia de transicion
+        if (tDisp > raw.matrixW[0].length || tDisp < 1)
+            throw new ShotException(raw.mark, tDisp, this.raw.matrixW[0].length);
 
-        for (int i = 0; i < newMark.length; i++) {
+        /* Chequeo arcos lectores e inhibidores */
+        if(this.isExtReaderInh()){
+            for(int i=0; i < this.raw.extReaderInh.length ; i++){
+                if (this.raw.extReaderInh[i][tDisp-1] == 0) {
+                    continue; // Sale sin chequear los if, es el mas probable por eso esta aca
+                } else if (this.raw.extReaderInh[i][tDisp-1] < 0 && this.raw.mark[i] != 0) {
+                    // La transicion tDisp se encuentra inhibida por la plaza i+1
+                    validShot = false;
+                    break;
+                } else if (this.raw.extReaderInh[i][tDisp-1] > 0 &&
+                        this.raw.mark[i] >= this.raw.extReaderInh[i][tDisp-1]) {
+                    // La transicion tDisp se encuentra inhibida por  el arco lector
+                    validShot = false;
+                    break;
+                }
+            }
+        }
+
+
+
+        /* Si el tiro sigue siendo valido chequeo nueva marca */
+        newMark = validShot ? this.nextMark(tDisp) : null;
+        for (int i = 0; i < newMark.length && validShot; i++) {
             if (newMark[i] < 0) {
                 validShot = false;
                 break;
@@ -232,7 +301,8 @@ public class RDP {
                 }
             }
         }
-        // Marcado valido y salvo nueva marca
+
+        // No es un test y el marcado es valido
         if (!test && validShot) {
             raw.mark = newMark;
         }
