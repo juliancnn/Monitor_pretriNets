@@ -466,15 +466,23 @@ class RDPTest {
                 Assertions.assertTrue(rdp1_extendRH.shotT(1, false), "No se disparo y debia");
                 Assertions.assertArrayEquals(new boolean[]{false, true, true, false}, rdp1_extendRH.getSensitizedArray(),
                         "La red no evoluciono y el vector de sensibilidad es incorrecto");
-
+                Assertions.assertTrue(rdp1_extendRH.shotT(2, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new boolean[]{true, true, false, false}, rdp1_extendRH.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+                Assertions.assertTrue(rdp1_extendRH.shotT(1, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new boolean[]{false, true, true, false}, rdp1_extendRH.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
                 Assertions.assertTrue(rdp1_extendRH.shotT(3, false), "No se disparo y debia");
                 Assertions.assertArrayEquals(new boolean[]{false, true, true, false}, rdp1_extendRH.getSensitizedArray(),
                         "La red no evoluciono y el vector de sensibilidad es incorrecto");
                 Assertions.assertTrue(rdp1_extendRH.shotT(2, false), "No se disparo y debia");
-                Assertions.assertArrayEquals(new boolean[]{true, true, false, false}, rdp1_extendRH.getSensitizedArray(),
+                Assertions.assertArrayEquals(new boolean[]{false, true, false, false}, rdp1_extendRH.getSensitizedArray(),
                         "La red no evoluciono y el vector de sensibilidad es incorrecto");
                 Assertions.assertTrue(rdp1_extendRH.shotT(2, false), "No se disparo y debia");
-                Assertions.assertArrayEquals(new boolean[]{true, false, false, true}, rdp1_extendRH.getSensitizedArray(),
+                Assertions.assertArrayEquals(new boolean[]{false, false, false, true}, rdp1_extendRH.getSensitizedArray(),
+                        "La red no evoluciono y el vector de sensibilidad es incorrecto");
+                Assertions.assertTrue(rdp1_extendRH.shotT(4, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1_extendRH.getSensitizedArray(),
                         "La red no evoluciono y el vector de sensibilidad es incorrecto");
             } catch (ShotException e) {
                 Assertions.fail();

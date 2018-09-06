@@ -289,7 +289,7 @@ public class RDP {
                     validShot = false;
                     break;
                 } else if (this.raw.extReaderInh[i][tDisp - 1] > 0 &&
-                        this.raw.mark[i] >= this.raw.extReaderInh[i][tDisp - 1]) {
+                        this.raw.mark[i] < this.raw.extReaderInh[i][tDisp - 1]) {
                     // La transicion tDisp se encuentra inhibida por  el arco lector
                     validShot = false;
                     break;
@@ -303,7 +303,9 @@ public class RDP {
             if (newMark[i] < 0) {
                 validShot = false;
                 break;
-            } else if (this.isExtMaxToken()) {
+            }
+            /* Chequeo maximo de plazas */
+            else if (this.isExtMaxToken()) {
                 if (raw.extMaxToken[i] != 0 && newMark[i] > raw.extMaxToken[i]) {
                     validShot = false;
                     break;
