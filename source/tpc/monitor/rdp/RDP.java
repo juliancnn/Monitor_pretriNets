@@ -292,9 +292,6 @@ public class RDP {
         return (raw.extReaderInh != null);
     }
 
-    public boolean isExtTemp() {
-        return (raw.extTempWindows != null);
-    }
 
     /**
      * Consulta si la red de petri es temporal
