@@ -246,8 +246,20 @@ public class RDP {
      *         false: Caso contrario
      * </pre>
      */
+
     public boolean isExtReaderInh() {
         return (raw.extReaderInh != null);
+    }
+
+    /**
+     * Consulta si la red de petri es temporal
+     * <pre>
+     * @return true:  Hay ventana de tiempo establecido para 1 o mas transiciones <br>
+     *         false: Caso contrario
+     * </pre>
+     */
+    public boolean isExtTemp() {
+        return (raw.extTempWindows != null);
     }
 
     /**
@@ -273,13 +285,14 @@ public class RDP {
      */
     public boolean shotT(int tDisp, boolean test) throws ShotException {
         boolean validShot = true;
+        long timestamp;
         int[] newMark;
 
         // Excepcion por inexistencia de transicion
         if (tDisp > raw.matrixW[0].length || tDisp < 1)
             throw new ShotException(raw.mark, tDisp, this.raw.matrixW[0].length);
 
-        /* Chequeo arcos lectores e inhibidores */
+        /* Chequeo arcos lectores e inhibidores (1) - Ahorro multiplicacion si no se puede disparar */
         if (validShot && this.isExtReaderInh()) {
             for (int i = 0; i < this.raw.extReaderInh.length; i++) {
                 if (this.raw.extReaderInh[i][tDisp - 1] == 0) {
@@ -297,7 +310,7 @@ public class RDP {
             }
         }
 
-        /* Si el tiro sigue siendo valido chequeo nueva marca */
+        /* Si el tiro sigue siendo valido chequeo nueva marca  (2-3) - Verifico > 0 y < MaxTokens */
         newMark = validShot ? this.nextMark(tDisp) : null;
         for (int i = 0; validShot && i < newMark.length; i++) {
             if (newMark[i] < 0) {
@@ -313,9 +326,30 @@ public class RDP {
             }
         }
 
+        /* Si el tiro sigue siendo valido y es temporal hago chequeo de tiempo */
+        /* Necesariamente se tiene que hacer despues de calcular el posible nuevo marcado
+           Ya que puede que el nuevo marcado no sea valido por que una plaza tiene un maximo de tokens */
+        if (validShot && this.isExtTemp()) {
+            timestamp = java.lang.System.currentTimeMillis();
+            /* Chequeo de la ventana de tiempo */
+            if (raw.extTempWindows[0][tDisp - 1] != 0) {
+                validShot = raw.extTempWindows[0][tDisp - 1] < (timestamp - raw.extTempTimeStamp[tDisp - 1]) &&
+                        raw.extTempWindows[1][tDisp - 1] > (timestamp - raw.extTempTimeStamp[tDisp - 1]);
+            }
+
+        }
+
+
         // No es un test y el marcado es valido
         if (!test && validShot) {
-            raw.mark = newMark;
+            if(this.isExtTemp()){
+                boolean[] oldSensitized = getSensitizedArray();
+                raw.mark = newMark;
+                boolean[] newSensitized = getSensitizedArray();
+            }else{
+                raw.mark = newMark;
+            }
+
         }
 
         return validShot;
