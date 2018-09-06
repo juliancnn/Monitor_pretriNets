@@ -280,7 +280,7 @@ public class RDP {
             throw new ShotException(raw.mark, tDisp, this.raw.matrixW[0].length);
 
         /* Chequeo arcos lectores e inhibidores */
-        if (this.isExtReaderInh()) {
+        if (validShot && this.isExtReaderInh()) {
             for (int i = 0; i < this.raw.extReaderInh.length; i++) {
                 if (this.raw.extReaderInh[i][tDisp - 1] == 0) {
                     continue; // Sale sin chequear los if, es el mas probable por eso esta aca

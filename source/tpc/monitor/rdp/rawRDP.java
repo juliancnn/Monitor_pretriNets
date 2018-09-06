@@ -34,12 +34,17 @@ package tpc.monitor.rdp;
  *     "mark"     : [3, 0, 0, 0, 0],            # marcado inicial de la red
  *     "extMaxToken" : [0, 2, 0, 0, 0],         # (Opcional) Limite por plaza
  *     "extReaderInh" : [
- *     [0, 0, 0, 0],   # Matriz de arcos lectores e inhibidores
- *     [0, 0, 2,-1],   # El 2 representa que un arco lector de peso 2 desde la plaza 2 a la transicion 3
- *     [0, 0, 0, 0],   # El -1 representa un arco inhibidor de la plaza 2  a la transicion 4
- *     [0, 0, 0, 0],
- *     [0, 0, 0, 0]
+ *         [0, 0, 0, 0],   # Matriz de arcos lectores e inhibidores
+ *         [0, 0, 2,-1],   # El 2 representa que un arco lector de peso 2 desde la plaza 2 a la transicion 3
+ *         [0, 0, 0, 0],   # El -1 representa un arco inhibidor de la plaza 2  a la transicion 4
+ *         [0, 0, 0, 0],
+ *         [0, 0, 0, 0]
+ *     ],
+ *    "extTempWindows" : [
+ *     [1000, 1000,    0,    0],      # Vector de minimo tiempo antes que se sencibilize
+ *     [   0, 3000, 1000,    0]       # Vector de maximo tiempo antes que se sencibilize
  *   ]
+ *
  *   }
  * </pre>
  */
@@ -63,12 +68,18 @@ public class rawRDP {
     protected int[] mark;
 
     /**
-     * [Feature: Red de petri extendida]:  Vector de maximo de tokens por plaza
+     * [Feature: Red de petri extendida - Max Tokens]:  Vector de maximo de tokens por plaza
      */
     protected int[] extMaxToken;
     /**
-     * [Feature: Red de petri extendida]: Matriz de arcos lectores e inhibidores
+     * [Feature: Red de petri extendida - Arc Readers & Inhibitors]: Matriz de arcos lectores e inhibidores
      */
     protected int[][] extReaderInh;
+    /**
+     * [Feature: Red de petri extendida - Temporal]: Vector de ventana de tiempo de disparo de transicion
+     */
+    protected long[][] extTempWindows;
+    protected long[] extTempTimeStamp;
+
 
 }
