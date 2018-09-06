@@ -28,7 +28,6 @@ import java.lang.String;
  *
  * @WARNING No implementa ningun mecanismo de proteccion de recursos para hilos multiples (como semaforo),
  * debe ser implementado externamente
- * @TODO Implementar arcos lectores e inibidores
  * @TODO Implementar las transiciones temporales
  */
 public class RDP {
@@ -139,7 +138,39 @@ public class RDP {
             }
         }
 
+        /* Chequeo de longuitud de vector de tiempo, ausencia de elementos nulos y negativos */
+        if (this.raw.extTempWindows != null) {
+            raw.extTempTimeStamp = new long[raw.matrixW[0].length];
+            //Se verifica que el largo de la matriz no sea distinto de 2
+            if (raw.extTempWindows.length != 2) {
+                throw new ConfigException("Vector temporal distinto de 2 dimensiones", errorTypeConfig.invalidFormatMatrix);
+                //Se chequea el largo de los dos vectores por separado
+            } else if (raw.extTempWindows[0].length != raw.matrixW[0].length || raw.extTempWindows[1].length != raw.matrixW[0].length) {
+                throw new ConfigException("La cantidad de transiciones es no es la misma", errorTypeConfig.invalidFormatMatrix);
+            } else {
+                //Paso final, se chequea la ausencia de elementos negativos en la matriz
+                for (int i = 0; i < 2; ++i) {
+                    for (int j = 0; j < raw.extTempWindows[0].length; ++j) {
+                        if (raw.extTempWindows[i][j] < 0) {
+                            throw new ConfigException("Elemento negativo en el vector temporal", errorTypeConfig.invalidFormatMatrix);
+                        } else {
+                            continue;
+                        }
+                    }
+                }
+            }
+            //Finalizado los chequeos se procede a cargar el vector de tiempo dependiendo si la transicion esta sensibilizada
+            boolean SensAux[] = getSensitizedArray();
+            long tiempo = java.lang.System.currentTimeMillis();
+            for (int i = 0; i < raw.extTempWindows[0].length; ++i) {
+                if (SensAux[i] == true) {
+                    raw.extTempTimeStamp[i] = tiempo;
+                } else {
+                    raw.extTempTimeStamp[i] = 0;
+                }
+            }
 
+        }
     }
 
     /**
@@ -217,6 +248,17 @@ public class RDP {
     }
 
     /**
+     * Obtiene una matriz con la informacion de las transiciones temporales
+     * <pre>
+     * @return Una copia de la matriz con transiciones temporales <br>
+     *         Null Si no es extendida la red
+     * </pre>
+     */
+    public long[][] getExtTemporal() {
+        return this.isExtReaderInh() ? raw.extTempWindows.clone() : null;
+    }
+
+    /**
      * Obtiene una matriz con la informacion de los arcos lectores e inhibidores
      * <pre>
      * @return Una copia de la matriz con arcos lectores e inhibidores. <br>
@@ -226,7 +268,6 @@ public class RDP {
     public int[][] getExtReaaderInh() {
         return this.isExtReaderInh() ? raw.extReaderInh.clone() : null;
     }
-
 
     /**
      * Consulta si la red de petri es extendida para maxima cantidad de tokens
@@ -248,6 +289,10 @@ public class RDP {
      */
     public boolean isExtReaderInh() {
         return (raw.extReaderInh != null);
+    }
+
+    public boolean isExtTemp() {
+        return (raw.extTempWindows != null);
     }
 
     /**

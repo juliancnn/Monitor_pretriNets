@@ -71,10 +71,12 @@ public class rawRDP {
      * [Feature: Red de petri extendida - Max Tokens]:  Vector de maximo de tokens por plaza
      */
     protected int[] extMaxToken;
+
     /**
      * [Feature: Red de petri extendida - Arc Readers & Inhibitors]: Matriz de arcos lectores e inhibidores
      */
     protected int[][] extReaderInh;
+
     /**
      * [Feature: Red de petri extendida - Temporal]: Vector de ventana de tiempo de disparo de transicion
      */
