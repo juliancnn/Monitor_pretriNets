@@ -665,17 +665,43 @@ class RDPTest {
             try {
                 Assertions.assertFalse(rdp1_extend_TEMP.shotT(1, false), "Se disparo y no debia");
                 Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1_extend_TEMP.getMark(), "La red evoluciono y no debia");
-                Thread.sleep(1000);
+                Assertions.assertArrayEquals(new boolean[]{false, false, false, false}, rdp1_extend_TEMP.getSensitizedArray());
+                Thread.sleep(1100);
                 Assertions.assertTrue(rdp1_extend_TEMP.shotT(1, false), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{2, 1, 0, 1, 0}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
+                Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1_extend_TEMP.getSensitizedArray());
+                Assertions.assertTrue(rdp1_extend_TEMP.shotT(1, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1, 2, 0, 2, 0}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
+                Assertions.assertArrayEquals(new boolean[]{false, false, true, false}, rdp1_extend_TEMP.getSensitizedArray());
                 Assertions.assertTrue(rdp1_extend_TEMP.shotT(3, false), "No se disparo y debia");
-                Assertions.assertArrayEquals(new int[]{2, 1, 0, 0, 1}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
-                Assertions.assertTrue(rdp1_extend_TEMP.shotT(2, false), "No se disparo y debia");
-                Assertions.assertArrayEquals(new int[]{2, 0, 1, 0, 1}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
-                Assertions.assertTrue(rdp1_extend_TEMP.shotT(4, false), "No se disparo y debia");
-                Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
+                Assertions.assertArrayEquals(new int[]{1, 2, 0, 1, 1}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
+                Assertions.assertArrayEquals(new boolean[]{false, false, true, false}, rdp1_extend_TEMP.getSensitizedArray());
                 Assertions.assertFalse(rdp1_extend_TEMP.shotT(2, false), "Se disparo y no debia");
-                Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1_extend_TEMP.getMark(), "La red evoluciono y no debia");
+                Assertions.assertArrayEquals(new int[]{1, 2, 0, 1, 1}, rdp1_extend_TEMP.getMark(), "La red evoluciono y no debia");
+                Assertions.assertArrayEquals(new boolean[]{false, false, true, false}, rdp1_extend_TEMP.getSensitizedArray());
+                Thread.sleep(1100);
+                Assertions.assertArrayEquals(new boolean[]{false, true, false, false}, rdp1_extend_TEMP.getSensitizedArray());
+                Assertions.assertTrue(rdp1_extend_TEMP.shotT(2, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1, 1, 1, 1, 1}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
+                Thread.sleep(1100);
+                Assertions.assertArrayEquals(new boolean[]{true, true, false, false}, rdp1_extend_TEMP.getSensitizedArray());
+                Assertions.assertFalse(rdp1_extend_TEMP.shotT(4, false), "Se disparo y no debia");
+                Assertions.assertArrayEquals(new int[]{1, 1, 1, 1, 1}, rdp1_extend_TEMP.getMark(), "La red evoluciono y no debia");
+                Assertions.assertArrayEquals(new boolean[]{true, true, false, false}, rdp1_extend_TEMP.getSensitizedArray());
+                Assertions.assertTrue(rdp1_extend_TEMP.shotT(2, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1, 0, 2, 1, 1}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
+                Assertions.assertArrayEquals(new boolean[]{true, false, false, true}, rdp1_extend_TEMP.getSensitizedArray());
+                Assertions.assertTrue(rdp1_extend_TEMP.shotT(4, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{2, 0, 1, 1, 0}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
+                Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1_extend_TEMP.getSensitizedArray());
+               // Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1_extend_TEMP.getSensitizedArray(true, 0));
+                Thread.sleep(1100);
+                Assertions.assertTrue(rdp1_extend_TEMP.shotT(1, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1, 1, 1, 2, 0}, rdp1_extend_TEMP.getMark(),"La red no evoluciono y debia");
+                Thread.sleep(3100);
+                Assertions.assertFalse(rdp1_extend_TEMP.shotT(2, false), "Se disparo y no debia");
+                Assertions.assertArrayEquals(new int[]{1, 1, 1, 2, 0}, rdp1_extend_TEMP.getMark(), "La red evoluciono y no debia");
+
             } catch (ShotException e) {
                 Assertions.fail();
             } catch (Exception e) {
