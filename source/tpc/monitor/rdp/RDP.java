@@ -314,10 +314,10 @@ public class RDP {
 
     /**
      * <pre>
-     * Intenta realizar disparo de la red de petri, si puede dispara.
+     * Intenta realizar disparo de la red de petri, si puede dispara y altera el estado de la red
      *
      * @param tDisp Numero de transicion a disparar
-     * @return True en caso de exito en el disparo de la transicion y evolucion de la red
+     * @return True en caso de exito en el disparo de la transicion y evolucion de la red <br>
      *         False en caso de que la transicion no este sencibilidaza
      * @throws ShotException Si no existe la transicion
      * </pre>
@@ -327,7 +327,8 @@ public class RDP {
     }
 
     /**
-     * Realiza el disparo en la red de petri, este puede ser un disparo de prueba o puede guardar los resultados
+     * Intenta realizar disparo de la red de petri, este puede ser un disparo de prueba o puede guardar los resultados
+     * y alterar el estado de la red
      *
      * <pre>
      * @param tDisp Numero de transicion a disparar
@@ -343,8 +344,15 @@ public class RDP {
     }
 
     /**
-     * Realiza el disparo en la red de petri, este puede ser un disparo de prueba o puede guardar los resultados
      * <pre>
+     * Intenta realizar disparo de la red de petri, este puede, segun los parametros:<br>
+     *     - Ser un disparo de prueba o puede guardar los resultados y alterar el estado de la red.<br>
+     *     - No tomar en cuenta la ventana de tiempo para las redes de petri temporales
+     *     (Se ignora el valor si no es una red temporal) <br>
+     *     - Determinar un timestamp especifico para checkear el calculo de la ventana de tiempo y ver si <br>
+     *     la transicion esta habilitada. Permite tener una atomisidad y coinsitencia a la hora de obtener <br>
+     *     una serie de disparos de prueba y obtener el sensibilizado.
+     *     (Se ignora el valor si no es una red temporal)
      * @param tDisp         Numero de transicion a disparar
      * @param test          True si no quiere alterar el estado de la red de petri <br>
      *                      False si en caso de que se pueda disparar se altere el estado de la redes
@@ -480,16 +488,15 @@ public class RDP {
     }
 
     /**
-     * Resultado del disparo, sin alterar el marcado
-     * <p>
-     * La funcion retorna el resultado del disparo sin alterar el marcador
-     * Sirve para verficiar si el disparo se puede efectuar (Marcador positivo)
-     * o si el disparo no se puede efectuar, marcador negativo en algun valor
+     * Retorna el posible resultado del proximo marcado luego del disparo tDisp
+     * <pre>
+     * Retorna el posible resultado del disparo sin alterar el marcador y sin verificar su validez <br>
+     * Calcula el marcado del disparo de 1 sola transicion, como: <br>
      * Nuevo mark = mark actual + RDP * Vector Disparo
-     *
      * @param tDisp numero de transicion a disparar
      * @return vectorNextMark  Proxima marca, sea alcanzable o no.
      * @throws ShotException Excepcion por inexistencia de la transicion
+     * </pre>
      */
     private int[] nextMark(int tDisp) throws ShotException {
         // Si la transicion no existe lanza la excepcion
@@ -518,14 +525,14 @@ public class RDP {
 
     /**
      * Metodo encargado de agregar tokens a determinada plaza.
-     * <p>
+     *
      * <pre>
      * Si la plaza tiene un maximo de tokens y esta llena no los agregara. <br>
      * Si se intentan agregar mas tokens y el resultado final sobrepasa la cantidad
      * maxima de tokens permitidos tampoco los agrega.
      * @param Plaza plaza que se quiere agregar token
      * @param cant numero entero de tokens a agregar a la plaza.
-     * @return  True: dadero en caso de que se puedan agregar dichos tokens<br>
+     * @return  True: En caso de que se puedan agregar dichos tokens<br>
      *          False: Caso contrario
      * @throws TokenException producida por inexistencia de la plaza o una cantidad negativa de tokens
      * </pre>
@@ -554,13 +561,13 @@ public class RDP {
     /**
      * Metodo encargado de setear tokens a determinada plaza.
      * <pre>
+     * Principal diferencia con respecto a AddTokens es que no tiene en cuenta los <br>
+     * Tokens que se encuentran en dicha plaza, estos son reemplazados por el numero especifico a agregar.
      * @param Plaz plaza que se quiere agregar token
      * @param Cant numero entero de tokens a agregar
      * @return True en caso de que se puedan agregar dichos tokens <br>
      *         False en caso contrario (debido a que no tiene lugar suficiente la plaza)
-     * @throws TokenException producida por inexistencia de la plaza o una cantidad negativa de tokens
-     * Principal diferencia con respecto a AddTokens es que no tiene en cuenta los
-     * Tokens que se encuentran en dicha plaza, estos son reemplazados por el numero especifico a agregar.
+     * @throws TokenException producida por inexistencia de la plaza o una cantidad negativa de tokens <br>
      * </pre>
      */
     protected boolean SetToken(int Plaz, int Cant) throws TokenException {
