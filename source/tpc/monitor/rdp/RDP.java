@@ -60,6 +60,7 @@ public class RDP {
      *
      * @param jsonFile Nombre del archivo JSON que contiene la informacion
      * @throws FileNotFoundException Lanzado cuando no se encuentra el archivo JSON
+     * @throws ConfigException      Error de configuracion del JSON, mal formado los datos
      * @see rawRDP Ver estructura completa del JSON
      */
     public RDP(String jsonFile) throws FileNotFoundException, ConfigException {
@@ -235,7 +236,6 @@ public class RDP {
         return raw.mark.clone();
     }
 
-
     /**
      * Obtiene un array con la informacion de maximos toquens por plaza
      * <pre>
@@ -287,7 +287,6 @@ public class RDP {
      *         false: Caso contrario
      * </pre>
      */
-
     public boolean isExtReaderInh() {
         return (raw.extReaderInh != null);
     }
@@ -314,6 +313,20 @@ public class RDP {
     }
 
     /**
+     * <pre>
+     * Intenta realizar disparo de la red de petri, si puede dispara.
+     *
+     * @param tDisp Numero de transicion a disparar
+     * @return True en caso de exito en el disparo de la transicion y evolucion de la red
+     *         False en caso de que la transicion no este sencibilidaza
+     * @throws ShotException Si no existe la transicion
+     * </pre>
+     */
+    public boolean shotT(int tDisp) throws ShotException{
+        return shotT(tDisp, false, false,java.lang.System.currentTimeMillis());
+    }
+
+    /**
      * Realiza el disparo en la red de petri, este puede ser un disparo de prueba o puede guardar los resultados
      *
      * <pre>
@@ -321,13 +334,33 @@ public class RDP {
      * @param test  True si no quiere alterar el estado de la red de petri <br>
      *              False si en caso de que se pueda disparar se altere el estado de la redes
      * @return True en caso de exito en el disparo de la transicion <br>
-     *         Falso en caso de que la transicion no este sencibilidaza
+     *         False en caso de que la transicion no este sencibilidaza
      * @throws ShotException Excepcion por inexistencia de la transicion
      * </pre>
      */
-    public boolean shotT(int tDisp, boolean test) throws ShotException {
+    protected boolean shotT(int tDisp, boolean test) throws ShotException{
+        return shotT(tDisp, test, false,java.lang.System.currentTimeMillis());
+    }
+
+    /**
+     * Realiza el disparo en la red de petri, este puede ser un disparo de prueba o puede guardar los resultados
+     * <pre>
+     * @param tDisp         Numero de transicion a disparar
+     * @param test          True si no quiere alterar el estado de la red de petri <br>
+     *                      False si en caso de que se pueda disparar se altere el estado de la redes
+     * @param ignoreWindows True para ignorar la ventana de tiempo de la red temporal <br>
+     *                      Si la red no es temporal el valor del parametro es indistinto  <br>
+     *                      NOTA: Se utiliza para verificar las transiciones sensibilizadas y contar el tiempo
+     * @param timestamp     Si ignore windows es false, se utiliza para determinar si esta dentro de la <br>
+     *                      ventana en en tiempo para disparar. <br>
+     *                      NOTA: Se utiliza para detectar varias transiciones habilitadas con el mismo timestamp
+     * @return True en caso de exito en el disparo de la transicion <br>
+     *         False en caso de que la transicion no este sencibilidaza
+     * @throws ShotException Excepcion por inexistencia de la transicion
+     * </pre>
+     */
+    protected boolean shotT(int tDisp, boolean test, boolean ignoreWindows, long timestamp) throws ShotException {
         boolean validShot = true;
-        long timestamp;
         int[] newMark;
 
         // Excepcion por inexistencia de transicion
@@ -371,8 +404,7 @@ public class RDP {
         /* Si el tiro sigue siendo valido y es temporal hago chequeo de tiempo */
         /* Necesariamente se tiene que hacer despues de calcular el posible nuevo marcado
            Ya que puede que el nuevo marcado no sea valido por que una plaza tiene un maximo de tokens */
-        if (validShot && this.isExtTemp()) {
-            timestamp = java.lang.System.currentTimeMillis();
+        if (validShot && this.isExtTemp() && !ignoreWindows) {
             /* Chequeo de la ventana de tiempo */
             if (raw.extTempWindows[0][tDisp - 1] != 0) {
                 validShot = raw.extTempWindows[0][tDisp - 1] < (timestamp - raw.extTempTimeStamp[tDisp - 1]) &&
@@ -385,9 +417,14 @@ public class RDP {
         // No es un test y el marcado es valido
         if (!test && validShot) {
             if(this.isExtTemp()){
-                boolean[] oldSensitized = getSensitizedArray();
+                boolean[] oldSensitized = getSensitizedArray(true, timestamp);
                 raw.mark = newMark;
-                boolean[] newSensitized = getSensitizedArray();
+                boolean[] newSensitized = getSensitizedArray(true, timestamp);
+                for(int i=0; i<newSensitized.length;++i){
+                    if (!oldSensitized[i] && newSensitized[i]){
+                        raw.extTempTimeStamp[i] = timestamp;
+                    }
+                }
             }else{
                 raw.mark = newMark;
             }
@@ -396,7 +433,6 @@ public class RDP {
 
         return validShot;
     }
-
     /**
      * Retorna el vector de transiciones sensibilizadas, cada lugar del vector representa una transicion
      * donde el primer lugar corresponde a la primera transicion.
@@ -406,12 +442,31 @@ public class RDP {
      *         False en caso contrario
      * </pre>
      */
-    public boolean[] getSensitizedArray() {
+    protected boolean[] getSensitizedArray(){
+        return getSensitizedArray(false, java.lang.System.currentTimeMillis());
+    }
+
+    /**
+     * <pre>
+     * Retorna el vector de transiciones sensibilizadas, cada lugar del vector representa una transicion
+     * donde el primer lugar corresponde a la primera transicion. <br>
+     * Puede ignorarse la ventana de tiempo para la obtencion de la sensibilidad <br>
+     * NOTA: Se utiliza para caluclar los timestamp de las redes de petri
+     *
+     * @param ignoreWindows True si se desea ignorar la parte temporal de la red para la obtencion del vector<br>
+     *                      False Si se desea tomar en cuenta el timestamp y la parte temporal de la red
+     * @param timestamp     Valor del tiempo en milisegundos para realizar el calulo de las ventanas de tiempo <br>
+     *                      Permite tener sincronizacion entre que se chequea la sensibilidad de cada transicion
+     * @return        True si la transicion esta sensibilizada <br>
+     *                False en caso contrario
+     * </pre>
+     */
+    public boolean[] getSensitizedArray(boolean ignoreWindows, long timestamp) {
         boolean[] sensitizedArray = new boolean[raw.matrixW[0].length];
 
         try {
             for (int i = 0; i < sensitizedArray.length; i++) {
-                sensitizedArray[i] = this.shotT(i + 1, true);
+                sensitizedArray[i] = this.shotT(i + 1, true, ignoreWindows, timestamp);
             }
         } catch (ShotException e) {
             // No deberia pasar nunca ya que se testea solo la cantidad de transiciones disponibles segun la matriz
@@ -434,7 +489,6 @@ public class RDP {
      * @return vectorNextMark  Proxima marca, sea alcanzable o no.
      * @throws ShotException Excepcion por inexistencia de la transicion
      */
-
     private int[] nextMark(int tDisp) throws ShotException {
         // Si la transicion no existe lanza la excepcion
         if (tDisp > raw.matrixW[0].length || tDisp < 1)

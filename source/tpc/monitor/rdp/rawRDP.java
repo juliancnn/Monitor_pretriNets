@@ -73,7 +73,7 @@ public class rawRDP {
     protected int[] extMaxToken;
 
     /**
-     * [Feature: Red de petri extendida - Arc Readers & Inhibitors]: Matriz de arcos lectores e inhibidores
+     * [Feature: Red de petri extendida - Arc Readers - Inhibitors]: Matriz de arcos lectores e inhibidores
      */
     protected int[][] extReaderInh;
 
