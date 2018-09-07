@@ -407,8 +407,10 @@ public class RDP {
         if (validShot && this.isExtTemp() && !ignoreWindows) {
             /* Chequeo de la ventana de tiempo */
             if (raw.extTempWindows[0][tDisp - 1] != 0) {
-                validShot = raw.extTempWindows[0][tDisp - 1] < (timestamp - raw.extTempTimeStamp[tDisp - 1]) &&
-                        raw.extTempWindows[1][tDisp - 1] > (timestamp - raw.extTempTimeStamp[tDisp - 1]);
+                validShot = raw.extTempWindows[0][tDisp - 1] < (timestamp - raw.extTempTimeStamp[tDisp - 1]);
+            }
+            if (validShot && raw.extTempWindows[1][tDisp - 1] != 0) {
+                validShot = raw.extTempWindows[1][tDisp - 1] > (timestamp - raw.extTempTimeStamp[tDisp - 1]);
             }
 
         }
