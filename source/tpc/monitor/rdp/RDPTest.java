@@ -665,25 +665,63 @@ class RDPTest {
             try {
                 Assertions.assertFalse(rdp1_extend_TEMP.shotT(1, false), "Se disparo y no debia");
                 Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1_extend_TEMP.getMark(), "La red evoluciono y no debia");
+                /* t1: FALSE -> Tiene tokens pero no paso el segundo de espera, no entra en la vetana de tiempo
+                 * t2-t3-t4: FALSE -> No hay tokens para disparar
+                 */
                 Assertions.assertArrayEquals(new boolean[]{false, false, false, false}, rdp1_extend_TEMP.getSensitizedArray());
                 Thread.sleep(1100);
+                /* t1:       TRUE  -> Tiene tokens y entro en la ventana de tiempo
+                 * t2-t3-t4: FALSE -> No hay tokens para disparar
+                 */
                 Assertions.assertTrue(rdp1_extend_TEMP.shotT(1, false), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{2, 1, 0, 1, 0}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
+                /* t1: TRUE  -> Tiene tokens y esta en la ventana de tiempo
+                 * t2: FALSE -> Tiene tokens pero no entro en la ventana tiene que esperar un segundo
+                 * t3: FALSE -> Tiene tokenes pero tiene que haber 2 tokens en P2 por el arco lector
+                 * t4: FALSE -> No hay tokens para disparar
+                 */
                 Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1_extend_TEMP.getSensitizedArray());
                 Assertions.assertTrue(rdp1_extend_TEMP.shotT(1, false), "No se disparo y debia");
+                /* t1: FALSO -> Tiene tokens y pero P2 esta llena, tiene un maximo de 2 tokens, por eso esta en false
+                 * t2: FALSE -> Tiene tokens pero no entro en la ventana tiene que esperar un segundo
+                 * t3: TRUE  -> Tiene tokenes y el arco lector esta habilitado
+                 * t4: FALSE -> No hay tokens para disparar
+                 */
                 Assertions.assertArrayEquals(new int[]{1, 2, 0, 2, 0}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
                 Assertions.assertArrayEquals(new boolean[]{false, false, true, false}, rdp1_extend_TEMP.getSensitizedArray());
                 Assertions.assertTrue(rdp1_extend_TEMP.shotT(3, false), "No se disparo y debia");
+                /* t1: FALSO -> Tiene tokens y pero P2 esta llena, tiene un maximo de 2 tokens, por eso esta en false
+                 * t2: FALSE -> Tiene tokens pero no entro en la ventana tiene que esperar un segundo
+                 * t3: TRUE  -> Tiene tokenes y el arco lector esta habilitado
+                 * t4: FALSE -> No hay tokens para disparar, faltan los de p3
+                 */
                 Assertions.assertArrayEquals(new int[]{1, 2, 0, 1, 1}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
                 Assertions.assertArrayEquals(new boolean[]{false, false, true, false}, rdp1_extend_TEMP.getSensitizedArray());
+                // Nos va a disparar por que no entra en la ventana de tiempo
                 Assertions.assertFalse(rdp1_extend_TEMP.shotT(2, false), "Se disparo y no debia");
                 Assertions.assertArrayEquals(new int[]{1, 2, 0, 1, 1}, rdp1_extend_TEMP.getMark(), "La red evoluciono y no debia");
                 Assertions.assertArrayEquals(new boolean[]{false, false, true, false}, rdp1_extend_TEMP.getSensitizedArray());
                 Thread.sleep(1100);
+                /* t1: FALSO -> Tiene tokens y pero P2 esta llena, tiene un maximo de 2 tokens, por eso esta en false
+                 * t2: TRUE  -> Tiene tokens y acaba de entrar a la ventana de tiempo
+                 * t3: FALSE -> Tiene tokenes y el arco lector esta habilitado, pero salio de la ventana de tiempo
+                 * t4: FALSE -> No hay tokens para disparar, faltan los de p3
+                 */
                 Assertions.assertArrayEquals(new boolean[]{false, true, false, false}, rdp1_extend_TEMP.getSensitizedArray());
                 Assertions.assertTrue(rdp1_extend_TEMP.shotT(2, false), "No se disparo y debia");
+                /* t1: FALSE -> Tiene tokens P2 tiene lugar, pero recien se acaba de sensibilizar no esta en la ventana
+                 * t2: TRUE  -> Tiene tokens y acaba de entrar a la ventana de tiempo
+                 * t3: FALSE -> Tiene tokenes y el arco lector NO esta habilitado
+                 * t4: FALSE -> Tiene tokens pero esta inhibido por P2
+                 */
+                Assertions.assertArrayEquals(new boolean[]{false, true, false, false}, rdp1_extend_TEMP.getSensitizedArray());
                 Assertions.assertArrayEquals(new int[]{1, 1, 1, 1, 1}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
                 Thread.sleep(1100);
+                /* t1: FALSE -> Tiene tokens P2 tiene lugar, y acaba de entrar en la ventana de tiempo
+                 * t2: TRUE  -> Tiene tokens y acaba de entrar a la ventana de tiempo
+                 * t3: FALSE -> Tiene tokenes y el arco lector NO esta habilitado
+                 * t4: FALSE -> Tiene tokens pero esta inhibido por P2
+                 */
                 Assertions.assertArrayEquals(new boolean[]{true, true, false, false}, rdp1_extend_TEMP.getSensitizedArray());
                 Assertions.assertFalse(rdp1_extend_TEMP.shotT(4, false), "Se disparo y no debia");
                 Assertions.assertArrayEquals(new int[]{1, 1, 1, 1, 1}, rdp1_extend_TEMP.getMark(), "La red evoluciono y no debia");
@@ -694,7 +732,6 @@ class RDPTest {
                 Assertions.assertTrue(rdp1_extend_TEMP.shotT(4, false), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{2, 0, 1, 1, 0}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
                 Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1_extend_TEMP.getSensitizedArray());
-               // Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1_extend_TEMP.getSensitizedArray(true, 0));
                 Thread.sleep(1100);
                 Assertions.assertTrue(rdp1_extend_TEMP.shotT(1, false), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{1, 1, 1, 2, 0}, rdp1_extend_TEMP.getMark(),"La red no evoluciono y debia");
