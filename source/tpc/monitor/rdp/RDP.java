@@ -18,17 +18,17 @@ import java.lang.String;
  *  - Dispara las transiciones y alterar el estado de la red
  *  - Informar las transiciones disponibles para disparar
  *  - Informar si se puede disparar o no una transicion
+ *  - Informar marcado de la red y la red misma.
  *
  * Soporta caracteristicas de redes de petri extendidas como:
  *  - Maxima cantidad de tokens por plaza
- *  - Arcos inhibidores y lectores (Future support)
- *  - Transiciones sensibilizadas temporalmente (Future support)
+ *  - Arcos inhibidores y lectores
+ *  - Transiciones sensibilizadas temporalmente
  *
  * </pre>
  *
  * @WARNING No implementa ningun mecanismo de proteccion de recursos para hilos multiples (como semaforo),
  * debe ser implementado externamente
- * @TODO Implementar las transiciones temporales
  */
 public class RDP {
     /**
@@ -259,7 +259,7 @@ public class RDP {
     }
 
     /**
-     * Obtiene una matriz con la informacion de los arcos lectores e inhibidores
+     * Obtiene una matriz con la informacion de los arcos lectores e inhibidores, con el mismo formato de JSON
      * <pre>
      * @return Una copia de la matriz con arcos lectores e inhibidores. <br>
      *         Null Si no es extendida la red
@@ -304,7 +304,7 @@ public class RDP {
     }
 
     /**
-     * Obtiene la matriz de la red de petri
+     * Obtiene la matriz de doble incidencia de la red de petri
      *
      * @return Devuelve una copia de la matriz de la red de petri
      */
@@ -519,32 +519,33 @@ public class RDP {
     /**
      * Metodo encargado de agregar tokens a determinada plaza.
      * <p>
-     * Si la plaza tiene un maximo de tokens y esta llena no los agregara
+     * <pre>
+     * Si la plaza tiene un maximo de tokens y esta llena no los agregara. <br>
      * Si se intentan agregar mas tokens y el resultado final sobrepasa la cantidad
-     * maxima no agrega ninguno
-     *
-     * @param Plaz plaza que se quiere agregar token
-     * @param cant numero entero de tokens a agregar
-     * @return boolean True: dadero en caso de que se puedan agregar dichos tokens
-     * False: Caso contrario
+     * maxima de tokens permitidos tampoco los agrega.
+     * @param Plaza plaza que se quiere agregar token
+     * @param cant numero entero de tokens a agregar a la plaza.
+     * @return  True: dadero en caso de que se puedan agregar dichos tokens<br>
+     *          False: Caso contrario
      * @throws TokenException producida por inexistencia de la plaza o una cantidad negativa de tokens
+     * </pre>
      */
-    protected boolean AddToken(int Plaz, int cant) throws TokenException {
+    protected boolean AddToken(int Plaza, int cant) throws TokenException {
 
         boolean agregar;
         //Si la plaza no existe lanza la execepcion
-        if (Plaz > raw.matrixW.length || Plaz <= 0) {
-            throw new TokenException(raw.mark, Plaz + 1, raw.matrixW.length, cant);
+        if (Plaza > raw.matrixW.length || Plaza <= 0) {
+            throw new TokenException(raw.mark, Plaza + 1, raw.matrixW.length, cant);
             //Si la cantidad a agregar es negativa lanza la excepcion
         } else if (cant < 0) {
-            throw new TokenException(raw.mark, Plaz + 1, raw.matrixW.length, cant);
+            throw new TokenException(raw.mark, Plaza + 1, raw.matrixW.length, cant);
             //Si la cantidad es mayor al limite de la plaza devuelve un false
-        } else if (cant + raw.mark[Plaz - 1] > raw.extMaxToken[Plaz - 1] && raw.extMaxToken[Plaz - 1] != 0) {
+        } else if (cant + raw.mark[Plaza - 1] > raw.extMaxToken[Plaza - 1] && raw.extMaxToken[Plaza - 1] != 0) {
             agregar = false;
             return agregar;
         }
         //Modifico el vector de marcado y devuelvo true
-        raw.mark[Plaz - 1] = cant + raw.mark[Plaz - 1];
+        raw.mark[Plaza - 1] = cant + raw.mark[Plaza - 1];
         agregar = true;
         return agregar;
 
