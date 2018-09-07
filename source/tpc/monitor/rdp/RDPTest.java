@@ -649,6 +649,46 @@ class RDPTest {
     }
 
     /**
+     * Chequea que las transiciones se disparen (o no), teniendo en cuenta el intervalo de
+     * tiempo que con la cual se creo la RDP.
+     */
+    @Test
+    @Tag("TimeTest")
+    @DisplayName("[ext Temporal] Checkeo de disparos con transiciones temporales:")
+    void shotT_Temporal() {
+        /*==========================================================
+            RDP 1_extended: Extendida, con transiciones temporales
+        ========================================================== */
+        try {
+            RDP rdp1_extend_TEMP = new RDP(JFILE_RDP1_TEMPORAL);
+            Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1_extend_TEMP.getMark());
+            try {
+                Assertions.assertFalse(rdp1_extend_TEMP.shotT(1, false), "Se disparo y no debia");
+                Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1_extend_TEMP.getMark(), "La red evoluciono y no debia");
+                Thread.sleep(1000);
+                Assertions.assertTrue(rdp1_extend_TEMP.shotT(1, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{2, 1, 0, 1, 0}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp1_extend_TEMP.shotT(3, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{2, 1, 0, 0, 1}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp1_extend_TEMP.shotT(2, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{2, 0, 1, 0, 1}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp1_extend_TEMP.shotT(4, false), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
+                Assertions.assertFalse(rdp1_extend_TEMP.shotT(2, false), "Se disparo y no debia");
+                Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1_extend_TEMP.getMark(), "La red evoluciono y no debia");
+            } catch (ShotException e) {
+                Assertions.fail();
+            } catch (Exception e) {
+                Assertions.fail("Thread Exception");
+            }
+        } catch (java.io.FileNotFoundException e) {
+            Assertions.fail("No existe el archivo");
+        } catch (ConfigException e) {
+            Assertions.fail(e.toString());
+        }
+    }
+
+    /**
      * Chequea las excepciones del programa
      */
     @Test
