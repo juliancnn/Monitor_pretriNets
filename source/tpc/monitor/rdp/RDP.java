@@ -60,6 +60,7 @@ public class RDP {
      *
      * @param jsonFile Nombre del archivo JSON que contiene la informacion
      * @throws FileNotFoundException Lanzado cuando no se encuentra el archivo JSON
+     * @throws ConfigException      Error de configuracion del JSON, mal formado los datos
      * @see rawRDP Ver estructura completa del JSON
      */
     public RDP(String jsonFile) throws FileNotFoundException, ConfigException {
