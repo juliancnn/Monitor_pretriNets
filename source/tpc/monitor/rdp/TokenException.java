@@ -3,7 +3,8 @@ package tpc.monitor.rdp;
 /**
  * La excepcion se produce al intentar agregar un token a una plaza inexistente.
  */
-public class TokenException extends Exception {
+@SuppressWarnings("unused")
+class TokenException extends Exception {
     /**
      * Cantidad de tokens que se quieren agregar.
      */

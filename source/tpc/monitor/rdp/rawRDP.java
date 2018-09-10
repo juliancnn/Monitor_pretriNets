@@ -51,7 +51,8 @@ package tpc.monitor.rdp;
  * </pre>
  */
 
-public class rawRDP {
+@SuppressWarnings("unused")
+class rawRDP {
     /**
      * Informacion basica de la red de petri
      */
@@ -63,33 +64,33 @@ public class rawRDP {
     /**
      * Matriz de la red de petri
      */
-    protected int[][] matrixW;
+    int[][] matrixW;
     /**
      * Marcador de la red de petri
      */
-    protected int[] mark;
+    int[] mark;
 
     /**
      * [Feature: Red de petri extendida - Max Tokens]:  Vector de maximo de tokens por plaza
      */
-    protected int[] extMaxToken;
+    int[] extMaxToken;
 
     /**
      * [Feature: Red de petri extendida - Arc Readers - Inhibitors]: Matriz de arcos lectores e inhibidores
      */
-    protected int[][] extReaderInh;
+    int[][] extReaderInh;
 
     /**
      * [Feature: Red de petri extendida - Temporal]: Vector de ventana de tiempo de disparo de transicion
      */
-    protected long[][] extTempWindows;
+    long[][] extTempWindows;
     /**
      * <pre>
      * [Feature: Red de petri extendida - Temporal]: Vector de timestamp di disparo de transiciones
      * El vector es de uso interno, si se le cargan datos seran remplazados cuando se inicialize la red.
      * </pre>
      */
-    protected long[] extTempTimeStamp;
+    long[] extTempTimeStamp;
 
 
 }

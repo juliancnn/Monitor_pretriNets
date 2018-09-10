@@ -4,10 +4,10 @@ package tpc.monitor.rdp;
  * La excepcion se produce por errores en la carga de datos,
  * como datos invalidos y falta de datos
  */
-public class ConfigException extends Exception {
+class ConfigException extends Exception {
 
-    private String moreInfo;
-    private errorTypeConfig e;
+    private final String moreInfo;
+    private final errorTypeConfig e;
 
     /**
      * Se produce ante un mal formateo de datos en la carga de la red de petri,

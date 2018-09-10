@@ -5,7 +5,7 @@ package tpc.monitor.rdp;
  * El disparo es invalido por que el numero de transicion es menor que 1 o mayor que el numero de
  * transiciones que tiene la red. Es decir cuando la transicion es inexistente
  */
-public class ShotException extends Exception {
+class ShotException extends Exception {
 
     /**
      * Marca al momento del disparo
@@ -38,6 +38,7 @@ public class ShotException extends Exception {
      *
      * @return vector de disparo que fallo
      */
+    @SuppressWarnings("unused")
     public int[] getMarca() {
         return this.marca;
     }
@@ -47,6 +48,7 @@ public class ShotException extends Exception {
      *
      * @return El numero de transicion fallida
      */
+    @SuppressWarnings("unused")
     public int gettDisparo() {
         return this.tDisparo;
     }

@@ -60,7 +60,7 @@ public class RDP {
      *
      * @param jsonFile Nombre del archivo JSON que contiene la informacion
      * @throws FileNotFoundException Lanzado cuando no se encuentra el archivo JSON
-     * @throws ConfigException      Error de configuracion del JSON, mal formado los datos
+     * @throws ConfigException       Error de configuracion del JSON, mal formado los datos
      * @see rawRDP Ver estructura completa del JSON
      */
     public RDP(String jsonFile) throws FileNotFoundException, ConfigException {
@@ -87,13 +87,15 @@ public class RDP {
             if (conlconst == -1) {
                 conlconst = raw.matrixW[0].length;
             } else if (conlconst != raw.matrixW[i].length) {
-                throw new ConfigException("La matriz de insidencia no es constante", errorTypeConfig.invalidFormatMatrix);
+                throw new ConfigException("La matriz de insidencia no es constante",
+                        errorTypeConfig.invalidFormatMatrix);
             }
         }
 
         /* Chequeo de loguitud del vector y elementos positivos */
         if (raw.matrixW.length != raw.mark.length) {
-            throw new ConfigException("La cantidad de plazas  de marcado no es correcta", errorTypeConfig.invalidFormatArray);
+            throw new ConfigException("La cantidad de plazas  de marcado no es correcta",
+                    errorTypeConfig.invalidFormatArray);
         } else {
             for (int i = 0; i < raw.mark.length; ++i) {
                 if (raw.mark[i] < 0) {
@@ -108,7 +110,7 @@ public class RDP {
                 throw new ConfigException("La cantidad de plazas no es correcta en " +
                         "los elementos de maximo por plaza", errorTypeConfig.invalidFormatArray);
             } else {
-                for (int i = 0; i < raw.extMaxToken.length; ++i) {
+                for (int anExtMaxToken : raw.extMaxToken) {
                     if (raw.extMaxToken[0] < 0) {
                         throw new ConfigException("Elemento negativo en la marca por plaza",
                                 errorTypeConfig.invalidFormatArray);
@@ -144,27 +146,29 @@ public class RDP {
             raw.extTempTimeStamp = new long[raw.matrixW[0].length];
             //Se verifica que el largo de la matriz no sea distinto de 2
             if (raw.extTempWindows.length != 2) {
-                throw new ConfigException("Vector temporal distinto de 2 dimensiones", errorTypeConfig.invalidFormatMatrix);
+                throw new ConfigException("Vector temporal distinto de 2 dimensiones",
+                        errorTypeConfig.invalidFormatMatrix);
                 //Se chequea el largo de los dos vectores por separado
-            } else if (raw.extTempWindows[0].length != raw.matrixW[0].length || raw.extTempWindows[1].length != raw.matrixW[0].length) {
-                throw new ConfigException("La cantidad de transiciones es no es la misma", errorTypeConfig.invalidFormatMatrix);
+            } else if (raw.extTempWindows[0].length != raw.matrixW[0].length ||
+                    raw.extTempWindows[1].length != raw.matrixW[0].length) {
+                throw new ConfigException("La cantidad de transiciones es no es la misma",
+                        errorTypeConfig.invalidFormatMatrix);
             } else {
                 //Paso final, se chequea la ausencia de elementos negativos en la matriz
                 for (int i = 0; i < 2; ++i) {
                     for (int j = 0; j < raw.extTempWindows[0].length; ++j) {
                         if (raw.extTempWindows[i][j] < 0) {
-                            throw new ConfigException("Elemento negativo en el vector temporal", errorTypeConfig.invalidFormatMatrix);
-                        } else {
-                            continue;
+                            throw new ConfigException("Elemento negativo en el vector temporal",
+                                    errorTypeConfig.invalidFormatMatrix);
                         }
                     }
                 }
             }
-            //Finalizado los chequeos se procede a cargar el vector de tiempo dependiendo si la transicion esta sensibilizada
+            //Chequeos ok - Carga vector de tiempo para transiciones sensibilizadas
             boolean SensAux[] = getSensitizedArray();
             long tiempo = java.lang.System.currentTimeMillis();
             for (int i = 0; i < raw.extTempWindows[0].length; ++i) {
-                if (SensAux[i] == true) {
+                if (SensAux[i]) {
                     raw.extTempTimeStamp[i] = tiempo;
                 } else {
                     raw.extTempTimeStamp[i] = 0;
@@ -177,14 +181,16 @@ public class RDP {
     /**
      * Imprime la matriz de la red de petri
      */
+
+    @SuppressWarnings("unused")
     public void printRDP() {
         for (int i = 0; i < raw.matrixW.length; i++) {
             /* Cabezera de tabla */
             if (i == 0) {
-                String line = new String("");
+                StringBuilder line = new StringBuilder();
                 for (int j = 0; j < raw.matrixW[0].length; j++) {
                     System.out.print(String.format("%5s", "T" + (j + 1)));
-                    line += "------";
+                    line.append("------");
                 }
                 System.out.print("\n" + line + "\n");
             }
@@ -198,6 +204,7 @@ public class RDP {
     /**
      * Imprime el marcador actual de la RDP
      */
+    @SuppressWarnings("unused")
     public void printMark() {
         for (int i = 0; i < raw.mark.length; i++) {
             System.out.print(String.format("%5s", "P" + (i + 1)));
@@ -213,6 +220,7 @@ public class RDP {
      * Imprime el vector de sensibilizado de la red en el estado actual
      */
 
+    @SuppressWarnings("unused")
     public void printSensitizedVector() {
 
         boolean[] sense = this.getSensitizedArray();
@@ -220,8 +228,8 @@ public class RDP {
             System.out.print(String.format("%5s", "T" + (i + 1)));
         }
         System.out.print("\n");
-        for (int i = 0; i < sense.length; i++) {
-            System.out.print(String.format("%5s", sense[i] ? "SI" : "NO"));
+        for (boolean aSense : sense) {
+            System.out.print(String.format("%5s", aSense ? "SI" : "NO"));
         }
         System.out.print("\n");
 
@@ -322,8 +330,9 @@ public class RDP {
      * @throws ShotException Si no existe la transicion
      * </pre>
      */
-    public boolean shotT(int tDisp) throws ShotException{
-        return shotT(tDisp, false, false,java.lang.System.currentTimeMillis());
+    @SuppressWarnings("unused")
+    public boolean shotT(int tDisp) throws ShotException {
+        return shotT(tDisp, false, false, java.lang.System.currentTimeMillis());
     }
 
     /**
@@ -339,8 +348,8 @@ public class RDP {
      * @throws ShotException Excepcion por inexistencia de la transicion
      * </pre>
      */
-    protected boolean shotT(int tDisp, boolean test) throws ShotException{
-        return shotT(tDisp, test, false,java.lang.System.currentTimeMillis());
+    boolean shotT(int tDisp, boolean test) throws ShotException {
+        return shotT(tDisp, test, false, java.lang.System.currentTimeMillis());
     }
 
     /**
@@ -367,7 +376,7 @@ public class RDP {
      * @throws ShotException Excepcion por inexistencia de la transicion
      * </pre>
      */
-    protected boolean shotT(int tDisp, boolean test, boolean ignoreWindows, long timestamp) throws ShotException {
+    private boolean shotT(int tDisp, boolean test, boolean ignoreWindows, long timestamp) throws ShotException {
         boolean validShot = true;
         int[] newMark;
 
@@ -376,9 +385,10 @@ public class RDP {
             throw new ShotException(raw.mark, tDisp, this.raw.matrixW[0].length);
 
         /* Chequeo arcos lectores e inhibidores (1) - Ahorro multiplicacion si no se puede disparar */
-        if (validShot && this.isExtReaderInh()) {
+        if (this.isExtReaderInh()) {
             for (int i = 0; i < this.raw.extReaderInh.length; i++) {
                 if (this.raw.extReaderInh[i][tDisp - 1] == 0) {
+                    //noinspection UnnecessaryContinue
                     continue; // Sale sin chequear los if, es el mas probable por eso esta aca
                 } else if (this.raw.extReaderInh[i][tDisp - 1] < 0 && this.raw.mark[i] != 0) {
                     // La transicion tDisp se encuentra inhibida por la plaza i+1
@@ -426,16 +436,16 @@ public class RDP {
 
         // No es un test y el marcado es valido
         if (!test && validShot) {
-            if(this.isExtTemp()){
+            if (this.isExtTemp()) {
                 boolean[] oldSensitized = getSensitizedArray(true, timestamp);
                 raw.mark = newMark;
                 boolean[] newSensitized = getSensitizedArray(true, timestamp);
-                for(int i=0; i<newSensitized.length;++i){
-                    if (!oldSensitized[i] && newSensitized[i]){
+                for (int i = 0; i < newSensitized.length; ++i) {
+                    if (!oldSensitized[i] && newSensitized[i]) {
                         raw.extTempTimeStamp[i] = timestamp;
                     }
                 }
-            }else{
+            } else {
                 raw.mark = newMark;
             }
 
@@ -443,6 +453,7 @@ public class RDP {
 
         return validShot;
     }
+
     /**
      * Retorna el vector de transiciones sensibilizadas, cada lugar del vector representa una transicion
      * donde el primer lugar corresponde a la primera transicion.
@@ -452,7 +463,7 @@ public class RDP {
      *         False en caso contrario
      * </pre>
      */
-    protected boolean[] getSensitizedArray(){
+    boolean[] getSensitizedArray() {
         return getSensitizedArray(false, java.lang.System.currentTimeMillis());
     }
 
@@ -467,11 +478,11 @@ public class RDP {
      *                      False Si se desea tomar en cuenta el timestamp y la parte temporal de la red
      * @param timestamp     Valor del tiempo en milisegundos para realizar el calulo de las ventanas de tiempo <br>
      *                      Permite tener sincronizacion entre que se chequea la sensibilidad de cada transicion
-     * @return        True si la transicion esta sensibilizada <br>
+     * @return True si la transicion esta sensibilizada <br>
      *                False en caso contrario
      * </pre>
      */
-    public boolean[] getSensitizedArray(boolean ignoreWindows, long timestamp) {
+    private boolean[] getSensitizedArray(boolean ignoreWindows, long timestamp) {
         boolean[] sensitizedArray = new boolean[raw.matrixW[0].length];
 
         try {
@@ -532,14 +543,13 @@ public class RDP {
      * maxima de tokens permitidos tampoco los agrega.
      * @param Plaza plaza que se quiere agregar token
      * @param cant numero entero de tokens a agregar a la plaza.
-     * @return  True: En caso de que se puedan agregar dichos tokens<br>
+     * @return True: En caso de que se puedan agregar dichos tokens<br>
      *          False: Caso contrario
      * @throws TokenException producida por inexistencia de la plaza o una cantidad negativa de tokens
      * </pre>
      */
-    protected boolean AddToken(int Plaza, int cant) throws TokenException {
+    boolean AddToken(int Plaza, int cant) throws TokenException {
 
-        boolean agregar;
         //Si la plaza no existe lanza la execepcion
         if (Plaza > raw.matrixW.length || Plaza <= 0) {
             throw new TokenException(raw.mark, Plaza + 1, raw.matrixW.length, cant);
@@ -548,13 +558,11 @@ public class RDP {
             throw new TokenException(raw.mark, Plaza + 1, raw.matrixW.length, cant);
             //Si la cantidad es mayor al limite de la plaza devuelve un false
         } else if (cant + raw.mark[Plaza - 1] > raw.extMaxToken[Plaza - 1] && raw.extMaxToken[Plaza - 1] != 0) {
-            agregar = false;
-            return agregar;
+            return false;
         }
         //Modifico el vector de marcado y devuelvo true
         raw.mark[Plaza - 1] = cant + raw.mark[Plaza - 1];
-        agregar = true;
-        return agregar;
+        return true;
 
     }
 
@@ -570,9 +578,8 @@ public class RDP {
      * @throws TokenException producida por inexistencia de la plaza o una cantidad negativa de tokens <br>
      * </pre>
      */
-    protected boolean SetToken(int Plaz, int Cant) throws TokenException {
+    boolean SetToken(int Plaz, int Cant) throws TokenException {
 
-        boolean agreg;
         //Si la plaza no existe lanza la execepcion
         if (Plaz > raw.matrixW.length || Plaz <= 0) {
             throw new TokenException(raw.mark, Plaz + 1, raw.matrixW.length, Cant);
@@ -581,13 +588,11 @@ public class RDP {
             throw new TokenException(raw.mark, Plaz + 1, raw.matrixW.length, Cant);
             //Si la cantidad es mayor al limite de la plaza devuelve un false
         } else if (Cant > raw.extMaxToken[Plaz - 1] && raw.extMaxToken[Plaz - 1] != 0) {
-            agreg = false;
-            return agreg;
+            return false;
         }
         //Modifico el vector de marcado y devuelvo true
         raw.mark[Plaz - 1] = Cant;
-        agreg = true;
-        return agreg;
+        return true;
 
     }
 
