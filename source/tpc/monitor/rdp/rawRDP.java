@@ -4,7 +4,7 @@ package tpc.monitor.rdp;
  * Representa la estructura, estado y configuracion de la red de petri
  *
  * <pre>
- * Traida desde un archivo json, donde la estructura coinside con la clase.
+ * Cargada desde un archivo json, donde la estructura coincide con la clase.
  * Donde el primer lugar representa la transicion o la plaza uno dependiente el caso.
  * Ningun valor puede ser salteado y ademas:
  *      En la maxima cantidad de tokens: el valor 0 representa un sin limite
@@ -16,7 +16,7 @@ package tpc.monitor.rdp;
  * Por ejemplo:
  * El siguiente json posee 5 plazas y 4 transiciones, con la una marca inicial en la plaza uno de 3 tokens
  * y un maximo de 2 tokens en la plaza 2.
- * Tambien posee extencion temporal donde 0 significa sin restriccion temporal
+ * Tambien posee extension temporal donde 0 significa sin restriccion temporal
  * El tiempo debe estar en milisegundos
  *
  * </pre>
@@ -44,7 +44,7 @@ package tpc.monitor.rdp;
  *     ],
  *    "extTempWindows" : [                      # Parametro Opcional
  *     [1000, 1000,    0,    0],                # Vector de minimo tiempo antes que se pueda disparar
- *     [   0, 3000, 1000,    0]                 # Vector de maximo tiemeout para disparar
+ *     [   0, 3000, 1000,    0]                 # Vector de maximo timeout para disparar
  *   ]
  *
  *   }
@@ -87,7 +87,7 @@ class rawRDP {
     /**
      * <pre>
      * [Feature: Red de petri extendida - Temporal]: Vector de timestamp di disparo de transiciones
-     * El vector es de uso interno, si se le cargan datos seran remplazados cuando se inicialize la red.
+     * El vector es de uso interno, si se le cargan datos seran remplazados cuando se inicialice la red.
      * </pre>
      */
     long[] extTempTimeStamp;

@@ -12,7 +12,7 @@ class ConfigException extends Exception {
     /**
      * Se produce ante un mal formateo de datos en la carga de la red de petri,
      * falta de datos, matriz que no tiene cantidad de filas y columnas cnt
-     * @param description Breve descrpcion
+     * @param description Breve descripcion
      * @param e Tipo de error
      */
     public ConfigException(String description, errorTypeConfig e) {

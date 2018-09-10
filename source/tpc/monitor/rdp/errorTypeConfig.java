@@ -10,7 +10,7 @@ public enum errorTypeConfig {
     invalidFormatArray,
     invalidFormatMatrix,
     /**
-     * Faltan datos escensiales en la estructura del JSON.
+     * Faltan datos esenciales en la estructura del JSON.
      */
     missingDataInJASON
 
