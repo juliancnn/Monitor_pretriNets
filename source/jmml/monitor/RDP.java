@@ -2,6 +2,7 @@ package jmml.monitor;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -64,8 +65,8 @@ public class RDP {
      * @param jsonFile Nombre del archivo JSON que contiene la informacion
      * @throws FileNotFoundException Lanzado cuando no se encuentra el archivo JSON
      * @see RDPraw Ver estructura completa del JSON
+     * @TODO Verificar que las matrices H y R sean binarias
      */
-
     public RDP(String jsonFile) throws FileNotFoundException, ConfigException {
 
 
@@ -180,7 +181,8 @@ public class RDP {
     public boolean shotT(int tDisp, boolean test) {
         boolean validShot = true;
         int[] newMark;
-        /* Verifico si el tiro es valido */
+
+        /* Verifico si el tiro es valido  por arcos inhibidores */
 
         /* Si el tiro sigue siendo valido chequeo nueva marca */
         newMark = validShot ? this.nextMark(tDisp) : null;
@@ -202,7 +204,7 @@ public class RDP {
      *         False si la marca no es valida
      * </pre>
      */
-    private boolean valid4Mark(int[] mark) {
+    private boolean valid4Mark(@NotNull int[] mark) {
         boolean valid = true;
 
         for (int i = 0; i < mark.length; i++) {
@@ -255,7 +257,7 @@ public class RDP {
      * @param v Vector de dimencion Nx1
      * @return vector de Nx1, NULL en caso de tamanos incompatibles
      */
-    private int[] matMulVect(int[][] m, int[] v) {
+    private int[] matMulVect(@NotNull int[][] m,@NotNull int[] v) {
         // Chequeo tamanos compatibles
         if (v.length != m[0].length)
             return null;
@@ -272,6 +274,29 @@ public class RDP {
 
         return result;
     }
+
+    /**
+     * Producto interno entre 2 vectores
+     * @param v1 Vector tamano n
+     * @param v2 Vector de tamano n
+     * @return escalar, NULL en caso de tamanos incompatibles
+     */
+    private int vecMul(@NotNull int[] v1,@NotNull int[] v2) {
+        // Chequeo tamanos compatibles
+        if (v1.length != v2.length)
+            throw  new java.lang.ArrayIndexOutOfBoundsException("Vectores de distinta longitud");
+
+        // Vector resultado inicializado en 0
+        int result = 0;
+
+        // Opero por filas en la matriz
+        for (int i = 0; i < v1.length; i++) {
+                result += v1[i]*v2[i];
+        }
+
+        return result;
+    }
+
 
     /**
      * Consulta si la red de petri es extendida para maxima cantidad de tokens
