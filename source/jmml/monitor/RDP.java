@@ -183,10 +183,12 @@ public class RDP {
         int[] newMark;
 
         /* Verifico si el tiro es valido  por arcos inhibidores */
-        validShot = validShot && (vecMul(this.raw.matrixH[tDisp-1],genVectorQ()) == 1);
+        if (this.isExtInh())
+            validShot = validShot && (vecMul(this.raw.matrixH[tDisp - 1], genVectorQ()) == 1);
 
         /* Verifico si el tiro es valido  por arcos inhibidores */
-        validShot = validShot && (vecMul(this.raw.matrixR[tDisp-1],genVectorW()) == 1);
+        if (this.isExtReader())
+            validShot = validShot && (vecMul(this.raw.matrixR[tDisp - 1], genVectorW()) == 1);
 
         /* Si el tiro sigue siendo valido chequeo nueva marca */
         newMark = validShot ? this.nextMark(tDisp) : null;
@@ -261,12 +263,13 @@ public class RDP {
      *                 1 Si la plaza no tiene Tokens
      * </pre>
      */
-    private int[] genVectorQ(){
+    private int[] genVectorQ() {
         int[] q = new int[this.raw.vectorMark.length];
-        for(int i=0;i<q.length;i++)
+        for (int i = 0; i < q.length; i++)
             q[i] = this.raw.vectorMark[i] == 0 ? 1 : 0;
         return q;
     }
+
     /**
      * <pre>
      * Genera el vector W de plazas Lectoras, generadas con la relacion Uno(Marcador(Plaza))
@@ -274,9 +277,9 @@ public class RDP {
      *                 0 Si la plaza no tiene Tokens
      * </pre>
      */
-    private int[] genVectorW(){
+    private int[] genVectorW() {
         int[] w = new int[this.raw.vectorMark.length];
-        for(int i=0;i<w.length;i++)
+        for (int i = 0; i < w.length; i++)
             w[i] = this.raw.vectorMark[i] == 0 ? 0 : 1;
         return w;
     }
