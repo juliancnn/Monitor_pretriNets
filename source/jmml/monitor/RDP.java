@@ -64,8 +64,8 @@ public class RDP {
      *
      * @param jsonFile Nombre del archivo JSON que contiene la informacion
      * @throws FileNotFoundException Lanzado cuando no se encuentra el archivo JSON
-     * @see RDPraw Ver estructura completa del JSON
      * @TODO Verificar que las matrices H y R sean binarias
+     * @see RDPraw Ver estructura completa del JSON
      */
     public RDP(String jsonFile) throws FileNotFoundException, ConfigException {
 
@@ -127,20 +127,20 @@ public class RDP {
 
         /* Chequeo de longuitud del vector de arcos inhibidores */
         if (this.isExtInh()) {
-            if (raw.matrixH.length != raw.matrixI.length) {
+            if (raw.matrixH[0].length != raw.matrixI.length) {
                 throw new jmml.monitor.ConfigException("La cantidad de plazas  en la matriz de arcos " +
-                        "lectores e inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
-            } else if (raw.matrixH[0].length != raw.matrixI[0].length) {
+                        "inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+            } else if (raw.matrixH.length != raw.matrixI[0].length) {
                 throw new jmml.monitor.ConfigException("La cantidad de transiciones  en la matriz de arcos" +
-                        " lectores e inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+                        "inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
             } else {
                 /* Chequeo de longuitud de matriz constante. */
                 conlconst = -1;
-                for (int i = 0; i < raw.matrixH.length; ++i) {
+                for (int i = 0; i < this.raw.matrixH[0].length; ++i) {
                     if (conlconst == -1) {
-                        conlconst = raw.matrixH[0].length;
-                    } else if (conlconst != raw.matrixH[i].length) {
-                        throw new jmml.monitor.ConfigException("La matriz en la matriz de arcos lectores e inhibidores " +
+                        conlconst = this.raw.matrixH[0].length;
+                    } else if (conlconst != this.raw.matrixH[i].length) {
+                        throw new jmml.monitor.ConfigException("La matriz en la matriz de arcos inhibidores " +
                                 "no es constante", jmml.monitor.errorTypeConfig.invalidFormatMatrix);
                     }
                 }
@@ -149,12 +149,12 @@ public class RDP {
 
         /* Chequeo de longuitud del vector de arcos lectores */
         if (this.isExtReader()) {
-            if (raw.matrixR.length != raw.matrixI.length) {
+            if (this.raw.matrixR[0].length != this.raw.matrixI.length) {
                 throw new jmml.monitor.ConfigException("La cantidad de plazas  en la matriz de arcos " +
-                        "lectores e inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
-            } else if (raw.matrixR[0].length != raw.matrixI[0].length) {
+                        "lectores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+            } else if (this.raw.matrixR.length != this.raw.matrixI[0].length) {
                 throw new jmml.monitor.ConfigException("La cantidad de transiciones  en la matriz de arcos " +
-                        "lectores e inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+                        "lectores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
             } else {
                 /* Chequeo de longuitud de matriz constante. */
                 conlconst = -1;
@@ -162,8 +162,8 @@ public class RDP {
                     if (conlconst == -1) {
                         conlconst = raw.matrixR[0].length;
                     } else if (conlconst != raw.matrixR[i].length) {
-                        throw new jmml.monitor.ConfigException("La matriz en la matriz de arcos lectores e " +
-                                "inhibidores no es constante", jmml.monitor.errorTypeConfig.invalidFormatMatrix);
+                        throw new jmml.monitor.ConfigException("La matriz en la matriz de arcos lectores" +
+                                "no es constante", jmml.monitor.errorTypeConfig.invalidFormatMatrix);
                     }
                 }
             }
@@ -288,7 +288,7 @@ public class RDP {
      * @param v Vector de dimencion Nx1
      * @return vector de Nx1, NULL en caso de tamanos incompatibles
      */
-    private int[] matMulVect(@NotNull int[][] m,@NotNull int[] v) {
+    private int[] matMulVect(@NotNull int[][] m, @NotNull int[] v) {
         // Chequeo tamanos compatibles
         if (v.length != m[0].length)
             return null;
@@ -308,21 +308,22 @@ public class RDP {
 
     /**
      * Producto interno entre 2 vectores
+     *
      * @param v1 Vector tamano n
      * @param v2 Vector de tamano n
      * @return escalar, NULL en caso de tamanos incompatibles
      */
-    private int vecMul(@NotNull int[] v1,@NotNull int[] v2) {
+    private int vecMul(@NotNull int[] v1, @NotNull int[] v2) {
         // Chequeo tamanos compatibles
         if (v1.length != v2.length)
-            throw  new java.lang.ArrayIndexOutOfBoundsException("Vectores de distinta longitud");
+            throw new java.lang.ArrayIndexOutOfBoundsException("Vectores de distinta longitud");
 
         // Vector resultado inicializado en 0
         int result = 0;
 
         // Opero por filas en la matriz
         for (int i = 0; i < v1.length; i++) {
-                result += v1[i]*v2[i];
+            result += v1[i] * v2[i];
         }
 
         return result;
@@ -409,12 +410,9 @@ public class RDP {
      *         Null Si no es extendida la red
      * </pre>
      */
-    public int[][] getExtReader(){
+    public int[][] getExtReader() {
         return this.isExtReader() ? this.raw.matrixR.clone() : null;
     }
-
-
-
 
 
 }
