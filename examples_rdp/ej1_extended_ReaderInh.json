@@ -1,0 +1,27 @@
+{
+  "brief" : "Ejemplo 1: Proceso paralelo",
+  "info" : "Modificacion de la red de petri con los estandares generalizados de RDP",
+  "matrixI" :  [
+    [-1, 0, 0, 1],
+    [1, -1, 0, 0],
+    [0, 1, 0, -1],
+    [1, 0, -1, 0],
+    [0, 0, 1, -1]
+  ],
+  "vectorMark"     : [3, 0, 0, 0, 0],
+  "vectorMaxMark" : [0, 2, 0, 0, 0],
+  "matrixH" :  [
+    [0, 0, 0, 0],
+    [0, 0, 0, 1],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0]
+  ],
+  "matrixR" :[
+    [0, 0, 0, 0],
+    [0, 0, 1, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0]
+  ]
+}
