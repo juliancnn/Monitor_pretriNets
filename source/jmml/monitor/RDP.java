@@ -62,13 +62,111 @@ public class RDP {
      * @throws FileNotFoundException Lanzado cuando no se encuentra el archivo JSON
      * @see RDPraw Ver estructura completa del JSON
      */
-    public RDP(String jsonFile) throws FileNotFoundException {
+
+    public RDP(String jsonFile) throws FileNotFoundException, ConfigException {
+
 
         /* INICIO DE CARGA DE DATOS */
         Gson json = new Gson();
         JsonReader reader = new JsonReader(new FileReader(jsonFile));
         this.raw = json.fromJson(reader, RDPraw.class);
         /* FIN DE CARGA DE DATOS */
+
+        /* =========================================================
+            Chequeos de datos validos de estructura del archivo JSON.
+           ========================================================= */
+
+        /* Chequeo de estructura JSON.  */
+        if (raw.matrixI == null || raw.vectorMark == null) {
+            throw new ConfigException("Error en la estructura JSON", errorTypeConfig.missingDataInJASON);
+        }
+
+        /* Chequeo de longuitud de matriz constante. */
+        int conlconst = -1;
+        for (int i = 0; i < raw.matrixI.length; ++i) {
+            if (conlconst == -1) {
+                conlconst = raw.matrixI[0].length;
+            } else if (conlconst != raw.matrixI[i].length) {
+                throw new jmml.monitor.ConfigException("La matriz de insidencia no es constante",
+                        jmml.monitor.errorTypeConfig.invalidFormatMatrix);
+            }
+        }
+
+        /* Chequeo de loguitud del vector y elementos positivos */
+        if (raw.matrixI.length != raw.vectorMark.length) {
+            throw new jmml.monitor.ConfigException("La cantidad de plazas  de marcado no es correcta",
+                    jmml.monitor.errorTypeConfig.invalidFormatArray);
+        } else {
+            for (int i = 0; i < raw.vectorMark.length; ++i) {
+                if (raw.vectorMark[i] < 0) {
+                    throw new jmml.monitor.ConfigException("Elemento negativo en la marca",
+                            jmml.monitor.errorTypeConfig.invalidFormatArray);
+                }
+            }
+        }
+
+
+        /* Chequeo de longuitud del vector de maximo de plazas y elementos positivos */
+        if (this.isExtMaxToken()) {
+            if (this.raw.vectorMaxMark.length != this.raw.vectorMark.length) {
+                throw new jmml.monitor.ConfigException("La cantidad de plazas no es correcta en " +
+                        "los elementos de maximo por plaza", jmml.monitor.errorTypeConfig.invalidFormatArray);
+            } else {
+                for (int anExtMaxToken : this.raw.vectorMaxMark) {
+                    if (anExtMaxToken < 0) {
+                        throw new jmml.monitor.ConfigException("Elemento negativo en la marca por plaza",
+                                jmml.monitor.errorTypeConfig.invalidFormatArray);
+                    }
+                }
+            }
+        }
+
+        /* Chequeo de longuitud del vector de arcos inhibidores */
+        if (this.isExtInh()) {
+            if (raw.matrixH.length != raw.matrixI.length) {
+                throw new jmml.monitor.ConfigException("La cantidad de plazas  en la matriz de arcos " +
+                        "lectores e inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+            } else if (raw.matrixH[0].length != raw.matrixI[0].length) {
+                throw new jmml.monitor.ConfigException("La cantidad de transiciones  en la matriz de arcos" +
+                        " lectores e inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+            } else {
+                /* Chequeo de longuitud de matriz constante. */
+                conlconst = -1;
+                for (int i = 0; i < raw.matrixH.length; ++i) {
+                    if (conlconst == -1) {
+                        conlconst = raw.matrixH[0].length;
+                    } else if (conlconst != raw.matrixH[i].length) {
+                        throw new jmml.monitor.ConfigException("La matriz en la matriz de arcos lectores e inhibidores " +
+                                "no es constante", jmml.monitor.errorTypeConfig.invalidFormatMatrix);
+                    }
+                }
+            }
+        }
+
+        /* Chequeo de longuitud del vector de arcos lectores */
+        if (this.isExtReader()) {
+            if (raw.matrixR.length != raw.matrixI.length) {
+                throw new jmml.monitor.ConfigException("La cantidad de plazas  en la matriz de arcos " +
+                        "lectores e inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+            } else if (raw.matrixR[0].length != raw.matrixI[0].length) {
+                throw new jmml.monitor.ConfigException("La cantidad de transiciones  en la matriz de arcos " +
+                        "lectores e inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+            } else {
+                /* Chequeo de longuitud de matriz constante. */
+                conlconst = -1;
+                for (int i = 0; i < raw.matrixR.length; ++i) {
+                    if (conlconst == -1) {
+                        conlconst = raw.matrixR[0].length;
+                    } else if (conlconst != raw.matrixR[i].length) {
+                        throw new jmml.monitor.ConfigException("La matriz en la matriz de arcos lectores e " +
+                                "inhibidores no es constante", jmml.monitor.errorTypeConfig.invalidFormatMatrix);
+                    }
+                }
+            }
+        }
+
+
+
     }
 
     // Falta agregar las escepciones si no existe la transiciones
@@ -149,22 +247,54 @@ public class RDP {
      * @param v Vector de dimencion Nx1
      * @return vector de Nx1, NULL en caso de tamanos incompatibles
      */
-    private int[] matMulVect(int[][] m, int[] v){
+    private int[] matMulVect(int[][] m, int[] v) {
         // Chequeo tamanos compatibles
-        if(v.length != m[0].length)
+        if (v.length != m[0].length)
             return null;
 
         // Vector resultado inicializado en 0
         int[] result = new int[v.length];
 
         // Opero por filas en la matriz
-        for(int i = 0; i < m.length; i++){
-            for(int j=0; j<m[0].length;j++){
+        for (int i = 0; i < m.length; i++) {
+            for (int j = 0; j < m[0].length; j++) {
                 result[i] += m[i][j] * v[j];
             }
         }
 
         return result;
+    }
+    /**
+     * Consulta si la red de petri es extendida para maxima cantidad de tokens
+     * <pre>
+     * @return true:  Si estan limitadas las plazas a un numero maximo de tokens <br>
+     *         false: Caso contrario
+     * </pre>
+     */
+    public boolean isExtMaxToken() {
+        return (this.raw.vectorMaxMark != null);
+    }
+
+    /**
+     * Consulta si la red de petri es extendida arcos inhibidores
+     * <pre>
+     * @return true:  Si hay matriz de arcos inhibidores <br>
+     *         false: Caso contrario
+     * </pre>
+     */
+    public boolean isExtInh() {
+        return (this.raw.matrixH != null);
+    }
+
+    /**
+     * Consulta si la red de petri es extendida arcos lectores
+     * <pre>
+     * @return true:  Si hay matriz de arcos lectores <br>
+     *         false: Caso contrario
+     * </pre>
+     */
+    public boolean isExtReader() {
+        return (this.raw.matrixR != null);
     }
 
 
