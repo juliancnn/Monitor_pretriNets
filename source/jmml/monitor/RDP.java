@@ -306,5 +306,59 @@ public class RDP {
         return (this.raw.matrixR != null);
     }
 
+    /**
+     * Obtiene un array con el estado de marcado de la red de petri
+     *
+     * @return Una copia del array con el marcado actual del sistema
+     */
+    public int[] getMark() {
+        return raw.vectorMark.clone();
+    }
+
+    /**
+     * Obtiene la matriz de doble incidencia de la red de petri
+     *
+     * @return Devuelve una copia de la matriz de la red de petri
+     */
+    public int[][] getMatrix() {
+        return this.raw.matrixI.clone();
+    }
+
+    /**
+     * Obtiene un array con la informacion de maximos toquens por plaza
+     * <pre>
+     * @return Una copia del array con el marcado maximo por plaza. <br>
+     *         Null Si no es extendida la red
+     * </pre>
+     */
+    public int[] getExtMaxToken() {
+        return this.isExtMaxToken() ? this.raw.vectorMaxMark.clone() : null;
+    }
+
+    /**
+     * Obtiene una matriz con la informacion de los arcos inhibidores, con el mismo formato de JSON
+     * <pre>
+     * @return Una copia de la matriz con arcos inhibidores. <br>
+     *         Null Si no es extendida la red
+     * </pre>
+     */
+    public int[][] getExtInh() {
+        return this.isExtInh() ? this.raw.matrixH.clone() : null;
+    }
+
+    /**
+     * Obtiene una matriz con la informacion de los arcos lectores, con el mismo formato de JSON
+     * <pre>
+     * @return Una copia de la matriz con arcos lectores. <br>
+     *         Null Si no es extendida la red
+     * </pre>
+     */
+    public int[][] getExtReader(){
+        return this.isExtReader() ? this.raw.matrixR.clone() : null;
+    }
+
+
+
+
 
 }
