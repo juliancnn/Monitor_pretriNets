@@ -1,6 +1,8 @@
 package jmml.monitor;
+
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.String;
@@ -36,6 +38,7 @@ public class RDP {
      * Contiene toda la configuracion de la red de petri y su estado.
      */
     private RDPraw raw;
+
     /**
      * Crea la red de petri a partir de un archivo
      * <p>
@@ -166,20 +169,25 @@ public class RDP {
         }
 
 
-
     }
 
     // Falta agregar las escepciones si no existe la transiciones
-    public boolean shotT(int tDisp, boolean test){
+    public boolean shotT(int tDisp) {
+        return this.shotT(tDisp, false);
+    }
+
+    // FAlta documentacion
+    public boolean shotT(int tDisp, boolean test) {
         boolean validShot = true;
         int[] newMark;
+        /* Verifico si el tiro es valido */
 
         /* Si el tiro sigue siendo valido chequeo nueva marca */
         newMark = validShot ? this.nextMark(tDisp) : null;
         validShot = newMark != null && valid4Mark(newMark);
 
 
-        if(validShot && !test){
+        if (validShot && !test) {
             this.raw.vectorMark = newMark;
         }
 
@@ -194,23 +202,22 @@ public class RDP {
      *         False si la marca no es valida
      * </pre>
      */
-    private boolean valid4Mark(int[] mark){
+    private boolean valid4Mark(int[] mark) {
         boolean valid = true;
 
-        for(int i=0;i<mark.length;i++){
+        for (int i = 0; i < mark.length; i++) {
             // Marca invalida por falta de tokens
-            if(mark[i]<0){
+            if (mark[i] < 0) {
                 valid = false;
                 break;
             }
             // Cambio por la funcion si es extendida
             // Marca invalida por maxTokens
-            if(this.raw.vectorMaxMark != null){
-                if(this.raw.vectorMaxMark[i] != 0 && mark[i] > this.raw.vectorMaxMark[i]){
+            if (this.isExtMaxToken()) {
+                if (this.raw.vectorMaxMark[i] != 0 && mark[i] > this.raw.vectorMaxMark[i]) {
                     valid = false;
                     break;
                 }
-
             }
         }
 
@@ -227,7 +234,7 @@ public class RDP {
      * @return vectorNextMark  Proxima marca, sea alcanzable o no. Null en caso de inexistencia de transicion
      * </pre>
      */
-    private int[] nextMark(int tDisp){
+    private int[] nextMark(int tDisp) {
         // Si la transicion no existe
         if (tDisp > raw.matrixI[0].length || tDisp < 1)
             return null;
@@ -237,12 +244,13 @@ public class RDP {
         vectorDisparo[tDisp - 1] = 1;
 
         // vector Proximo marcado
-        return matMulVect(this.raw.matrixI,vectorDisparo);
+        return matMulVect(this.raw.matrixI, vectorDisparo);
 
     }
 
     /**
      * Multiplica la Matriz M por el vector V
+     *
      * @param m Matriz de dimencion MxN
      * @param v Vector de dimencion Nx1
      * @return vector de Nx1, NULL en caso de tamanos incompatibles
@@ -264,6 +272,7 @@ public class RDP {
 
         return result;
     }
+
     /**
      * Consulta si la red de petri es extendida para maxima cantidad de tokens
      * <pre>
