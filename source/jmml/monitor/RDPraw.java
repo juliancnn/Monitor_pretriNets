@@ -27,6 +27,7 @@ package jmml.monitor;
  *   Estructura completa del JSON:
  *
  * </pre>
+ * @TODO Cambiar documentacion de matrices matrixH y matrixR
  */
 
 public class RDPraw {

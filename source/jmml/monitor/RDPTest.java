@@ -1,4 +1,5 @@
 package jmml.monitor;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -23,6 +24,7 @@ class RDPTest {
     private static final String JFILE_RDP1_INH = "examples_rdp/ej1_extended_Inh.json";
     //private static final String JFILE_RDP1_TEMPORAL = "examples_rdp/ex1_extended_Temporal.json";
     private static final String JFILE_RDP1_MAXTOKENS = "examples_rdp/ej1_extended_MaxToken.json";
+    private static final String JFILE_RDP1_READERINH = "examples_rdp/ej1_extended_ReaderInh.json";
 
     /**
      * Verifica que los archivos de la red sean los esperados para los test
@@ -111,11 +113,10 @@ class RDPTest {
                 Assertions.fail("La red de petri no es extendida para lectores escritores");
             } else {
                 assertArrayEquals(new int[][]{
-                                {0, 0, 0, 0},
-                                {0, 0, 2, -1},
-                                {0, 0, 0, 0},
-                                {0, 0, 0, 0},
-                                {0, 0, 0, 0}
+                                {0, 0, 0, 0, 0},
+                                {0, 0, 0, 0, 0},
+                                {0, 0, 0, 0, 0},
+                                {0, 1, 0, 0, 0},
                         }, rdp1_extend_H.getExtInh(),
                         "Arcos lectores/inhibidores alterados para el test");
             }
@@ -123,7 +124,7 @@ class RDPTest {
         } catch (java.io.FileNotFoundException e) {
             Assertions.fail("No existe el archivo JSON");
 
-        } catch (tpc.monitor.rdp.ConfigException e) {
+        } catch (ConfigException e) {
             Assertions.fail(e.toString());
         }
 
