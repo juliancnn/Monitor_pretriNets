@@ -136,6 +136,7 @@ class RDPTest {
     @Test
     @DisplayName("Disparos acertados chequeo de marcado")
     void shotT_ok() {
+        try {
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
@@ -148,6 +149,9 @@ class RDPTest {
                     "La red evoluciono mal o no evoluciono");
 
 
+        }catch (ShotException e) {
+            Assertions.fail("Transicion no existe");
+        }
         } catch (java.io.FileNotFoundException e) {
             Assertions.fail("No se puede crear la red de petri");
         } catch (ConfigException e) {
