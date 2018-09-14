@@ -81,28 +81,28 @@ public class RDP {
            ========================================================= */
 
         /* Chequeo de estructura JSON.  */
-        if (raw.matrixI == null || raw.vectorMark == null) {
+        if (this.raw.matrixI == null || this.raw.vectorMark == null) {
             throw new ConfigException("Error en la estructura JSON", errorTypeConfig.missingDataInJASON);
         }
 
         /* Chequeo de longuitud de matriz constante. */
         int conlconst = -1;
-        for (int i = 0; i < raw.matrixI.length; ++i) {
+        for (int i = 0; i < this.raw.matrixI.length; ++i) {
             if (conlconst == -1) {
-                conlconst = raw.matrixI[0].length;
-            } else if (conlconst != raw.matrixI[i].length) {
+                conlconst = this.raw.matrixI[0].length;
+            } else if (conlconst != this.raw.matrixI[i].length) {
                 throw new jmml.monitor.ConfigException("La matriz de insidencia no es constante",
                         jmml.monitor.errorTypeConfig.invalidFormatMatrix);
             }
         }
 
         /* Chequeo de loguitud del vector y elementos positivos */
-        if (raw.matrixI.length != raw.vectorMark.length) {
+        if (this.raw.matrixI.length != this.raw.vectorMark.length) {
             throw new jmml.monitor.ConfigException("La cantidad de plazas  de marcado no es correcta",
                     jmml.monitor.errorTypeConfig.invalidFormatArray);
         } else {
-            for (int i = 0; i < raw.vectorMark.length; ++i) {
-                if (raw.vectorMark[i] < 0) {
+            for (int i = 0; i < this.raw.vectorMark.length; ++i) {
+                if (this.raw.vectorMark[i] < 0) {
                     throw new jmml.monitor.ConfigException("Elemento negativo en la marca",
                             jmml.monitor.errorTypeConfig.invalidFormatArray);
                 }
@@ -127,7 +127,7 @@ public class RDP {
 
         /* Chequeo de longuitud del vector de arcos inhibidores */
         if (this.isExtInh()) {
-            if (raw.matrixH[0].length != raw.matrixI.length) {
+            if (this.raw.matrixH[0].length != this.raw.matrixI.length) {
                 throw new jmml.monitor.ConfigException("La cantidad de plazas  en la matriz de arcos " +
                         "inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
             } else if (this.raw.matrixH.length != this.raw.matrixI[0].length) {
@@ -158,10 +158,10 @@ public class RDP {
             } else {
                 /* Chequeo de longuitud de matriz constante. */
                 conlconst = -1;
-                for (int i = 0; i < raw.matrixR.length; ++i) {
+                for (int i = 0; i < this.raw.matrixR.length; ++i) {
                     if (conlconst == -1) {
-                        conlconst = raw.matrixR[0].length;
-                    } else if (conlconst != raw.matrixR[i].length) {
+                        conlconst = this.raw.matrixR[0].length;
+                    } else if (conlconst != this.raw.matrixR[i].length) {
                         throw new jmml.monitor.ConfigException("La matriz en la matriz de arcos lectores" +
                                 "no es constante", jmml.monitor.errorTypeConfig.invalidFormatMatrix);
                     }
@@ -252,7 +252,11 @@ public class RDP {
         vectorDisparo[tDisp - 1] = 1;
 
         // vector Proximo marcado
-        return matMulVect(this.raw.matrixI, vectorDisparo);
+        int[] vNextMark = matMulVect(this.raw.matrixI, vectorDisparo);
+        for (int i = 0; i < vNextMark.length; i++)
+            vNextMark[i] += this.raw.vectorMark[i];
+
+        return vNextMark;
 
     }
 
@@ -297,7 +301,7 @@ public class RDP {
             return null;
 
         // Vector resultado inicializado en 0
-        int[] result = new int[v.length];
+        int[] result = new int[m.length];
 
         // Opero por filas en la matriz
         for (int i = 0; i < m.length; i++) {

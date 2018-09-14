@@ -144,7 +144,7 @@ class RDPTest {
             Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1.getMark());
 
             Assertions.assertTrue(rdp1.shotT(1, false), "No se disparo y debia");
-            Assertions.assertArrayEquals(new int[]{0, 1, 0, 1, 0}, rdp1.getMark(),
+            Assertions.assertArrayEquals(new int[]{2, 1, 0, 1, 0}, rdp1.getMark(),
                     "La red evoluciono mal o no evoluciono");
 
 
