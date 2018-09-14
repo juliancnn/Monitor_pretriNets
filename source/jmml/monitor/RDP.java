@@ -130,13 +130,13 @@ public class RDP {
             if (raw.matrixH[0].length != raw.matrixI.length) {
                 throw new jmml.monitor.ConfigException("La cantidad de plazas  en la matriz de arcos " +
                         "inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
-            } else if (raw.matrixH.length != raw.matrixI[0].length) {
+            } else if (this.raw.matrixH.length != this.raw.matrixI[0].length) {
                 throw new jmml.monitor.ConfigException("La cantidad de transiciones  en la matriz de arcos" +
-                        "inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+                        " inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
             } else {
                 /* Chequeo de longuitud de matriz constante. */
                 conlconst = -1;
-                for (int i = 0; i < this.raw.matrixH[0].length; ++i) {
+                for (int i = 0; i < this.raw.matrixH.length; ++i) {
                     if (conlconst == -1) {
                         conlconst = this.raw.matrixH[0].length;
                     } else if (conlconst != this.raw.matrixH[i].length) {
