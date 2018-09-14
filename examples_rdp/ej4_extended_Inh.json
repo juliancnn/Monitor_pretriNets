@@ -2,9 +2,9 @@
   "brief" : "Ejemplo 4: Escritor/Lector",
   "info"  : "Red con arcos inhibidores. Multiples lectores y un solo escritor. P1 posibles procesos para escribir o leer, P2 escritor y P3 lectores. ",
   "matrixI" : [
-    [0, -1, 0, 1],
+    [-1, -1, 1, 1],
     [1, 0, -1, 0],
-    [1, 0, 0, -1]
+    [0, 1, 0, -1]
   ],
   "vectorMark"     : [5, 0, 0],
   "vectorMaxToken" : [0, 0, 3],
