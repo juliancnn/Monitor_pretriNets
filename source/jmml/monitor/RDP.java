@@ -209,7 +209,7 @@ public class RDP {
 
         /* Verifico si el tiro es valido  por arcos inhibidores */
         if (this.isExtInh())
-            validShot = (this.vecMul(this.raw.matrixH[tDisp - 1], this.genVectorQ()) == 1);
+            validShot = (this.vecMul(this.raw.matrixH[tDisp - 1], this.genVectorW()) == 0);
 
         /* Verifico si el tiro es valido  por arcos inhibidores */
         if (this.isExtReader())
@@ -288,15 +288,18 @@ public class RDP {
 
     /**
      * <pre>
-     * Genera el vector Q de plazas inhibidoras, generadas con la relacion Cero(Marcador(Plaza))
-     * @return Vector, 0 si la plaza tiene Toknes
-     *                 1 Si la plaza no tiene Tokens
+     * Genera el vector Q de plazas inhibidoras, generadas con la relacion UNO(Marcador(Plaza))
+     * Los unos multiplicados con los unos de las transiciones con arcos inhibidores
+     * generan unos en el vector de no sensibilizado
+     *
+     * @return Vector, 1 si la plaza tiene Tokens
+     *                 0 Si la plaza no tiene Tokens
      * </pre>
      */
     private int[] genVectorQ() {
         int[] q = new int[this.raw.vectorMark.length];
         for (int i = 0; i < q.length; i++)
-            q[i] = this.raw.vectorMark[i] == 0 ? 1 : 0;
+            q[i] = this.raw.vectorMark[i] == 0 ? 0 : 1;
         return q;
     }
 

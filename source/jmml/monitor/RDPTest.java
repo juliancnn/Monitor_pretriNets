@@ -184,9 +184,22 @@ class RDPTest {
                 Assertions.assertTrue(rdp4_extend.shotT(2), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{2, 0, 3}, rdp4_extend.getMark(),
                         "La red no evoluciono y debia");
-                Assertions.assertFalse(rdp4_extend.shotT(2), "No se disparo y debia");
+                /*Por maxima cantidad de tokens*/
+                Assertions.assertFalse(rdp4_extend.shotT(2), "Se disparo y no debia");
                 Assertions.assertArrayEquals(new int[]{2, 0, 3}, rdp4_extend.getMark(),
                         "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp4_extend.shotT(4), "No se disparo y debia");
+                Assertions.assertTrue(rdp4_extend.shotT(4), "No se disparo y debia");
+                Assertions.assertTrue(rdp4_extend.shotT(4), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{5, 0, 0}, rdp4_extend.getMark());
+                Assertions.assertTrue(rdp4_extend.shotT(1), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{4, 1, 0}, rdp4_extend.getMark());
+                Assertions.assertFalse(rdp4_extend.shotT(1), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{4, 1, 0}, rdp4_extend.getMark());
+                Assertions.assertFalse(rdp4_extend.shotT(2), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{4, 1, 0}, rdp4_extend.getMark());
+                Assertions.assertTrue(rdp4_extend.shotT(3), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{5, 0, 0}, rdp4_extend.getMark());
             } catch (ShotException e) {
                 Assertions.fail();
             }

@@ -7,7 +7,7 @@
     [0, 1, 0, -1]
   ],
   "vectorMark"     : [5, 0, 0],
-  "vectorMaxToken" : [0, 0, 3],
+  "vectorMaxMark" : [0, 0, 3],
   "matrixH" : [
     [0, 1, 1],
     [0, 1, 0],
