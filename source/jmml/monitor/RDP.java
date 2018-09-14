@@ -62,7 +62,7 @@ public class RDP {
      *   }
      * </pre>
      *
-     * @param jsonFile Nombre del archivo JSON que contiene la informacion
+     * @param jsonFile Ruta del archivo JSON que contiene la informacion
      * @throws FileNotFoundException Lanzado cuando no se encuentra el archivo JSON
      * @TODO Verificar que las matrices H y R sean binarias
      * @see RDPraw Ver estructura completa del JSON
@@ -172,27 +172,52 @@ public class RDP {
 
     }
 
-    // Falta agregar las escepciones si no existe la transiciones
-    public boolean shotT(int tDisp) {
+    /**
+     * <pre>
+     * Intenta realizar disparo de la red de petri, si puede dispara y altera el estado de la red
+     *
+     * @param tDisp Numero de transicion a disparar
+     * @return True en caso de exito en el disparo de la transicion y evolucion de la red <br>
+     *         False en caso de que la transicion no este sencibilidaza
+     * @throws ShotException Si no existe la transicion
+     * </pre>
+     */
+    public boolean shotT(int tDisp) throws ShotException {
         return this.shotT(tDisp, false);
     }
 
-    // FAlta documentacion
-    public boolean shotT(int tDisp, boolean test) {
+    /**
+     * Intenta realizar disparo de la red de petri, este puede ser un disparo de prueba o puede guardar los resultados
+     * y alterar el estado de la red
+     *
+     * <pre>
+     * @param tDisp Numero de transicion a disparar
+     * @param test  True si no quiere alterar el estado de la red de petri <br>
+     *              False si en caso de que se pueda disparar se altere el estado de la redes
+     * @return True en caso de exito en el disparo de la transicion <br>
+     *         False en caso de que la transicion no este sencibilidaza
+     * @throws ShotException Excepcion por inexistencia de la transicion
+     * </pre>
+     */
+    public boolean shotT(int tDisp, boolean test) throws ShotException {
+        // Si la transicion no existe lanza la excepcion
+        if (tDisp > this.raw.matrixI[0].length || tDisp < 1)
+            throw new ShotException(this.raw.vectorMark, tDisp, this.raw.matrixI[0].length);
+
         boolean validShot = true;
         int[] newMark;
 
         /* Verifico si el tiro es valido  por arcos inhibidores */
         if (this.isExtInh())
-            validShot = validShot && (vecMul(this.raw.matrixH[tDisp - 1], genVectorQ()) == 1);
+            validShot = (this.vecMul(this.raw.matrixH[tDisp - 1], this.genVectorQ()) == 1);
 
         /* Verifico si el tiro es valido  por arcos inhibidores */
         if (this.isExtReader())
-            validShot = validShot && (vecMul(this.raw.matrixR[tDisp - 1], genVectorW()) == 1);
+            validShot = validShot && (this.vecMul(this.raw.matrixR[tDisp - 1], this.genVectorW()) == 1);
 
         /* Si el tiro sigue siendo valido chequeo nueva marca */
         newMark = validShot ? this.nextMark(tDisp) : null;
-        validShot = newMark != null && valid4Mark(newMark);
+        validShot = newMark != null && this.valid4Mark(newMark);
 
 
         if (validShot && !test) {
@@ -253,8 +278,9 @@ public class RDP {
 
         // vector Proximo marcado
         int[] vNextMark = matMulVect(this.raw.matrixI, vectorDisparo);
-        for (int i = 0; i < vNextMark.length; i++)
-            vNextMark[i] += this.raw.vectorMark[i];
+        if (vNextMark != null)
+            for (int i = 0; i < vNextMark.length; i++)
+                vNextMark[i] += this.raw.vectorMark[i];
 
         return vNextMark;
 
