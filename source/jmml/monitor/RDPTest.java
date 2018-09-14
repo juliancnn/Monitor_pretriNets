@@ -1,14 +1,19 @@
 package jmml.monitor;
 
 import org.junit.jupiter.api.*;
-import jmml.monitor.ConfigException;
-import jmml.monitor.RDP;
-import jmml.monitor.ShotException;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Testea la Red de Petri en base a los archivos ubicados en el directorio
+ * @TODO Falta todo en JFILE_RDP2_MAXTOKENS
+ * @TODO Falta todo en JFILE_RDP3_MAXTOKENS
+ * @TODO Faltan los test de JFILE_RDP1_INH
+ * @TODO Falta checkeo de archivos en JFILE_RDP4_INH
+ * @TODO Falta Armar un archivo nuevo para lectores solo
+ * @TODO Falta todo en JFILE_RDP1_READERINH
+ * @TODO Falta todo en JFILE_RDP1_TEMPORAL
  */
 @Tag("RDP")
 class RDPTest {
@@ -17,13 +22,13 @@ class RDPTest {
      * Lista de archivos usados en los test
      * */
     private static final String JFILE_RDP1 = "examples_rdp/ej1_basic.json";
-    private static final String JFILE_RDP2_MAXTOKENS = "examples_rdp/ej2_extended_MaxToken.json";
-    private static final String JFILE_RDP3_MAXTOKENS = "examples_rdp/ej3_extended_MaxToken.json";
-    private static final String JFILE_RDP4_INH = "examples_rdp/ej4_extended_Inh.json";
-    private static final String JFILE_RDP1_INH = "examples_rdp/ej1_extended_Inh.json";
-    //private static final String JFILE_RDP1_TEMPORAL = "examples_rdp/ex1_extended_Temporal.json";
     private static final String JFILE_RDP1_MAXTOKENS = "examples_rdp/ej1_extended_MaxToken.json";
-    private static final String JFILE_RDP1_READERINH = "examples_rdp/ej1_extended_ReaderInh.json";
+    //private static final String JFILE_RDP2_MAXTOKENS = "examples_rdp/ej2_extended_MaxToken.json";
+    //private static final String JFILE_RDP3_MAXTOKENS = "examples_rdp/ej3_extended_MaxToken.json";
+    private static final String JFILE_RDP1_INH = "examples_rdp/ej1_extended_Inh.json";
+    private static final String JFILE_RDP4_INH = "examples_rdp/ej4_extended_Inh.json";
+    //private static final String JFILE_RDP1_TEMPORAL = "examples_rdp/ex1_extended_Temporal.json";
+    //private static final String JFILE_RDP1_READERINH = "examples_rdp/ej1_extended_ReaderInh.json";
 
     /**
      * Verifica que los archivos de la red sean los esperados para los test
@@ -33,7 +38,7 @@ class RDPTest {
      * algoritmo de la red. Tambien se asegura que todas las redes pasen por todos los test.
      */
     @BeforeAll
-    @Tag("Creation Files")
+    @Tag("files")
     static void checkInitFiles() {
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
@@ -143,9 +148,17 @@ class RDPTest {
         try {
             RDP rdp1 = new RDP(JFILE_RDP1);
             Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1.getMark());
-
-            Assertions.assertTrue(rdp1.shotT(1, false), "No se disparo y debia");
+            Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
             Assertions.assertArrayEquals(new int[]{2, 1, 0, 1, 0}, rdp1.getMark(),
+                    "La red evoluciono mal o no evoluciono");
+            Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
+            Assertions.assertArrayEquals(new int[]{1, 2, 0, 2, 0}, rdp1.getMark(),
+                    "La red evoluciono mal o no evoluciono");
+            Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
+            Assertions.assertArrayEquals(new int[]{0, 3, 0, 3, 0}, rdp1.getMark(),
+                    "La red evoluciono mal o no evoluciono");
+            Assertions.assertFalse(rdp1.shotT(1), "No se disparo y debia");
+            Assertions.assertArrayEquals(new int[]{0, 3, 0, 3, 0}, rdp1.getMark(),
                     "La red evoluciono mal o no evoluciono");
 
 
@@ -160,10 +173,51 @@ class RDPTest {
 
 
     }
+
+    @Test
+    @DisplayName("[extMaxToken] Disparos acertados chequeo de marcado con plazas limitadas")
+    void shotT_extendedMAxTokens() {
+        try {
+        /*================================================
+            RDP 1: Limitada en la plaza 2 con 2 tokens
+          ================================================ */
+            try {
+                RDP rdp1 = new RDP(JFILE_RDP1_MAXTOKENS);
+                Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1.getMark());
+                Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{2, 1, 0, 1, 0}, rdp1.getMark(),
+                        "La red evoluciono mal o no evoluciono");
+                Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1, 2, 0, 2, 0}, rdp1.getMark(),
+                        "La red evoluciono mal o no evoluciono");
+                Assertions.assertFalse(rdp1.shotT(1), "Se disparo y no debia");
+                Assertions.assertArrayEquals(new int[]{1, 2, 0, 2, 0}, rdp1.getMark(),
+                        "La red evoluciono mal o no evoluciono");
+                Assertions.assertTrue(rdp1.shotT(2), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1, 1, 1, 2, 0}, rdp1.getMark(),
+                        "La red evoluciono mal o no evoluciono");
+                Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{0, 2, 1, 3, 0}, rdp1.getMark(),
+                        "La red evoluciono mal o no evoluciono");
+
+
+            }catch (ShotException e) {
+                Assertions.fail("Transicion no existe");
+            }
+        } catch (java.io.FileNotFoundException e) {
+            Assertions.fail("No se puede crear la red de petri");
+        } catch (ConfigException e) {
+            Assertions.fail(e.toString());
+        }
+
+
+    }
+
+
     @Test
     @Tag("extINH")
-    @DisplayName("[extInh] Disparos con arcos inhibidores")
-    void shotT_extendedReaderInh() {
+    @DisplayName("[extInh] Disparos con arcos inhibidores + MaxTokens")
+    void shotT_extendedInh() {
 
         /*=========================================================
             RDP 4_extend: Extendida, con arcos inhibidores y max tokens
