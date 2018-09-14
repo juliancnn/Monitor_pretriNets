@@ -1,17 +1,16 @@
 package jmml.monitor;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.*;
 import jmml.monitor.ConfigException;
 import jmml.monitor.RDP;
+import jmml.monitor.ShotException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Testea la Red de Petri en base a los archivos ubicados en el directorio
  */
-@Tag("Carga de RDP")
+@Tag("RDP")
 class RDPTest {
 
     /*
@@ -34,7 +33,7 @@ class RDPTest {
      * algoritmo de la red. Tambien se asegura que todas las redes pasen por todos los test.
      */
     @BeforeAll
-    @Tag("files")
+    @Tag("Creation Files")
     static void checkInitFiles() {
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
@@ -50,7 +49,7 @@ class RDPTest {
                             {1, 0, -1, 0},
                             {0, 0, 1, -1}
                     }, rdp1.getMatrix(), "Red de petri 1 alterada para el test");
-            Assertions.assertArrayEquals(new int[]{1, 0, 0, 0, 0}, rdp1.getMark(),
+            Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1.getMark(),
                     "Marca inicial 1 alterada para el test");
         } catch (java.io.FileNotFoundException e) {
             Assertions.fail("No existe el archivo");
@@ -129,4 +128,34 @@ class RDPTest {
         }
 
     }
+
+    /**
+     * Teste el disparo (shotT), con disparos de prueba y con disparos de evolucion de red
+     * Chequea que evolucione correctamente el marcado
+     */
+    @Test
+    @DisplayName("Disparos acertados chequeo de marcado")
+    void shotT_ok() {
+        /*================================================
+            RDP 1: Basica, no exendida en ninguna forma
+          ================================================ */
+        try {
+            RDP rdp1 = new RDP(JFILE_RDP1);
+            Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1.getMark());
+
+            Assertions.assertTrue(rdp1.shotT(1, false), "No se disparo y debia");
+            Assertions.assertArrayEquals(new int[]{0, 1, 0, 1, 0}, rdp1.getMark(),
+                    "La red evoluciono mal o no evoluciono");
+
+
+        } catch (java.io.FileNotFoundException e) {
+            Assertions.fail("No se puede crear la red de petri");
+        } catch (ConfigException e) {
+            Assertions.fail(e.toString());
+        }
+
+
+    }
+
+
 }
