@@ -166,7 +166,7 @@ class RDPTest {
     void shotT_extendedReaderInh() {
 
         /*=========================================================
-            RDP 4_extend: Extendida, con arcos inhibidores
+            RDP 4_extend: Extendida, con arcos inhibidores y max tokens
           ========================================================= */
         try {
              RDP rdp4_extend = new RDP(JFILE_RDP4_INH);

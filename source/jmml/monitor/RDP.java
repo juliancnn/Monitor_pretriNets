@@ -208,8 +208,9 @@ public class RDP {
         int[] newMark;
 
         /* Verifico si el tiro es valido  por arcos inhibidores */
+        // Calculo componmenete B(tDisp) = H[tdis][] x VectorQ (1 = Transicion no sensibilizada)
         if (this.isExtInh())
-            validShot = (this.vecMul(this.raw.matrixH[tDisp - 1], this.genVectorW()) == 0);
+            validShot = (this.vecMul(this.raw.matrixH[tDisp - 1], this.genVectorQ()) == 0);
 
         /* Verifico si el tiro es valido  por arcos inhibidores */
         if (this.isExtReader())
