@@ -1,0 +1,17 @@
+{
+  "brief" : "Ejemplo 5: Generador de autos con barrera",
+  "info" : "T1 genera autos a P1, que pasan de uno por la barrera modelada entre p3 y p4, pasan a p2",
+  "matrixI" :  [
+    [1, -1,  0],
+    [0,  1,  0],
+    [0,  1, -1],
+    [0, -1,  1]
+  ],
+  "vectorMark" : [0, 0, 1, 0],
+  "vectorMaxMark" : [0, 3, 0, 0],
+  "matrixR" :[
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [1, 0, 0, 0]
+  ]
+}

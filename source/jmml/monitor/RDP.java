@@ -17,14 +17,14 @@ import java.lang.String;
  * Tiene la posibilidad de:
  *  - [NO] Dispara las transiciones y alterar el estado de la red
  *  - [NO] Informar las transiciones disponibles para disparar
- *  - [NO] Informar si se puede disparar o no una transicion
- *  - [NO] Informar el marcado de la red
+ *  - Informar si se puede disparar o no una transicion
+ *  - Informar el marcado de la red
  *  - [NO] Informar el estado de sensibilizado de todas las condiciones (Matrix sensibilizado)
  *  - [NO] Imprimir toda la informacion disponible de la red y su estado
  *
  * Soporta caracteristicas de redes de petri extendidas como:
- *  - [NO] Maxima cantidad de tokens por plaza
- *  - [NO] Arcos inhibidores
+ *  - Maxima cantidad de tokens por plaza
+ *  - Arcos inhibidores
  *  - [NO] Arcos lectores con peso 1
  *  - [NO] Arcos lectores con otro peso
  *  - [NO] Transiciones sensibilizadas temporalmente
@@ -214,7 +214,7 @@ public class RDP {
 
         /* Verifico si el tiro es valido  por arcos inhibidores */
         if (this.isExtReader())
-            validShot = validShot && (this.vecMul(this.raw.matrixR[tDisp - 1], this.genVectorW()) == 1);
+            validShot = validShot && (this.vecMul(this.raw.matrixR[tDisp - 1], this.genVectorW()) == 0);
 
         /* Si el tiro sigue siendo valido chequeo nueva marca */
         newMark = validShot ? this.nextMark(tDisp) : null;
@@ -292,7 +292,6 @@ public class RDP {
      * Genera el vector Q de plazas inhibidoras, generadas con la relacion UNO(Marcador(Plaza))
      * Los unos multiplicados con los unos de las transiciones con arcos inhibidores
      * generan unos en el vector de no sensibilizado
-     *
      * @return Vector, 1 si la plaza tiene Tokens
      *                 0 Si la plaza no tiene Tokens
      * </pre>
@@ -306,15 +305,16 @@ public class RDP {
 
     /**
      * <pre>
-     * Genera el vector W de plazas Lectoras, generadas con la relacion Uno(Marcador(Plaza))
-     * @return Vector, 1 si la plaza tiene Toknes
-     *                 0 Si la plaza no tiene Tokens
+     * Los unos multiplicados con los unos de las transiciones con arcos lectores
+     * generan unos en el vector de no sensibilizado por arcos lectores
+     * @return Vector, 1 si la plaza no tiene Toknes
+     *                 0 Si la plaza tiene Tokens
      * </pre>
      */
     private int[] genVectorW() {
         int[] w = new int[this.raw.vectorMark.length];
         for (int i = 0; i < w.length; i++)
-            w[i] = this.raw.vectorMark[i] == 0 ? 0 : 1;
+            w[i] = this.raw.vectorMark[i] == 0 ? 1 : 0;
         return w;
     }
 

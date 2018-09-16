@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Testea la Red de Petri en base a los archivos ubicados en el directorio
+ * @TODO Falta checkear el archiv JFILE_RDP5_READER
  * @TODO Falta todo en JFILE_RDP2_MAXTOKENS
  * @TODO Falta todo en JFILE_RDP3_MAXTOKENS
  * @TODO Faltan los test de JFILE_RDP1_INH
@@ -27,8 +28,10 @@ class RDPTest {
     //private static final String JFILE_RDP3_MAXTOKENS = "examples_rdp/ej3_extended_MaxToken.json";
     private static final String JFILE_RDP1_INH = "examples_rdp/ej1_extended_Inh.json";
     private static final String JFILE_RDP4_INH = "examples_rdp/ej4_extended_Inh.json";
-    //private static final String JFILE_RDP1_TEMPORAL = "examples_rdp/ex1_extended_Temporal.json";
+    private static final String JFILE_RDP5_READER = "examples_rdp/ej5_extended_Reader.json";
     //private static final String JFILE_RDP1_READERINH = "examples_rdp/ej1_extended_ReaderInh.json";
+    //private static final String JFILE_RDP1_TEMPORAL = "examples_rdp/ex1_extended_Temporal.json";
+
 
     /**
      * Verifica que los archivos de la red sean los esperados para los test
@@ -254,6 +257,62 @@ class RDPTest {
                 Assertions.assertArrayEquals(new int[]{4, 1, 0}, rdp4_extend.getMark());
                 Assertions.assertTrue(rdp4_extend.shotT(3), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{5, 0, 0}, rdp4_extend.getMark());
+            } catch (ShotException e) {
+                Assertions.fail();
+            }
+        } catch (java.io.FileNotFoundException e) {
+            Assertions.fail("No existe el archivo");
+        } catch (ConfigException e) {
+            Assertions.fail(e.toString());
+        }
+    }
+
+    @Test
+    @Tag("extReader")
+    @DisplayName("[extReader] Disparos con arcos Lectores + MaxTokens")
+    void shotT_extendedReader() {
+
+        /*=========================================================
+            RDP 4_extend: Extendida, con arcos inhibidores y max tokens
+          ========================================================= */
+        try {
+            RDP rdp5_extReader = new RDP(JFILE_RDP5_READER);
+            Assertions.assertArrayEquals(new int[]{0, 0, 1, 0}, rdp5_extReader.getMark());
+            try {
+                Assertions.assertFalse(rdp5_extReader.shotT(3), "Se disparo y no debia");
+                Assertions.assertFalse(rdp5_extReader.shotT(2), "Se disparo y no debia");
+                Assertions.assertTrue(rdp5_extReader.shotT(1), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1, 0, 1, 0}, rdp5_extReader.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp5_extReader.shotT(3), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1, 0, 0, 1}, rdp5_extReader.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp5_extReader.shotT(2), "Se disparo y no debia");
+                Assertions.assertArrayEquals(new int[]{0, 1, 1, 0}, rdp5_extReader.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertFalse(rdp5_extReader.shotT(2), "Se disparo y no debia");
+                Assertions.assertTrue(rdp5_extReader.shotT(1), "No se disparo y debia");
+                Assertions.assertTrue(rdp5_extReader.shotT(1), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{2, 1, 1, 0}, rdp5_extReader.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp5_extReader.shotT(3), "No se disparo y debia");
+                Assertions.assertTrue(rdp5_extReader.shotT(2), "Se disparo y no debia");
+                Assertions.assertArrayEquals(new int[]{1, 2, 1, 0}, rdp5_extReader.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertTrue(rdp5_extReader.shotT(3), "No se disparo y debia");
+                Assertions.assertTrue(rdp5_extReader.shotT(2), "Se disparo y no debia");
+                Assertions.assertArrayEquals(new int[]{0, 3, 1, 0}, rdp5_extReader.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertFalse(rdp5_extReader.shotT(3), "No se disparo y debia");
+                Assertions.assertFalse(rdp5_extReader.shotT(2), "Se disparo y no debia");
+                Assertions.assertArrayEquals(new int[]{0, 3, 1, 0}, rdp5_extReader.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertFalse(rdp5_extReader.shotT(3), "No se disparo y debia");
+                Assertions.assertTrue(rdp5_extReader.shotT(1), "Se disparo y no debia");
+                Assertions.assertTrue(rdp5_extReader.shotT(3), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1, 3, 0, 1}, rdp5_extReader.getMark(),
+                        "La red no evoluciono y debia");
+                Assertions.assertFalse(rdp5_extReader.shotT(2), "Se disparo y no debia");
             } catch (ShotException e) {
                 Assertions.fail();
             }
