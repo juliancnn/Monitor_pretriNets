@@ -2,7 +2,9 @@ package jmml.monitor;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -199,7 +201,7 @@ public class RDP {
      * @throws ShotException Excepcion por inexistencia de la transicion
      * </pre>
      */
-    public boolean shotT(int tDisp, boolean test) throws ShotException {
+    private boolean shotT(int tDisp, boolean test) throws ShotException {
         // Si la transicion no existe lanza la excepcion
         if (tDisp > this.raw.matrixI[0].length || tDisp < 1)
             throw new ShotException(this.raw.vectorMark, tDisp, this.raw.matrixI[0].length);
@@ -245,7 +247,6 @@ public class RDP {
                 valid = false;
                 break;
             }
-            // Cambio por la funcion si es extendida
             // Marca invalida por maxTokens
             if (this.isExtMaxToken()) {
                 if (this.raw.vectorMaxMark[i] != 0 && mark[i] > this.raw.vectorMaxMark[i]) {
@@ -268,10 +269,10 @@ public class RDP {
      * @return vectorNextMark  Proxima marca, sea alcanzable o no. Null en caso de inexistencia de transicion
      * </pre>
      */
-    private int[] nextMark(int tDisp) {
+    private int[] nextMark(int tDisp) throws ShotException {
         // Si la transicion no existe
         if (tDisp > raw.matrixI[0].length || tDisp < 1)
-            return null;
+            throw new ShotException(this.raw.vectorMark, tDisp, this.raw.matrixI[0].length);
 
         // Vector de disparo ()
         int[] vectorDisparo = new int[raw.matrixI[0].length];
@@ -296,6 +297,7 @@ public class RDP {
      *                 0 Si la plaza no tiene Tokens
      * </pre>
      */
+    @Contract(pure = true)
     private int[] genVectorQ() {
         int[] q = new int[this.raw.vectorMark.length];
         for (int i = 0; i < q.length; i++)
@@ -311,6 +313,7 @@ public class RDP {
      *                 0 Si la plaza tiene Tokens
      * </pre>
      */
+    @Contract(pure = true)
     private int[] genVectorW() {
         int[] w = new int[this.raw.vectorMark.length];
         for (int i = 0; i < w.length; i++)
@@ -325,6 +328,8 @@ public class RDP {
      * @param v Vector de dimencion Nx1
      * @return vector de Nx1, NULL en caso de tamanos incompatibles
      */
+    @Nullable
+    @Contract(pure = true)
     private int[] matMulVect(@NotNull int[][] m, @NotNull int[] v) {
         // Chequeo tamanos compatibles
         if (v.length != m[0].length)
@@ -350,6 +355,7 @@ public class RDP {
      * @param v2 Vector de tamano n
      * @return escalar, NULL en caso de tamanos incompatibles
      */
+    @Contract(pure = true)
     private int vecMul(@NotNull int[] v1, @NotNull int[] v2) {
         // Chequeo tamanos compatibles
         if (v1.length != v2.length)
@@ -365,6 +371,88 @@ public class RDP {
 
         return result;
     }
+    /*==================================================================================================================
+
+                                   GETERS OF INFORMATIONS AND PROPERTIES
+
+     Devuelven informacion de estado y propiedades de la red sin realizar calculos
+     =================================================================================================================*/
+
+    /**
+     * Obtiene un array con el estado de marcado de la red de petri
+     *
+     * @return Una copia del array con el marcado actual del sistema
+     */
+    public int[] getMark() {
+        return raw.vectorMark.clone();
+    }
+
+    /**
+     * Retorna el vector de transiciones sensibilizadas, cada lugar del vector representa una transicion
+     * donde el primer lugar corresponde a la primera transicion.
+     *
+     * <pre>
+     * @return True si la transicion esta sensibilizada <br>
+     *         False en caso contrario
+     * </pre>
+     */
+    boolean[] getSensitizedArray() {
+        return getSensitizedArray(false);
+    }
+
+    /**
+     * Retorna el vector de transiciones sensibilizadas, cada lugar del vector representa una transicion
+     * donde el primer lugar corresponde a la primera transicion.
+     * Puede retornas el sensibilizado ignorando la ventana de tiempo de las transiciones
+     * <pre>
+     * @param ignoreWindows True si no quiere tener en cuenta el des-sensibilizado por ventana de tiempo
+     * @return True si la transicion esta sensibilizada <br>
+     *         False en caso contrario
+     * </pre>
+     */
+    private boolean[] getSensitizedArray(boolean ignoreWindows) {
+        boolean[] sensitizedT = new boolean[this.raw.matrixI[0].length];
+
+        /* Sensibilizado por tokenes y MaxTokens */
+        try {
+            for (int i = 0; i < sensitizedT.length; i++) {
+                sensitizedT[i] = this.valid4Mark(this.nextMark(i + 1));
+            }
+        } catch (ShotException se) {
+            System.out.println("Te las mandaste esto no puede pasar nunca por como se crea el vector");
+            System.exit(-1);
+        }
+
+
+        /* Sensibilizado por arcos inhibidores B = H*Q */
+        if (this.isExtInh()) {
+            int[] notSensitizedB = this.matMulVect(this.raw.matrixH, this.genVectorQ());
+            for (int i = 0; i < sensitizedT.length; i++) {
+                sensitizedT[i] &= (notSensitizedB[i] == 0); // Si es cero esta sensibilizada
+            }
+        }
+
+        /* Sensibilizado por arcos lectores L = R*W */
+        if (this.isExtReader()) {
+            int[] notSensitizedR = this.matMulVect(this.raw.matrixR, this.genVectorW());
+            for (int i = 0; i < sensitizedT.length; i++) {
+                sensitizedT[i] &= (notSensitizedR[i] == 0); // Si es cero esta sensibilizada
+            }
+        }
+
+
+        return sensitizedT;
+
+    }
+
+
+
+    /*==================================================================================================================
+
+                                   GETERS OF STATIC INFORMATIONS AND PROPERTIES
+
+     Devuelven informacion de estado y propiedades estaticas de la red
+     =================================================================================================================*/
 
 
     /**
@@ -400,14 +488,6 @@ public class RDP {
         return (this.raw.matrixR != null);
     }
 
-    /**
-     * Obtiene un array con el estado de marcado de la red de petri
-     *
-     * @return Una copia del array con el marcado actual del sistema
-     */
-    public int[] getMark() {
-        return raw.vectorMark.clone();
-    }
 
     /**
      * Obtiene la matriz de doble incidencia de la red de petri
