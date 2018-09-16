@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -66,6 +65,7 @@ public class RDP {
      *
      * @param jsonFile Ruta del archivo JSON que contiene la informacion
      * @throws FileNotFoundException Lanzado cuando no se encuentra el archivo JSON
+     * @throws ConfigException Lanzado cuando esta mal formado el archivo JSON
      * @TODO Verificar que las matrices H y R sean binarias
      * @see RDPraw Ver estructura completa del JSON
      */
@@ -238,6 +238,7 @@ public class RDP {
      *         False si la marca no es valida
      * </pre>
      */
+    @Contract(pure = true)
     private boolean valid4Mark(@NotNull int[] mark) {
         boolean valid = true;
 
@@ -269,6 +270,8 @@ public class RDP {
      * @return vectorNextMark  Proxima marca, sea alcanzable o no. Null en caso de inexistencia de transicion
      * </pre>
      */
+    @NotNull
+    @Contract(pure = true)
     private int[] nextMark(int tDisp) throws ShotException {
         // Si la transicion no existe
         if (tDisp > raw.matrixI[0].length || tDisp < 1)
@@ -280,9 +283,9 @@ public class RDP {
 
         // vector Proximo marcado
         int[] vNextMark = matMulVect(this.raw.matrixI, vectorDisparo);
-        if (vNextMark != null)
-            for (int i = 0; i < vNextMark.length; i++)
-                vNextMark[i] += this.raw.vectorMark[i];
+        for (int i = 0; i < vNextMark.length; i++)
+            vNextMark[i] += this.raw.vectorMark[i];
+
 
         return vNextMark;
 
@@ -298,6 +301,7 @@ public class RDP {
      * </pre>
      */
     @Contract(pure = true)
+    @NotNull
     private int[] genVectorQ() {
         int[] q = new int[this.raw.vectorMark.length];
         for (int i = 0; i < q.length; i++)
@@ -314,6 +318,7 @@ public class RDP {
      * </pre>
      */
     @Contract(pure = true)
+    @NotNull
     private int[] genVectorW() {
         int[] w = new int[this.raw.vectorMark.length];
         for (int i = 0; i < w.length; i++)
@@ -327,13 +332,14 @@ public class RDP {
      * @param m Matriz de dimencion MxN
      * @param v Vector de dimencion Nx1
      * @return vector de Nx1, NULL en caso de tamanos incompatibles
+     * @throws ArithmeticException Matriz y vector de dimenciones incompatibles
      */
-    @Nullable
+    @NotNull
     @Contract(pure = true)
     private int[] matMulVect(@NotNull int[][] m, @NotNull int[] v) {
         // Chequeo tamanos compatibles
         if (v.length != m[0].length)
-            return null;
+            throw new ArithmeticException("Matrix y vector de tamanos incompatibles");
 
         // Vector resultado inicializado en 0
         int[] result = new int[m.length];
@@ -373,9 +379,9 @@ public class RDP {
     }
     /*==================================================================================================================
 
-                                   GETERS OF INFORMATIONS AND PROPERTIES
+                                   GETERS OF INFORMATION AND PROPERTIES
 
-     Devuelven informacion de estado y propiedades de la red sin realizar calculos
+                    Devuelven informacion de estado y propiedades dinamicos de la red
      =================================================================================================================*/
 
     /**
@@ -383,6 +389,8 @@ public class RDP {
      *
      * @return Una copia del array con el marcado actual del sistema
      */
+    @NotNull
+    @Contract(pure = true)
     public int[] getMark() {
         return raw.vectorMark.clone();
     }
@@ -396,6 +404,8 @@ public class RDP {
      *         False en caso contrario
      * </pre>
      */
+    @NotNull
+    @Contract(pure = true)
     boolean[] getSensitizedArray() {
         return getSensitizedArray(false);
     }
@@ -410,6 +420,8 @@ public class RDP {
      *         False en caso contrario
      * </pre>
      */
+    @NotNull
+    @Contract(pure = true)
     private boolean[] getSensitizedArray(boolean ignoreWindows) {
         boolean[] sensitizedT = new boolean[this.raw.matrixI[0].length];
 
@@ -449,9 +461,9 @@ public class RDP {
 
     /*==================================================================================================================
 
-                                   GETERS OF STATIC INFORMATIONS AND PROPERTIES
+                                   GETERS OF STATIC INFORMATION AND PROPERTIES
 
-     Devuelven informacion de estado y propiedades estaticas de la red
+                        Devuelven informacion de estado y propiedades estaticas de la red
      =================================================================================================================*/
 
 
@@ -462,6 +474,7 @@ public class RDP {
      *         false: Caso contrario
      * </pre>
      */
+    @Contract(pure = true)
     public boolean isExtMaxToken() {
         return (this.raw.vectorMaxMark != null);
     }
@@ -473,6 +486,7 @@ public class RDP {
      *         false: Caso contrario
      * </pre>
      */
+    @Contract(pure = true)
     public boolean isExtInh() {
         return (this.raw.matrixH != null);
     }
@@ -484,6 +498,7 @@ public class RDP {
      *         false: Caso contrario
      * </pre>
      */
+    @Contract(pure = true)
     public boolean isExtReader() {
         return (this.raw.matrixR != null);
     }
@@ -494,6 +509,8 @@ public class RDP {
      *
      * @return Devuelve una copia de la matriz de la red de petri
      */
+    @NotNull
+    @Contract(pure = true)
     public int[][] getMatrix() {
         return this.raw.matrixI.clone();
     }
@@ -505,6 +522,7 @@ public class RDP {
      *         Null Si no es extendida la red
      * </pre>
      */
+    @Contract(pure = true)
     public int[] getExtMaxToken() {
         return this.isExtMaxToken() ? this.raw.vectorMaxMark.clone() : null;
     }
@@ -516,6 +534,7 @@ public class RDP {
      *         Null Si no es extendida la red
      * </pre>
      */
+    @Contract(pure = true)
     public int[][] getExtInh() {
         return this.isExtInh() ? this.raw.matrixH.clone() : null;
     }
@@ -527,6 +546,7 @@ public class RDP {
      *         Null Si no es extendida la red
      * </pre>
      */
+    @Contract(pure = true)
     public int[][] getExtReader() {
         return this.isExtReader() ? this.raw.matrixR.clone() : null;
     }

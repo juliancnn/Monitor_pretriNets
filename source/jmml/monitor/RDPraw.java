@@ -70,7 +70,7 @@ package jmml.monitor;
  * @TODO Caundo se cambien lo de los pesos de los lectores resolver lo de la documentacion.
  */
 
-public class RDPraw {
+class RDPraw {
     /**
      * Informacion basica de la red de petri
      */

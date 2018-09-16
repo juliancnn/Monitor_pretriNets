@@ -56,6 +56,7 @@ class ShotException extends Exception {
     /**
      * Imprime la informacion del disparo fallido junto con el estado del sistema
      */
+    @SuppressWarnings("unused")
     public void printInfo() {
         System.out.println("Disparo fallido para la transicion: " + this.tDisparo);
         System.out.println("Marca del sistema al momento del fallo:");
