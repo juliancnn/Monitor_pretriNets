@@ -72,6 +72,23 @@ public class RDP {
         JsonReader reader = new JsonReader(new FileReader(jsonFile));
         this.raw = json.fromJson(reader, RDPraw.class);
         /* FIN DE CARGA DE DATOS */
+
+        /* Si es temporal cargo los datos delos timestamp */
+        if(this.isExtTemp()){
+            //Chequeos ok - Carga vector de tiempo para transiciones sensibilizadas
+            this.raw.vectorTimestamp = new long[this.raw.matrixI[0].length];
+            boolean SensAux[] = getSensitizedArray(true);
+            long timestamp = java.lang.System.currentTimeMillis();
+            for (int i = 0; i < this.raw.vectorTimestamp.length; ++i) {
+                if (SensAux[i]) {
+                    this.raw.vectorTimestamp[i] = timestamp;
+                } else {
+                    this.raw.vectorTimestamp[i] = 0;
+                }
+            }
+
+        }
+
         this.checkConfigJson();
 
     }
@@ -381,7 +398,7 @@ public class RDP {
         }
 
         /* Sensibilizado por tiempo */
-        if (ignoreWindows && this.isExtTemp()) {
+        if (!ignoreWindows && this.isExtTemp()) {
             boolean[] sensitizedTemporal = this.genSensitizedTemp(java.lang.System.currentTimeMillis());
             for (int i = 0; i < sensitizedT.length; i++)
                 sensitizedT[i] &= sensitizedTemporal[i]; // Si es uno esta sensibilizada
