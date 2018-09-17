@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
+import org.jetbrains.annotations.Nullable;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.String;
@@ -16,20 +16,16 @@ import java.lang.String;
  * La clase se encarga de instanciar la red de petri con todas sus caracteristicas desde una archivo JSON
  *
  * Tiene la posibilidad de:
- *  - [NO] Dispara las transiciones y alterar el estado de la red
- *  - [NO] Informar las transiciones disponibles para disparar
- *  - Informar si se puede disparar o no una transicion
+ *  - Dispara las transiciones y alterar el estado de la red
+ *  - Informar las transiciones disponibles para disparar
  *  - Informar el marcado de la red
- *  - [NO] Informar el estado de sensibilizado de todas las condiciones (Matrix sensibilizado)
- *  - [NO] Imprimir toda la informacion disponible de la red y su estado
  *
- * Soporta caracteristicas de redes de petri extendidas como:
+ * Soporta caracteristicas independientes de redes de petri extendidas como:
  *  - Maxima cantidad de tokens por plaza
  *  - Arcos inhibidores
- *  - [NO] Arcos lectores con peso 1
+ *  - Arcos lectores con peso 1
  *  - [NO] Arcos lectores con otro peso
- *  - [NO] Transiciones sensibilizadas temporalmente
- *
+ *  - Transiciones sensibilizadas temporalmente
  * </pre>
  *
  * @WARNING No implementa ningun mecanismo de proteccion de recursos para hilos multiples (como semaforo),
@@ -65,166 +61,70 @@ public class RDP {
      *
      * @param jsonFile Ruta del archivo JSON que contiene la informacion
      * @throws FileNotFoundException Lanzado cuando no se encuentra el archivo JSON
-     * @throws ConfigException Lanzado cuando esta mal formado el archivo JSON
+     * @throws ConfigException       Lanzado cuando esta mal formado el archivo JSON
      * @TODO Verificar que las matrices H y R sean binarias
      * @see RDPraw Ver estructura completa del JSON
      */
     public RDP(String jsonFile) throws FileNotFoundException, ConfigException {
-
 
         /* INICIO DE CARGA DE DATOS */
         Gson json = new Gson();
         JsonReader reader = new JsonReader(new FileReader(jsonFile));
         this.raw = json.fromJson(reader, RDPraw.class);
         /* FIN DE CARGA DE DATOS */
-
-        /* =========================================================
-            Chequeos de datos validos de estructura del archivo JSON.
-           ========================================================= */
-
-        /* Chequeo de estructura JSON.  */
-        if (this.raw.matrixI == null || this.raw.vectorMark == null) {
-            throw new ConfigException("Error en la estructura JSON", errorTypeConfig.missingDataInJASON);
-        }
-
-        /* Chequeo de longuitud de matriz constante. */
-        int conlconst = -1;
-        for (int i = 0; i < this.raw.matrixI.length; ++i) {
-            if (conlconst == -1) {
-                conlconst = this.raw.matrixI[0].length;
-            } else if (conlconst != this.raw.matrixI[i].length) {
-                throw new jmml.monitor.ConfigException("La matriz de insidencia no es constante",
-                        jmml.monitor.errorTypeConfig.invalidFormatMatrix);
-            }
-        }
-
-        /* Chequeo de loguitud del vector y elementos positivos */
-        if (this.raw.matrixI.length != this.raw.vectorMark.length) {
-            throw new jmml.monitor.ConfigException("La cantidad de plazas  de marcado no es correcta",
-                    jmml.monitor.errorTypeConfig.invalidFormatArray);
-        } else {
-            for (int i = 0; i < this.raw.vectorMark.length; ++i) {
-                if (this.raw.vectorMark[i] < 0) {
-                    throw new jmml.monitor.ConfigException("Elemento negativo en la marca",
-                            jmml.monitor.errorTypeConfig.invalidFormatArray);
-                }
-            }
-        }
-
-
-        /* Chequeo de longuitud del vector de maximo de plazas y elementos positivos */
-        if (this.isExtMaxToken()) {
-            if (this.raw.vectorMaxMark.length != this.raw.vectorMark.length) {
-                throw new jmml.monitor.ConfigException("La cantidad de plazas no es correcta en " +
-                        "los elementos de maximo por plaza", jmml.monitor.errorTypeConfig.invalidFormatArray);
-            } else {
-                for (int anExtMaxToken : this.raw.vectorMaxMark) {
-                    if (anExtMaxToken < 0) {
-                        throw new jmml.monitor.ConfigException("Elemento negativo en la marca por plaza",
-                                jmml.monitor.errorTypeConfig.invalidFormatArray);
-                    }
-                }
-            }
-        }
-
-        /* Chequeo de longuitud del vector de arcos inhibidores */
-        if (this.isExtInh()) {
-            if (this.raw.matrixH[0].length != this.raw.matrixI.length) {
-                throw new jmml.monitor.ConfigException("La cantidad de plazas  en la matriz de arcos " +
-                        "inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
-            } else if (this.raw.matrixH.length != this.raw.matrixI[0].length) {
-                throw new jmml.monitor.ConfigException("La cantidad de transiciones  en la matriz de arcos" +
-                        " inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
-            } else {
-                /* Chequeo de longuitud de matriz constante. */
-                conlconst = -1;
-                for (int i = 0; i < this.raw.matrixH.length; ++i) {
-                    if (conlconst == -1) {
-                        conlconst = this.raw.matrixH[0].length;
-                    } else if (conlconst != this.raw.matrixH[i].length) {
-                        throw new jmml.monitor.ConfigException("La matriz en la matriz de arcos inhibidores " +
-                                "no es constante", jmml.monitor.errorTypeConfig.invalidFormatMatrix);
-                    }
-                }
-            }
-        }
-
-        /* Chequeo de longuitud del vector de arcos lectores */
-        if (this.isExtReader()) {
-            if (this.raw.matrixR[0].length != this.raw.matrixI.length) {
-                throw new jmml.monitor.ConfigException("La cantidad de plazas  en la matriz de arcos " +
-                        "lectores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
-            } else if (this.raw.matrixR.length != this.raw.matrixI[0].length) {
-                throw new jmml.monitor.ConfigException("La cantidad de transiciones  en la matriz de arcos " +
-                        "lectores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
-            } else {
-                /* Chequeo de longuitud de matriz constante. */
-                conlconst = -1;
-                for (int i = 0; i < this.raw.matrixR.length; ++i) {
-                    if (conlconst == -1) {
-                        conlconst = this.raw.matrixR[0].length;
-                    } else if (conlconst != this.raw.matrixR[i].length) {
-                        throw new jmml.monitor.ConfigException("La matriz en la matriz de arcos lectores" +
-                                "no es constante", jmml.monitor.errorTypeConfig.invalidFormatMatrix);
-                    }
-                }
-            }
-        }
-
+        this.checkConfigJson();
 
     }
 
-    /**
-     * <pre>
-     * Intenta realizar disparo de la red de petri, si puede dispara y altera el estado de la red
-     *
-     * @param tDisp Numero de transicion a disparar
-     * @return True en caso de exito en el disparo de la transicion y evolucion de la red <br>
-     *         False en caso de que la transicion no este sencibilidaza
-     * @throws ShotException Si no existe la transicion
-     * </pre>
-     */
-    public boolean shotT(int tDisp) throws ShotException {
-        return this.shotT(tDisp, false);
-    }
 
     /**
-     * Intenta realizar disparo de la red de petri, este puede ser un disparo de prueba o puede guardar los resultados
-     * y alterar el estado de la red
-     *
      * <pre>
-     * @param tDisp Numero de transicion a disparar
-     * @param test  True si no quiere alterar el estado de la red de petri <br>
-     *              False si en caso de que se pueda disparar se altere el estado de la redes
+     * Intenta realizar disparo de la red de petri, si este se puede disparar se dispara y altera el estado
+     * de la red.
+     * @param tDisp         Numero de transicion a disparar
      * @return True en caso de exito en el disparo de la transicion <br>
      *         False en caso de que la transicion no este sencibilidaza
      * @throws ShotException Excepcion por inexistencia de la transicion
      * </pre>
      */
-    private boolean shotT(int tDisp, boolean test) throws ShotException {
+    protected boolean shotT(int tDisp) throws ShotException {
         // Si la transicion no existe lanza la excepcion
         if (tDisp > this.raw.matrixI[0].length || tDisp < 1)
             throw new ShotException(this.raw.vectorMark, tDisp, this.raw.matrixI[0].length);
 
         boolean validShot = true;
         int[] newMark;
+        long timestamp = java.lang.System.currentTimeMillis(); // Garantiza conisistencia en vectores temporales
 
-        /* Verifico si el tiro es valido  por arcos inhibidores */
-        // Calculo componmenete B(tDisp) = H[tdis][] x VectorQ (1 = Transicion no sensibilizada)
+        /* Verifico si el tiro es valido  por arcos inhibidores > B(tDisp) = H[tdis][] x VectorQ */
         if (this.isExtInh())
             validShot = (this.vecMul(this.raw.matrixH[tDisp - 1], this.genVectorQ()) == 0);
 
-        /* Verifico si el tiro es valido  por arcos inhibidores */
+        /* Verifico si el tiro es valido  por arcos inhibidores > L(tDisp) = R[tdis][] x VectorW*/
         if (this.isExtReader())
             validShot = validShot && (this.vecMul(this.raw.matrixR[tDisp - 1], this.genVectorW()) == 0);
+
+        /* Si el tiro sigue siendo valido chequeo las restricciones temporales */
+        if (this.isExtTemp())
+            validShot = validShot && this.genSensitizedTemp(timestamp)[tDisp - 1];
+
 
         /* Si el tiro sigue siendo valido chequeo nueva marca */
         newMark = validShot ? this.nextMark(tDisp) : null;
         validShot = newMark != null && this.valid4Mark(newMark);
 
-
-        if (validShot && !test) {
-            this.raw.vectorMark = newMark;
+        /* Si el tiro sigue siendo valido, altero el estado de la red */
+        if (validShot) {
+            if (!this.isExtTemp())
+                this.raw.vectorMark = newMark;
+            else {
+                boolean[] oldSensitized = getSensitizedArray(true);
+                this.raw.vectorMark = newMark;
+                boolean[] newSensitized = getSensitizedArray(true);
+                for (int i = 0; i < newSensitized.length; ++i)
+                    if (!oldSensitized[i] && newSensitized[i])
+                        this.raw.vectorTimestamp[i] = timestamp;
+            }
         }
 
         return validShot;
@@ -365,7 +265,7 @@ public class RDP {
     private int vecMul(@NotNull int[] v1, @NotNull int[] v2) {
         // Chequeo tamanos compatibles
         if (v1.length != v2.length)
-            throw new java.lang.ArrayIndexOutOfBoundsException("Vectores de distinta longitud");
+            throw new ArithmeticException("Vectores de distinta longitud");
 
         // Vector resultado inicializado en 0
         int result = 0;
@@ -391,8 +291,36 @@ public class RDP {
      */
     @NotNull
     @Contract(pure = true)
-    public int[] getMark() {
+    int[] getMark() {
         return raw.vectorMark.clone();
+    }
+
+
+    /**
+     * Retorna el vector booleano de transiciones que se encuentran dentro de la ventana temporal
+     *
+     * @param timestamp El tiempo que se quiere chequear la vetanana, sirve para mantener atomicidad en ShotT
+     * @return True Si la transicion esta dentro de la ventana temporal
+     */
+    @NotNull
+    @Contract(pure = true)
+    private boolean[] genSensitizedTemp(long timestamp) {
+
+        boolean[] sensitizedT = new boolean[this.raw.matrixI[0].length];
+
+        for (int i = 0; i < sensitizedT.length; i++) {
+            sensitizedT[i] = true;
+            /* Chequeo de la ventana de tiempo */
+            if (this.raw.tempWindowTuple[0][i] != 0) {
+                sensitizedT[i] = this.raw.tempWindowTuple[0][i] < (timestamp - this.raw.vectorTimestamp[i]);
+            }
+            if (sensitizedT[i] && this.raw.tempWindowTuple[1][i] != 0) {
+                sensitizedT[i] = this.raw.tempWindowTuple[1][i] > (timestamp - this.raw.vectorTimestamp[i]);
+            }
+        }
+
+
+        return sensitizedT;
     }
 
     /**
@@ -411,13 +339,16 @@ public class RDP {
     }
 
     /**
-     * Retorna el vector de transiciones sensibilizadas, cada lugar del vector representa una transicion
-     * donde el primer lugar corresponde a la primera transicion.
-     * Puede retornas el sensibilizado ignorando la ventana de tiempo de las transiciones
      * <pre>
-     * @param ignoreWindows True si no quiere tener en cuenta el des-sensibilizado por ventana de tiempo
+     * Retorna el vector de transiciones sensibilizadas, cada lugar del vector representa una transicion
+     * donde el primer lugar corresponde a la primera transicion. <br>
+     * Puede ignorarse la ventana de tiempo para la obtencion de la sensibilidad <br>
+     * NOTA: Se utiliza para caluclar los timestamp de las redes de petri
+     *
+     * @param ignoreWindows True si se desea ignorar la parte temporal de la red para la obtencion del vector<br>
+     *                      False Si se desea tomar en cuenta el timestamp y la parte temporal de la red
      * @return True si la transicion esta sensibilizada <br>
-     *         False en caso contrario
+     *                False en caso contrario
      * </pre>
      */
     @NotNull
@@ -427,9 +358,8 @@ public class RDP {
 
         /* Sensibilizado por tokenes y MaxTokens */
         try {
-            for (int i = 0; i < sensitizedT.length; i++) {
+            for (int i = 0; i < sensitizedT.length; i++)
                 sensitizedT[i] = this.valid4Mark(this.nextMark(i + 1));
-            }
         } catch (ShotException se) {
             System.out.println("Te las mandaste esto no puede pasar nunca por como se crea el vector");
             System.exit(-1);
@@ -439,19 +369,23 @@ public class RDP {
         /* Sensibilizado por arcos inhibidores B = H*Q */
         if (this.isExtInh()) {
             int[] notSensitizedB = this.matMulVect(this.raw.matrixH, this.genVectorQ());
-            for (int i = 0; i < sensitizedT.length; i++) {
+            for (int i = 0; i < sensitizedT.length; i++)
                 sensitizedT[i] &= (notSensitizedB[i] == 0); // Si es cero esta sensibilizada
-            }
         }
 
         /* Sensibilizado por arcos lectores L = R*W */
         if (this.isExtReader()) {
             int[] notSensitizedR = this.matMulVect(this.raw.matrixR, this.genVectorW());
-            for (int i = 0; i < sensitizedT.length; i++) {
+            for (int i = 0; i < sensitizedT.length; i++)
                 sensitizedT[i] &= (notSensitizedR[i] == 0); // Si es cero esta sensibilizada
-            }
         }
 
+        /* Sensibilizado por tiempo */
+        if (ignoreWindows && this.isExtTemp()) {
+            boolean[] sensitizedTemporal = this.genSensitizedTemp(java.lang.System.currentTimeMillis());
+            for (int i = 0; i < sensitizedT.length; i++)
+                sensitizedT[i] &= sensitizedTemporal[i]; // Si es uno esta sensibilizada
+        }
 
         return sensitizedT;
 
@@ -503,6 +437,18 @@ public class RDP {
         return (this.raw.matrixR != null);
     }
 
+    /**
+     * Consulta si la red de petri es temporal
+     * <pre>
+     * @return true:  Hay ventana de tiempo establecido para 1 o mas transiciones <br>
+     *         false: Caso contrario
+     * </pre>
+     */
+    @Contract(pure = true)
+    public boolean isExtTemp() {
+        return (this.raw.tempWindowTuple != null);
+    }
+
 
     /**
      * Obtiene la matriz de doble incidencia de la red de petri
@@ -523,6 +469,7 @@ public class RDP {
      * </pre>
      */
     @Contract(pure = true)
+    @Nullable
     public int[] getExtMaxToken() {
         return this.isExtMaxToken() ? this.raw.vectorMaxMark.clone() : null;
     }
@@ -535,6 +482,7 @@ public class RDP {
      * </pre>
      */
     @Contract(pure = true)
+    @Nullable
     public int[][] getExtInh() {
         return this.isExtInh() ? this.raw.matrixH.clone() : null;
     }
@@ -547,9 +495,107 @@ public class RDP {
      * </pre>
      */
     @Contract(pure = true)
+    @Nullable
     public int[][] getExtReader() {
         return this.isExtReader() ? this.raw.matrixR.clone() : null;
     }
 
 
+    /* =========================================================
+      Chequeos de datos validos de estructura del archivo JSON.
+    ========================================================= */
+    @Contract(pure = true)
+    private void checkConfigJson() throws ConfigException{
+
+        /* Chequeo de estructura JSON.  */
+        if (this.raw.matrixI == null || this.raw.vectorMark == null) {
+            throw new ConfigException("Error en la estructura JSON", errorTypeConfig.missingDataInJASON);
+        }
+
+        /* Chequeo de longuitud de matriz constante. */
+        int conlconst = -1;
+        for (int i = 0; i < this.raw.matrixI.length; ++i) {
+            if (conlconst == -1) {
+                conlconst = this.raw.matrixI[0].length;
+            } else if (conlconst != this.raw.matrixI[i].length) {
+                throw new jmml.monitor.ConfigException("La matriz de insidencia no es constante",
+                        jmml.monitor.errorTypeConfig.invalidFormatMatrix);
+            }
+        }
+
+        /* Chequeo de loguitud del vector y elementos positivos */
+        if (this.raw.matrixI.length != this.raw.vectorMark.length) {
+            throw new jmml.monitor.ConfigException("La cantidad de plazas  de marcado no es correcta",
+                    jmml.monitor.errorTypeConfig.invalidFormatArray);
+        } else {
+            for (int i = 0; i < this.raw.vectorMark.length; ++i) {
+                if (this.raw.vectorMark[i] < 0) {
+                    throw new jmml.monitor.ConfigException("Elemento negativo en la marca",
+                            jmml.monitor.errorTypeConfig.invalidFormatArray);
+                }
+            }
+        }
+
+
+        /* Chequeo de longuitud del vector de maximo de plazas y elementos positivos */
+        if (this.isExtMaxToken()) {
+            if (this.raw.vectorMaxMark.length != this.raw.vectorMark.length) {
+                throw new jmml.monitor.ConfigException("La cantidad de plazas no es correcta en " +
+                        "los elementos de maximo por plaza", jmml.monitor.errorTypeConfig.invalidFormatArray);
+            } else {
+                for (int anExtMaxToken : this.raw.vectorMaxMark) {
+                    if (anExtMaxToken < 0) {
+                        throw new jmml.monitor.ConfigException("Elemento negativo en la marca por plaza",
+                                jmml.monitor.errorTypeConfig.invalidFormatArray);
+                    }
+                }
+            }
+        }
+
+        /* Chequeo de longuitud del vector de arcos inhibidores */
+        if (this.isExtInh()) {
+            if (this.raw.matrixH[0].length != this.raw.matrixI.length) {
+                throw new jmml.monitor.ConfigException("La cantidad de plazas  en la matriz de arcos " +
+                        "inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+            } else if (this.raw.matrixH.length != this.raw.matrixI[0].length) {
+                throw new jmml.monitor.ConfigException("La cantidad de transiciones  en la matriz de arcos" +
+                        " inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+            } else {
+                /* Chequeo de longuitud de matriz constante. */
+                conlconst = -1;
+                for (int i = 0; i < this.raw.matrixH.length; ++i) {
+                    if (conlconst == -1) {
+                        conlconst = this.raw.matrixH[0].length;
+                    } else if (conlconst != this.raw.matrixH[i].length) {
+                        throw new jmml.monitor.ConfigException("La matriz en la matriz de arcos inhibidores " +
+                                "no es constante", jmml.monitor.errorTypeConfig.invalidFormatMatrix);
+                    }
+                }
+            }
+        }
+
+        /* Chequeo de longuitud del vector de arcos lectores */
+        if (this.isExtReader()) {
+            if (this.raw.matrixR[0].length != this.raw.matrixI.length) {
+                throw new jmml.monitor.ConfigException("La cantidad de plazas  en la matriz de arcos " +
+                        "lectores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+            } else if (this.raw.matrixR.length != this.raw.matrixI[0].length) {
+                throw new jmml.monitor.ConfigException("La cantidad de transiciones  en la matriz de arcos " +
+                        "lectores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+            } else {
+                /* Chequeo de longuitud de matriz constante. */
+                conlconst = -1;
+                for (int i = 0; i < this.raw.matrixR.length; ++i) {
+                    if (conlconst == -1) {
+                        conlconst = this.raw.matrixR[0].length;
+                    } else if (conlconst != this.raw.matrixR[i].length) {
+                        throw new jmml.monitor.ConfigException("La matriz en la matriz de arcos lectores" +
+                                "no es constante", jmml.monitor.errorTypeConfig.invalidFormatMatrix);
+                    }
+                }
+            }
+        }
+
+
+    }
 }

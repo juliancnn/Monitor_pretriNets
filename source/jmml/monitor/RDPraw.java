@@ -59,7 +59,7 @@ package jmml.monitor;
  *     [0, 1, 0, 0, 0],                                            # 1 Si hay arcos lectores, 0 sin relacion
  *     [0, 0, 0, 0, 0],
  *   ],
- *   "extTempWindows" : [                                          # (Opcional) Tupla de tiempos en transiciones
+ *   "tempWindowTuple" : [                                          # (Opcional) Tupla de tiempos en transiciones
  *     [1000, 1000,    0,    0],                                   # Vector de minimo tiempo antes que se pueda disparar
  *     [   0, 3000, 1000,    0]                                    # Vector de maximo timeout para disparar
  *   ]
@@ -101,10 +101,14 @@ class RDPraw {
     int[] vectorMaxMark;
     /**
      * <pre>
-     * [Feature: Red de petri extendida - Temporal]: Vector de timestamp di disparo de transiciones
+     * [Temporal]: Vector de timestamp de disparo de transiciones
      * El vector es de uso interno, si se le cargan datos seran remplazados cuando se inicialice la red.
      * </pre>
      */
-    long[] extTempTimeStamp;
+    long[] vectorTimestamp;
+    /**
+     * Tupla de inicio y final de ventana de tiempo, medida en milisegundos
+     */
+    long[][] tempWindowTuple;
 
 }
