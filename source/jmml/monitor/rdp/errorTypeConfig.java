@@ -1,4 +1,4 @@
-package jmml.monitor;
+package jmml.monitor.rdp;
 
 /**
  * Lista de errores de configuracion al cargar la red de petri

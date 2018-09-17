@@ -1,4 +1,4 @@
-package jmml.monitor;
+package jmml.monitor.rdp;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
@@ -30,6 +30,7 @@ import java.lang.String;
  *
  * @WARNING No implementa ningun mecanismo de proteccion de recursos para hilos multiples (como semaforo),
  * debe ser implementado externamente
+ * @TODO  agregar todo el checkeo de archivos para temporales NO COPIAR - CAMBIO LOGICA DE CREAR EL VECT TEMPORAL
  */
 public class RDP {
     /**
@@ -535,20 +536,20 @@ public class RDP {
             if (conlconst == -1) {
                 conlconst = this.raw.matrixI[0].length;
             } else if (conlconst != this.raw.matrixI[i].length) {
-                throw new jmml.monitor.ConfigException("La matriz de insidencia no es constante",
-                        jmml.monitor.errorTypeConfig.invalidFormatMatrix);
+                throw new ConfigException("La matriz de insidencia no es constante",
+                        errorTypeConfig.invalidFormatMatrix);
             }
         }
 
         /* Chequeo de loguitud del vector y elementos positivos */
         if (this.raw.matrixI.length != this.raw.vectorMark.length) {
-            throw new jmml.monitor.ConfigException("La cantidad de plazas  de marcado no es correcta",
-                    jmml.monitor.errorTypeConfig.invalidFormatArray);
+            throw new ConfigException("La cantidad de plazas  de marcado no es correcta",
+                    errorTypeConfig.invalidFormatArray);
         } else {
             for (int i = 0; i < this.raw.vectorMark.length; ++i) {
                 if (this.raw.vectorMark[i] < 0) {
-                    throw new jmml.monitor.ConfigException("Elemento negativo en la marca",
-                            jmml.monitor.errorTypeConfig.invalidFormatArray);
+                    throw new ConfigException("Elemento negativo en la marca",
+                            errorTypeConfig.invalidFormatArray);
                 }
             }
         }
@@ -557,13 +558,13 @@ public class RDP {
         /* Chequeo de longuitud del vector de maximo de plazas y elementos positivos */
         if (this.isExtMaxToken()) {
             if (this.raw.vectorMaxMark.length != this.raw.vectorMark.length) {
-                throw new jmml.monitor.ConfigException("La cantidad de plazas no es correcta en " +
-                        "los elementos de maximo por plaza", jmml.monitor.errorTypeConfig.invalidFormatArray);
+                throw new ConfigException("La cantidad de plazas no es correcta en " +
+                        "los elementos de maximo por plaza", errorTypeConfig.invalidFormatArray);
             } else {
                 for (int anExtMaxToken : this.raw.vectorMaxMark) {
                     if (anExtMaxToken < 0) {
-                        throw new jmml.monitor.ConfigException("Elemento negativo en la marca por plaza",
-                                jmml.monitor.errorTypeConfig.invalidFormatArray);
+                        throw new ConfigException("Elemento negativo en la marca por plaza",
+                                errorTypeConfig.invalidFormatArray);
                     }
                 }
             }
@@ -572,11 +573,11 @@ public class RDP {
         /* Chequeo de longuitud del vector de arcos inhibidores */
         if (this.isExtInh()) {
             if (this.raw.matrixH[0].length != this.raw.matrixI.length) {
-                throw new jmml.monitor.ConfigException("La cantidad de plazas  en la matriz de arcos " +
-                        "inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+                throw new ConfigException("La cantidad de plazas  en la matriz de arcos " +
+                        "inhibidores no es correcta", errorTypeConfig.invalidFormatArray);
             } else if (this.raw.matrixH.length != this.raw.matrixI[0].length) {
-                throw new jmml.monitor.ConfigException("La cantidad de transiciones  en la matriz de arcos" +
-                        " inhibidores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+                throw new ConfigException("La cantidad de transiciones  en la matriz de arcos" +
+                        " inhibidores no es correcta", errorTypeConfig.invalidFormatArray);
             } else {
                 /* Chequeo de longuitud de matriz constante. */
                 conlconst = -1;
@@ -584,8 +585,8 @@ public class RDP {
                     if (conlconst == -1) {
                         conlconst = this.raw.matrixH[0].length;
                     } else if (conlconst != this.raw.matrixH[i].length) {
-                        throw new jmml.monitor.ConfigException("La matriz en la matriz de arcos inhibidores " +
-                                "no es constante", jmml.monitor.errorTypeConfig.invalidFormatMatrix);
+                        throw new ConfigException("La matriz en la matriz de arcos inhibidores " +
+                                "no es constante", errorTypeConfig.invalidFormatMatrix);
                     }
                 }
             }
@@ -594,11 +595,11 @@ public class RDP {
         /* Chequeo de longuitud del vector de arcos lectores */
         if (this.isExtReader()) {
             if (this.raw.matrixR[0].length != this.raw.matrixI.length) {
-                throw new jmml.monitor.ConfigException("La cantidad de plazas  en la matriz de arcos " +
-                        "lectores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+                throw new ConfigException("La cantidad de plazas  en la matriz de arcos " +
+                        "lectores no es correcta", errorTypeConfig.invalidFormatArray);
             } else if (this.raw.matrixR.length != this.raw.matrixI[0].length) {
-                throw new jmml.monitor.ConfigException("La cantidad de transiciones  en la matriz de arcos " +
-                        "lectores no es correcta", jmml.monitor.errorTypeConfig.invalidFormatArray);
+                throw new ConfigException("La cantidad de transiciones  en la matriz de arcos " +
+                        "lectores no es correcta", errorTypeConfig.invalidFormatArray);
             } else {
                 /* Chequeo de longuitud de matriz constante. */
                 conlconst = -1;
@@ -606,8 +607,8 @@ public class RDP {
                     if (conlconst == -1) {
                         conlconst = this.raw.matrixR[0].length;
                     } else if (conlconst != this.raw.matrixR[i].length) {
-                        throw new jmml.monitor.ConfigException("La matriz en la matriz de arcos lectores" +
-                                "no es constante", jmml.monitor.errorTypeConfig.invalidFormatMatrix);
+                        throw new ConfigException("La matriz en la matriz de arcos lectores" +
+                                "no es constante", errorTypeConfig.invalidFormatMatrix);
                     }
                 }
             }

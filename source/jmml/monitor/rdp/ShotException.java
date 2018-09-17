@@ -1,4 +1,4 @@
-package jmml.monitor;
+package jmml.monitor.rdp;
 
 /**
  * La excepcion se produce al intentar realizar un disparo invalido en la red de petri,

@@ -1,4 +1,4 @@
-import jmml.monitor.RDP;
+import jmml.monitor.rdp.RDP;
 
 public class Main {
 

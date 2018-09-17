@@ -1,4 +1,4 @@
-package jmml.monitor;
+package jmml.monitor.rdp;
 /**
  * Representa la estructura, estado y configuracion de la red de petri
  *

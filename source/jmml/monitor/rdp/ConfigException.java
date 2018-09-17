@@ -1,4 +1,4 @@
-package jmml.monitor;
+package jmml.monitor.rdp;
 
 
 /**

@@ -1,4 +1,4 @@
-package jmml.monitor;
+package jmml.monitor.rdp;
 
 import org.junit.jupiter.api.*;
 
