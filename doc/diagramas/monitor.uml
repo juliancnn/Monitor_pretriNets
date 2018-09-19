@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>jmml.monitor</OriginalElement>
+  <nodes>
+    <node x="962.2833333333333" y="464.0">jmml.monitor.rdp.RDP</node>
+    <node x="255.0" y="207.0">jmml.monitor.policies.policyType</node>
+    <node x="254.5" y="1059.0">jmml.monitor.Monitor</node>
+    <node x="514.0" y="205.5">jmml.monitor.rdp.ShotException</node>
+    <node x="254.0" y="652.0">jmml.monitor.policies.Policy</node>
+    <node x="0.0" y="652.0">jmml.monitor.colas.QueueManagement</node>
+    <node x="813.0" y="218.5">jmml.monitor.rdp.ConfigException</node>
+    <node x="948.0583333333334" y="0.0">jmml.monitor.rdp.errorTypeConfig</node>
+    <node x="1188.0" y="157.0">jmml.monitor.rdp.RDPraw</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="jmml.monitor.rdp.ConfigException" target="jmml.monitor.rdp.errorTypeConfig">
+      <point x="88.50000000000006" y="-67.0" />
+      <point x="1078.5" y="132.0" />
+      <point x="1041.0583333333334" y="132.0" />
+      <point x="0.0" y="53.5" />
+    </edge>
+    <edge source="jmml.monitor.rdp.ConfigException" target="jmml.monitor.rdp.ConfigException">
+      <point x="-88.5" y="67.0" />
+      <point x="901.5" y="372.5" />
+      <point x="793.0" y="372.5" />
+      <point x="793.0" y="285.5" />
+      <point x="-177.0" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.rdp.RDP" target="jmml.monitor.rdp.RDPraw">
+      <point x="82.75" y="-267.5" />
+      <point x="1210.5333333333333" y="444.0" />
+      <point x="1252.0" y="444.0" />
+      <point x="-64.0" y="128.5" />
+    </edge>
+    <edge source="jmml.monitor.rdp.RDP" target="jmml.monitor.rdp.ShotException">
+      <point x="-137.91666666666663" y="-267.5" />
+      <point x="989.8666666666667" y="444.0" />
+      <point x="578.75" y="444.0" />
+      <point x="-64.75" y="80.0" />
+    </edge>
+    <edge source="jmml.monitor.rdp.RDP" target="jmml.monitor.rdp.ConfigException">
+      <point x="-27.583333333333258" y="-267.5" />
+      <point x="1100.2" y="444.0" />
+      <point x="1078.5" y="444.0" />
+      <point x="88.50000000000006" y="67.0" />
+    </edge>
+    <edge source="jmml.monitor.rdp.RDP" target="jmml.monitor.rdp.RDP">
+      <point x="-82.75" y="267.5" />
+      <point x="1045.0333333333333" y="1019.0" />
+      <point x="942.2833333333333" y="1019.0" />
+      <point x="942.2833333333333" y="731.5" />
+      <point x="-165.5" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.colas.QueueManagement">
+      <point x="-80.0" y="-53.5" />
+      <point x="294.5" y="1039.0" />
+      <point x="117.0" y="1039.0" />
+      <point x="0.0" y="79.5" />
+    </edge>
+    <edge source="jmml.monitor.policies.Policy" target="jmml.monitor.policies.policyType">
+      <point x="-60.25" y="-79.5" />
+      <point x="-59.75" y="78.5" />
+    </edge>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.rdp.RDP">
+      <point x="80.0" y="-53.5" />
+      <point x="454.5" y="1039.0" />
+      <point x="1210.5333333333333" y="1039.0" />
+      <point x="82.75" y="267.5" />
+    </edge>
+    <edge source="jmml.monitor.rdp.RDP" target="jmml.monitor.rdp.errorTypeConfig">
+      <point x="27.58333333333337" y="-267.5" />
+      <point x="1155.3666666666668" y="444.0" />
+      <point x="1177.5" y="444.0" />
+      <point x="1177.5" y="132.0" />
+      <point x="1103.0583333333334" y="132.0" />
+      <point x="62.0" y="53.5" />
+    </edge>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.policies.Policy">
+      <point x="0.0" y="-53.5" />
+      <point x="0.0" y="79.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.4839797639123103" x="722.0" y="583.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Constructors</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
