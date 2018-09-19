@@ -5,6 +5,7 @@ import com.google.gson.stream.JsonReader;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.String;
@@ -30,7 +31,7 @@ import java.lang.String;
  *
  * @WARNING No implementa ningun mecanismo de proteccion de recursos para hilos multiples (como semaforo),
  * debe ser implementado externamente
- * @TODO  agregar todo el checkeo de archivos para temporales NO COPIAR - CAMBIO LOGICA DE CREAR EL VECT TEMPORAL
+ * @TODO agregar todo el checkeo de archivos para temporales NO COPIAR - CAMBIO LOGICA DE CREAR EL VECT TEMPORAL
  */
 public class RDP {
     /**
@@ -75,7 +76,7 @@ public class RDP {
         /* FIN DE CARGA DE DATOS */
 
         /* Si es temporal cargo los datos delos timestamp */
-        if(this.isExtTemp()){
+        if (this.isExtTemp()) {
             //Chequeos ok - Carga vector de tiempo para transiciones sensibilizadas
             this.raw.vectorTimestamp = new long[this.raw.matrixI[0].length];
             boolean SensAux[] = getSensitizedArray(true);
@@ -432,6 +433,18 @@ public class RDP {
     }
 
     /**
+     * Devuelve el numero de transiciones que posee la red
+     * <pre>
+     * @return Numero de transiciones de la red
+     * </pre>
+     */
+    @Contract(pure = true)
+    public int getNTrans() {
+        return this.raw.matrixI[0].length;
+    }
+
+
+    /**
      * Consulta si la red de petri es extendida arcos inhibidores
      * <pre>
      * @return true:  Si hay matriz de arcos inhibidores <br>
@@ -523,7 +536,7 @@ public class RDP {
       Chequeos de datos validos de estructura del archivo JSON.
     ========================================================= */
     @Contract(pure = true)
-    private void checkConfigJson() throws ConfigException{
+    private void checkConfigJson() throws ConfigException {
 
         /* Chequeo de estructura JSON.  */
         if (this.raw.matrixI == null || this.raw.vectorMark == null) {
