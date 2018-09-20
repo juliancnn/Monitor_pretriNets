@@ -19,6 +19,10 @@ public enum policyType {
      */
     FIFO,
     /**
+     * La transicion temporal que ahce mas tiempo que esta sensibilizada
+     */
+    FISTSEN,
+    /**
      * Selecciona la transicion que entro en cola y fue disparada menos veces
      */
     MINORSHOT,

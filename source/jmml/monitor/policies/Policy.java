@@ -4,6 +4,7 @@ package jmml.monitor.policies;
  * @TODO HACER TODO BEBE, esta mas crudo que los bebes que se trago wanda
  * @TODO IMPLEMENTAR EXCEPCIONES PARA MALA CARGA DE POLITICA + TRANSICIONES ESTATICAS
  * @TODO Rehacer la documentacion
+ * @TODO Debo guardad ultimo disparo y cantidad de veces que se disparo, para hacer matrices
  * */
 public class Policy {
     /**

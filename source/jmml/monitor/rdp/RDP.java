@@ -32,6 +32,7 @@ import java.lang.String;
  * @WARNING No implementa ningun mecanismo de proteccion de recursos para hilos multiples (como semaforo),
  * debe ser implementado externamente
  * @TODO agregar todo el checkeo de archivos para temporales NO COPIAR - CAMBIO LOGICA DE CREAR EL VECT TEMPORAL
+ * @TODO Debe verificar la matrix cuadrada T del dimencion cantidad de transiciones,binara, un 1 por columna, el resto cero, la fila no puede ser nula
  */
 public class RDP {
     /**
@@ -73,6 +74,7 @@ public class RDP {
         Gson json = new Gson();
         JsonReader reader = new JsonReader(new FileReader(jsonFile));
         this.raw = json.fromJson(reader, RDPraw.class);
+        this.checkConfigJson();
         /* FIN DE CARGA DE DATOS */
 
         /* Si es temporal cargo los datos delos timestamp */
@@ -91,7 +93,7 @@ public class RDP {
 
         }
 
-        this.checkConfigJson();
+
 
     }
 
@@ -428,7 +430,7 @@ public class RDP {
      * </pre>
      */
     @Contract(pure = true)
-    public boolean isExtMaxToken() {
+    boolean isExtMaxToken() {
         return (this.raw.vectorMaxMark != null);
     }
 
@@ -439,7 +441,7 @@ public class RDP {
      * </pre>
      */
     @Contract(pure = true)
-    public int getNTrans() {
+    int getNTrans() {
         return this.raw.matrixI[0].length;
     }
 
@@ -452,7 +454,7 @@ public class RDP {
      * </pre>
      */
     @Contract(pure = true)
-    public boolean isExtInh() {
+    boolean isExtInh() {
         return (this.raw.matrixH != null);
     }
 
@@ -464,7 +466,7 @@ public class RDP {
      * </pre>
      */
     @Contract(pure = true)
-    public boolean isExtReader() {
+    boolean isExtReader() {
         return (this.raw.matrixR != null);
     }
 
@@ -476,7 +478,7 @@ public class RDP {
      * </pre>
      */
     @Contract(pure = true)
-    public boolean isExtTemp() {
+    boolean isExtTemp() {
         return (this.raw.tempWindowTuple != null);
     }
 
@@ -488,7 +490,7 @@ public class RDP {
      */
     @NotNull
     @Contract(pure = true)
-    public int[][] getMatrix() {
+    int[][] getMatrix() {
         return this.raw.matrixI.clone();
     }
 
@@ -501,7 +503,7 @@ public class RDP {
      */
     @Contract(pure = true)
     @Nullable
-    public int[] getExtMaxToken() {
+    int[] getExtMaxToken() {
         return this.isExtMaxToken() ? this.raw.vectorMaxMark.clone() : null;
     }
 
@@ -514,7 +516,7 @@ public class RDP {
      */
     @Contract(pure = true)
     @Nullable
-    public int[][] getExtInh() {
+    int[][] getExtInh() {
         return this.isExtInh() ? this.raw.matrixH.clone() : null;
     }
 
@@ -527,7 +529,7 @@ public class RDP {
      */
     @Contract(pure = true)
     @Nullable
-    public int[][] getExtReader() {
+    int[][] getExtReader() {
         return this.isExtReader() ? this.raw.matrixR.clone() : null;
     }
 
@@ -535,6 +537,11 @@ public class RDP {
     /* =========================================================
       Chequeos de datos validos de estructura del archivo JSON.
     ========================================================= */
+
+    /**
+     * Chequea la coinsistencia de los datos de JSON
+     * @throws ConfigException Error en el formateo, formato o contenido del JSON de datos del JSON
+     */
     @Contract(pure = true)
     private void checkConfigJson() throws ConfigException {
 
