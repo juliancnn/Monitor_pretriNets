@@ -150,7 +150,7 @@ public class Policy {
      */
     @Contract(pure = true)
     @NotNull
-    protected int[] firstOnTrue(@NotNull int[] priorVector) {
+    int[] firstOnTrue(@NotNull int[] priorVector) {
         int[] fVector = new int[priorVector.length]; // Todos falsos por defecto
         for (int i = 0; i < fVector.length; i++) {
             fVector[i] = priorVector[i];
@@ -172,7 +172,7 @@ public class Policy {
      */
     @NotNull
     @Contract(pure = true)
-    protected int[] matMulVect(@NotNull int[] v, @NotNull int[][] m, boolean transpuesta) {
+    int[] matMulVect(@NotNull int[] v, @NotNull int[][] m, boolean transpuesta) {
         if (v.length != m[0].length)
             throw new ArithmeticException("Matrix y vector de tamanos incompatibles");
 
@@ -234,7 +234,7 @@ public class Policy {
      * 0 en caso de ser vector de ceros.
      */
     @Contract(pure = true)
-    protected int getFirstOnTrue(@NotNull int[] v) {
+    int getFirstOnTrue(@NotNull int[] v) {
         for (int i = 0; i < v.length; i++)
             if (v[i] != 0)
                 return i + 1;
