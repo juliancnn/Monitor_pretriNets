@@ -9,7 +9,7 @@ public enum policyType {
      * Selecciona una transicion al azar, todas tienen la mismas probabilidades
      * de ser disparadas, convierte al sistema en no determinista.
      */
-    RANDOMNODETERMINISTA,
+    RANDOM,
     /**
      * Selecciona la transicion que hace mas tiempo que no se dispara
      */

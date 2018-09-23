@@ -5,7 +5,7 @@ package jmml.monitor.rdp;
  * La excepcion se produce por errores en la carga de datos,
  * como datos invalidos y falta de datos
  */
-class ConfigException extends Exception {
+public class ConfigException extends Exception {
 
     private final String moreInfo;
     private final errorTypeConfig e;

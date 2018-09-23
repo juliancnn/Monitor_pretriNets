@@ -110,5 +110,9 @@ class RDPraw {
      * Tupla de inicio y final de ventana de tiempo, medida en milisegundos
      */
     long[][] tempWindowTuple;
+    /**
+     * Matriz de politicas (prioridades estaticas)
+     */
+    int[][] matrixT;
 
 }

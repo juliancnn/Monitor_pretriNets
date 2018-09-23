@@ -108,7 +108,7 @@ public class RDP {
      * @throws ShotException Excepcion por inexistencia de la transicion
      * </pre>
      */
-    protected boolean shotT(int tDisp) throws ShotException {
+    public boolean shotT(int tDisp) throws ShotException {
         // Si la transicion no existe lanza la excepcion
         if (tDisp > this.raw.matrixI[0].length || tDisp < 1)
             throw new ShotException(this.raw.vectorMark, tDisp, this.raw.matrixI[0].length);
@@ -252,7 +252,7 @@ public class RDP {
      *
      * @param m Matriz de dimencion MxN
      * @param v Vector de dimencion Nx1
-     * @return vector de Nx1, NULL en caso de tamanos incompatibles
+     * @return vector de Nx1
      * @throws ArithmeticException Matriz y vector de dimenciones incompatibles
      */
     @NotNull
@@ -355,7 +355,7 @@ public class RDP {
      */
     @NotNull
     @Contract(pure = true)
-    boolean[] getSensitizedArray() {
+    public boolean[] getSensitizedArray() {
         return getSensitizedArray(false);
     }
 
@@ -531,6 +531,19 @@ public class RDP {
     @Nullable
     int[][] getExtReader() {
         return this.isExtReader() ? this.raw.matrixR.clone() : null;
+    }
+
+    /**
+     * Retorna la matriz de prioridades estaticas T
+     * <pre>
+     * @return Una copia de la matriz T de prioridades. <br>
+     *         Null Si no posee
+     * </pre>
+     */
+    @Contract(pure = true)
+    @Nullable
+    public int[][] getMatrixT() {
+        return this.raw.matrixT;
     }
 
 
