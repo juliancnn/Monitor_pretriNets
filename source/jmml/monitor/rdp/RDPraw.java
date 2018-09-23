@@ -30,6 +30,15 @@ package jmml.monitor.rdp;
  *  - Vector de tokens maximos por plaza
  *          * Lo valores deben ser 0 para sin restriccion o un numero mayor a 0 para setear un maximo de tokens en esa
  *          plaza
+ *  - Matriz de de politicas T
+ *          * Los valores deben ser binarios
+ *          * La matriz es una matriz identidad de MxM con las filas cambiadas de orden, donde el orden reprensta
+ *            la prioridad, esto es:
+ *              - La matriz es cuadrada
+ *              - Cada fila representa una transicion
+ *              - En cada fila hay y solo hay un 1 (No pueden ser todos ceros y no pueden tener mas de uno)
+ *              - La posicion del 1 representa el nivel de prioridad
+ *              - Las tranciciones no pueden tener igual prioridad (No pueden haber 2 filas iguales)
  *
  * </pre>
  * <pre>
@@ -68,6 +77,7 @@ package jmml.monitor.rdp;
  *
  * </pre>
  * @TODO Caundo se cambien lo de los pesos de los lectores resolver lo de la documentacion.
+ * @TODO Documentar la ventana temporal
  */
 
 class RDPraw {

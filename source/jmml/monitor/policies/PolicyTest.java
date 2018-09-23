@@ -1,7 +1,6 @@
 package jmml.monitor.policies;
 
-import jmml.monitor.rdp.ConfigException;
-import jmml.monitor.rdp.RDP;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;

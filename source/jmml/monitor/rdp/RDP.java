@@ -25,14 +25,16 @@ import java.lang.String;
  *  - Maxima cantidad de tokens por plaza
  *  - Arcos inhibidores
  *  - Arcos lectores con peso 1
- *  - [NO] Arcos lectores con otro peso
+ *  - [FUTURE SOPPORT] Arcos lectores con otro peso
  *  - Transiciones sensibilizadas temporalmente
- * </pre>
  *
+ *</pre>
  * @WARNING No implementa ningun mecanismo de proteccion de recursos para hilos multiples (como semaforo),
  * debe ser implementado externamente
  * @TODO agregar todo el checkeo de archivos para temporales NO COPIAR - CAMBIO LOGICA DE CREAR EL VECT TEMPORAL
- * @TODO Debe verificar la matrix cuadrada T del dimencion cantidad de transiciones,binara, un 1 por columna, el resto cero, la fila no puede ser nula
+ * @TODO Debe verificar la matrix cuadrada T del dimencion cantidad de transiciones,binara, un 1 por columna,
+ * el resto cero, la fila no puede ser nula
+ *
  */
 public class RDP {
     /**
@@ -99,14 +101,12 @@ public class RDP {
 
 
     /**
-     * <pre>
      * Intenta realizar disparo de la red de petri, si este se puede disparar se dispara y altera el estado
      * de la red.
-     * @param tDisp         Numero de transicion a disparar
-     * @return True en caso de exito en el disparo de la transicion <br>
-     *         False en caso de que la transicion no este sencibilidaza
+     * @param tDisp  Numero de transicion a disparar
+     * @return <code>True</code> en caso de exito en el disparo de la transicion <br>
+     *         <code>False</code> en caso de que la transicion no este sencibilidaza
      * @throws ShotException Excepcion por inexistencia de la transicion
-     * </pre>
      */
     public boolean shotT(int tDisp) throws ShotException {
         // Si la transicion no existe lanza la excepcion
@@ -152,12 +152,10 @@ public class RDP {
     }
 
     /**
-     * <pre>
      * Analiza si la marca es valida, tomando en cuenta la posibilidad de maxima cantidad de tokens
      * @param mark Vector marca a analizar
-     * @return True si la marca es valida.
-     *         False si la marca no es valida
-     * </pre>
+     * @return <code>True</code> si la marca es valida.<br>
+     *         <code>False</code> si la marca no es valida
      */
     @Contract(pure = true)
     private boolean valid4Mark(@NotNull int[] mark) {
@@ -182,13 +180,14 @@ public class RDP {
     }
 
     /**
-     * Retorna el posible resultado del proximo marcado luego del disparo tDisp
-     * <pre>
+     * Retorna el posible resultado del proximo marcado luego del disparo tDisp <br>
      * Retorna el posible resultado del disparo sin alterar el marcador y sin verificar su validez <br>
      * Calcula el marcado del disparo de 1 sola transicion, como: <br>
      * Nuevo mark = mark actual + RDP * Vector Disparo
      * @param tDisp numero de transicion a disparar
-     * @return vectorNextMark  Proxima marca, sea alcanzable o no. Null en caso de inexistencia de transicion
+     * @return <code>boolean[]</code>  Proxima marca, sea alcanzable o no. <br>
+     *         <code>null</code> en caso de inexistencia de transicion
+     * @throws ShotException Si la transicion no existe
      * </pre>
      */
     @NotNull
@@ -213,13 +212,11 @@ public class RDP {
     }
 
     /**
-     * <pre>
-     * Genera el vector Q de plazas inhibidoras, generadas con la relacion UNO(Marcador(Plaza))
+     * Genera el vector Q de plazas inhibidoras, generadas con la relacion UNO(Marcador(Plaza)) <br>
      * Los unos multiplicados con los unos de las transiciones con arcos inhibidores
      * generan unos en el vector de no sensibilizado
-     * @return Vector, 1 si la plaza tiene Tokens
-     *                 0 Si la plaza no tiene Tokens
-     * </pre>
+     * @return <code>int[]</code>, 1 si la plaza tiene Tokens<br>
+     *         <code>0</code> Si la plaza no tiene Tokens
      */
     @Contract(pure = true)
     @NotNull
@@ -231,12 +228,10 @@ public class RDP {
     }
 
     /**
-     * <pre>
      * Los unos multiplicados con los unos de las transiciones con arcos lectores
      * generan unos en el vector de no sensibilizado por arcos lectores
-     * @return Vector, 1 si la plaza no tiene Toknes
-     *                 0 Si la plaza tiene Tokens
-     * </pre>
+     * @return <code>int[]</code>, 1 si la plaza no tiene Toknes<br>
+     *         0 Si la plaza tiene Tokens
      */
     @Contract(pure = true)
     @NotNull
@@ -249,16 +244,14 @@ public class RDP {
 
     /**
      * Multiplica la Matriz M por el vector V
-     *
      * @param m Matriz de dimencion MxN
      * @param v Vector de dimencion Nx1
-     * @return vector de Nx1
+     * @return vector de Nx1 = MxV
      * @throws ArithmeticException Matriz y vector de dimenciones incompatibles
      */
     @NotNull
     @Contract(pure = true)
     private int[] matMulVect(@NotNull int[][] m, @NotNull int[] v) {
-        // Chequeo tamanos compatibles
         if (v.length != m[0].length)
             throw new ArithmeticException("Matrix y vector de tamanos incompatibles");
 
@@ -277,10 +270,10 @@ public class RDP {
 
     /**
      * Producto interno entre 2 vectores
-     *
      * @param v1 Vector tamano n
      * @param v2 Vector de tamano n
-     * @return escalar, NULL en caso de tamanos incompatibles
+     * @throws ArithmeticException Vectores de distinta dimencion
+     * @return escalar, <code>null</code> en caso de tamanos incompatibles
      */
     @Contract(pure = true)
     private int vecMul(@NotNull int[] v1, @NotNull int[] v2) {
@@ -321,7 +314,7 @@ public class RDP {
      * Retorna el vector booleano de transiciones que se encuentran dentro de la ventana temporal
      *
      * @param timestamp El tiempo que se quiere chequear la vetanana, sirve para mantener atomicidad en ShotT
-     * @return True Si la transicion esta dentro de la ventana temporal
+     * @return <code>True</code> Si la transicion esta dentro de la ventana temporal
      */
     @NotNull
     @Contract(pure = true)
@@ -349,7 +342,7 @@ public class RDP {
      * donde el primer lugar corresponde a la primera transicion.
      *
      * <pre>
-     * @return True si la transicion esta sensibilizada <br>
+     * @return <code>True</code> si la transicion esta sensibilizada <br>
      *         False en caso contrario
      * </pre>
      */
@@ -366,9 +359,9 @@ public class RDP {
      * Puede ignorarse la ventana de tiempo para la obtencion de la sensibilidad <br>
      * NOTA: Se utiliza para caluclar los timestamp de las redes de petri
      *
-     * @param ignoreWindows True si se desea ignorar la parte temporal de la red para la obtencion del vector<br>
+     * @param ignoreWindows <code>True</code> si se desea ignorar la parte temporal de la red para la obtencion del vector<br>
      *                      False Si se desea tomar en cuenta el timestamp y la parte temporal de la red
-     * @return True si la transicion esta sensibilizada <br>
+     * @return <code>True</code> si la transicion esta sensibilizada <br>
      *                False en caso contrario
      * </pre>
      */
@@ -425,7 +418,7 @@ public class RDP {
     /**
      * Consulta si la red de petri es extendida para maxima cantidad de tokens
      * <pre>
-     * @return true:  Si estan limitadas las plazas a un numero maximo de tokens <br>
+     * @return <code>True</code>:  Si estan limitadas las plazas a un numero maximo de tokens <br>
      *         false: Caso contrario
      * </pre>
      */
@@ -449,7 +442,7 @@ public class RDP {
     /**
      * Consulta si la red de petri es extendida arcos inhibidores
      * <pre>
-     * @return true:  Si hay matriz de arcos inhibidores <br>
+     * @return <code>True</code>:  Si hay matriz de arcos inhibidores <br>
      *         false: Caso contrario
      * </pre>
      */
@@ -461,7 +454,7 @@ public class RDP {
     /**
      * Consulta si la red de petri es extendida arcos lectores
      * <pre>
-     * @return true:  Si hay matriz de arcos lectores <br>
+     * @return <code>True</code>:  Si hay matriz de arcos lectores <br>
      *         false: Caso contrario
      * </pre>
      */
@@ -473,7 +466,7 @@ public class RDP {
     /**
      * Consulta si la red de petri es temporal
      * <pre>
-     * @return true:  Hay ventana de tiempo establecido para 1 o mas transiciones <br>
+     * @return <code>True</code>:  Hay ventana de tiempo establecido para 1 o mas transiciones <br>
      *         false: Caso contrario
      * </pre>
      */
@@ -498,7 +491,7 @@ public class RDP {
      * Obtiene un array con la informacion de maximos toquens por plaza
      * <pre>
      * @return Una copia del array con el marcado maximo por plaza. <br>
-     *         Null Si no es extendida la red
+     *         <code>null</code> Si no es extendida la red
      * </pre>
      */
     @Contract(pure = true)
@@ -511,7 +504,7 @@ public class RDP {
      * Obtiene una matriz con la informacion de los arcos inhibidores, con el mismo formato de JSON
      * <pre>
      * @return Una copia de la matriz con arcos inhibidores. <br>
-     *         Null Si no es extendida la red
+     *         <code>null</code> Si no es extendida la red
      * </pre>
      */
     @Contract(pure = true)
@@ -524,7 +517,7 @@ public class RDP {
      * Obtiene una matriz con la informacion de los arcos lectores, con el mismo formato de JSON
      * <pre>
      * @return Una copia de la matriz con arcos lectores. <br>
-     *         Null Si no es extendida la red
+     *         <code>null</code> Si no es extendida la red
      * </pre>
      */
     @Contract(pure = true)
@@ -537,7 +530,7 @@ public class RDP {
      * Retorna la matriz de prioridades estaticas T
      * <pre>
      * @return Una copia de la matriz T de prioridades. <br>
-     *         Null Si no posee
+     *         <code>null</code> Si no posee
      * </pre>
      */
     @Contract(pure = true)
