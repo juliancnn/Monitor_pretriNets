@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
 /**
  * <pre>
  * Manejador de todas las colas (Listas FIFO) de threads que estan
- * en el monitor a la espera  disponibilidad de recursos. Si esta en la cola el threads esta en Sleep
+ * en el monitor a la espera  disponibilidad de recursos. Si esta en la cola el threads esta en waiting status
  * ------REVISAR DE ACA PARA ABAJO
  * El manejador es creado con un numero de colas predeterminado y fijo.
  * Posee mecanismos para:<br>
@@ -18,6 +18,13 @@ import java.util.NoSuchElementException;
  *
  * @TODO Hacer los test negrooo, banda de test
  * @TODO Rehacer la documentacion
+ * @TODO <pre>Como evito que alguien externo al monitor me interrumpa el hilo con un interrupt?
+ * Esto me trae problemas, por que si bien lo saco de la cola manejando la excepcion puede disparar igual
+ * y en el mejor de los casos no dispara, pero si dispara me puede o romper la coinsistencia del monitor, y dsp de disparar
+ * levantaria otro hilo, sabiendo que puede haber otro adentro del monitor levantando threads, dsp me devuelve
+ * y queda incoinsistente el semaforo
+ * Me podria podria implementar una excepcion
+ * checkeada obligatoria del monitor para que no intente aceder al recurso que solico dsp de pedirlo no? </pre>
  * @see jmml.monitor.rdp.RDP
  */
 public class QueueManagement {
@@ -30,11 +37,13 @@ public class QueueManagement {
 
     /**
      * Crea la lista de colas de Threads
+     *
      * @param numColas Numero de colas a crear
+     * @TODO Cambio de exepcion
      */
-    public QueueManagement(int numColas) {
+    public QueueManagement(int numColas) throws IllegalArgumentException {
         if (numColas < 1)
-            System.out.println("A ver nene si  aca implemetas la excepxion");
+            throw new IllegalArgumentException("A ver nene si  aca implemetas la excepxion");
 
         /* Levantamos las colas */
         this.colas = new ArrayList<>();
@@ -61,6 +70,7 @@ public class QueueManagement {
 
     /**
      * Anade el thread que lo llamo a la cola nCola
+     *
      * @param nCola Numero de cola a anadirse
      * @throws IndexOutOfBoundsException Cuando se quiere anadir a una cola que no existe
      */
@@ -73,7 +83,7 @@ public class QueueManagement {
         try {
             /* Mete el thread al final de la lista */
             this.colas.get(nCola).add(tn);
-            tn.getT().wait();
+            tn.waitNode();
         } catch (java.lang.InterruptedException e) {
             /* Si alguien lo interrumpe lo saco de la cola */
             this.colas.get(nCola).remove(tn);
@@ -82,7 +92,7 @@ public class QueueManagement {
     }
 
     /**
-     * Despierta a un thread al tope de la cola FIFO que estaba en Sleep
+     * Despierta a un thread al tope de la cola FIFO que estaba en waiting status
      *
      * @param nCola numero de cola del thread a despertar
      * @throws IndexOutOfBoundsException Se quiere quitar a una cola que no existe
@@ -104,10 +114,11 @@ public class QueueManagement {
          * aunque si lo despierta y cambia de conexto, sin volver al primer hilo
          * no habria 3 hilos en el monitor? esta bien, 2 estan saliendo, pero tecnicamente no estan dentro
          * del moinitor? */
+        /* que pasa si el proceso lo mataron por X causa. */
 
         ThreadNode tn = this.colas.get(nCola).get(0);
         this.colas.get(nCola).remove(tn);
-        tn.getT().notify();
+        tn.notifyNode();
 
     }
     /*==================================================================================================================
@@ -119,18 +130,20 @@ public class QueueManagement {
 
     /**
      * Cantidad de colas que administra el manejador, sin importar si estan vacias o no.
+     *
      * @return cantidad de colas que posee el manejador
      */
-    public int size(){
+    public int size() {
         return this.colas.size();
     }
 
     /**
      * Informacion del thread que guarda en la cola
      */
-    class ThreadNode {
-        private Thread t;
-        long timeStamp;
+    final class ThreadNode {
+        final private Thread t;
+        final long timeStamp;
+        final private Object lockObj;
 
         /**
          * Crea nodo de informacion del thread
@@ -138,16 +151,46 @@ public class QueueManagement {
         ThreadNode() {
             this.t = Thread.currentThread();
             this.timeStamp = java.lang.System.currentTimeMillis();
+            this.lockObj = new Object();
         }
 
+        /**
+         * Retorna el thread que creo el nodo
+         * @return Thread creador del nodo
+         */
         @NotNull
-        protected Thread getT() {
+        Thread getT() {
             return t;
         }
 
+        /**
+         * Pone al thread en wait state con un objeto propio del nodo
+         * @throws InterruptedException Producida por el wait al thread
+         */
+        void waitNode() throws InterruptedException {
+            synchronized (this.lockObj){
+                lockObj.wait();
+            }
+
+        }
+
+        /**
+         * Levanta al thread de wait state a ready con un objeto propio del nodo
+         */
+        synchronized void notifyNode() {
+            synchronized (this.lockObj) {
+                lockObj.notify();
+            }
+        }
+
+        /**
+         * Obtiene el tiempo de creacion del nodo
+         * @return TimeStamp de la creacion del nodo en ms formato unix
+         */
         protected long getTimeStamp() {
             return timeStamp;
         }
+
     }
 
 

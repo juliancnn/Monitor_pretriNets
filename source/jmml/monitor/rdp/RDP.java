@@ -251,7 +251,7 @@ public class RDP {
      */
     @NotNull
     @Contract(pure = true)
-    private int[] matMulVect(@NotNull int[][] m, @NotNull int[] v) {
+    private int[] matMulVect(@NotNull int[][] m, @NotNull int[] v) throws ArithmeticException {
         if (v.length != m[0].length)
             throw new ArithmeticException("Matrix y vector de tamanos incompatibles");
 
@@ -276,7 +276,7 @@ public class RDP {
      * @return escalar, <code>null</code> en caso de tamanos incompatibles
      */
     @Contract(pure = true)
-    private int vecMul(@NotNull int[] v1, @NotNull int[] v2) {
+    private int vecMul(@NotNull int[] v1, @NotNull int[] v2) throws ArithmeticException {
         // Chequeo tamanos compatibles
         if (v1.length != v2.length)
             throw new ArithmeticException("Vectores de distinta longitud");
@@ -359,8 +359,9 @@ public class RDP {
      * Puede ignorarse la ventana de tiempo para la obtencion de la sensibilidad <br>
      * NOTA: Se utiliza para caluclar los timestamp de las redes de petri
      *
-     * @param ignoreWindows <code>True</code> si se desea ignorar la parte temporal de la red para la obtencion del vector<br>
-     *                      False Si se desea tomar en cuenta el timestamp y la parte temporal de la red
+     * @param ignoreWindows <code>True</code> si se desea ignorar la parte temporal de la red para la obtencion <br>
+     *                      del vector.
+     *                      <code>False </code> Si se desea tomar en cuenta el timestamp y la parte temporal de la red
      * @return <code>True</code> si la transicion esta sensibilizada <br>
      *                False en caso contrario
      * </pre>

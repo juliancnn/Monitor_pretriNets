@@ -74,7 +74,7 @@ public class Policy {
      * @param policy Nueva politica para toma de desiciones.
      * @throws IllegalArgumentException Politica no esperada, por inexistencia o falta de implementacion.
      */
-    void setPolicy(policyType policy) {
+    void setPolicy(policyType policy) throws IllegalArgumentException{
         this.mode = policy;
         switch (this.mode) {
             /*case STATICORDER:
@@ -172,7 +172,7 @@ public class Policy {
      */
     @NotNull
     @Contract(pure = true)
-    int[] matMulVect(@NotNull int[] v, @NotNull int[][] m, boolean transpuesta) {
+    int[] matMulVect(@NotNull int[] v, @NotNull int[][] m, boolean transpuesta) throws ArithmeticException {
         if (v.length != m[0].length)
             throw new ArithmeticException("Matrix y vector de tamanos incompatibles");
 
@@ -206,7 +206,7 @@ public class Policy {
      * @TODO Hay una forma mas eficiente de hacer esto?
      */
     @NotNull
-    protected int[][] matReaorderRandom(@NotNull int[][] matrix, boolean clone) {
+    protected int[][] matReaorderRandom(@NotNull int[][] matrix, boolean clone) throws ArithmeticException {
         if (matrix[0].length != matrix.length)
             throw new ArithmeticException("Matrix a desordenar no es cuadrada");
 
