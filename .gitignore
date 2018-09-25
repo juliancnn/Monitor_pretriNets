@@ -2,3 +2,5 @@
 **/bin
 out/
 tpconcurrente2018.iml
+doc/covered/
+doc/srcDoc
