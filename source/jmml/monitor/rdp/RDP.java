@@ -86,11 +86,7 @@ public class RDP {
             boolean SensAux[] = getSensitizedArray(true);
             long timestamp = java.lang.System.currentTimeMillis();
             for (int i = 0; i < this.raw.vectorTimestamp.length; ++i) {
-                if (SensAux[i]) {
-                    this.raw.vectorTimestamp[i] = timestamp;
-                } else {
-                    this.raw.vectorTimestamp[i] = 0;
-                }
+                this.raw.vectorTimestamp[i] = SensAux[i] ? timestamp : 0;
             }
 
         }
@@ -122,13 +118,12 @@ public class RDP {
             validShot = (this.vecMul(this.raw.matrixH[tDisp - 1], this.genVectorQ()) == 0);
 
         /* Verifico si el tiro es valido  por arcos inhibidores > L(tDisp) = R[tdis][] x VectorW*/
-        if (this.isExtReader())
-            validShot = validShot && (this.vecMul(this.raw.matrixR[tDisp - 1], this.genVectorW()) == 0);
+        if (validShot && this.isExtReader())
+            validShot = (this.vecMul(this.raw.matrixR[tDisp - 1], this.genVectorW()) == 0);
 
         /* Si el tiro sigue siendo valido chequeo las restricciones temporales */
-        if (this.isExtTemp())
-            validShot = validShot && this.genSensitizedTemp(timestamp)[tDisp - 1];
-
+        if (validShot && this.isExtTemp())
+            validShot = this.genSensitizedTemp(timestamp)[tDisp - 1];
 
         /* Si el tiro sigue siendo valido chequeo nueva marca */
         newMark = validShot ? this.nextMark(tDisp) : null;
@@ -206,7 +201,6 @@ public class RDP {
         for (int i = 0; i < vNextMark.length; i++)
             vNextMark[i] += this.raw.vectorMark[i];
 
-
         return vNextMark;
 
     }
@@ -246,7 +240,7 @@ public class RDP {
      * Multiplica la Matriz M por el vector V
      * @param m Matriz de dimencion MxN
      * @param v Vector de dimencion Nx1
-     * @return vector de Nx1 = MxV
+     * @return vector de Mx1
      * @throws ArithmeticException Matriz y vector de dimenciones incompatibles
      */
     @NotNull

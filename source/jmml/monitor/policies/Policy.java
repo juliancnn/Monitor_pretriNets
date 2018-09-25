@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Random;
 
 /**
- * Encargado de manejar la politica de la red, dando mecanimos para cambiarla y de consulta de disparos
+ * Encargado de manejar la politica de la cola, dando mecanimos para cambiarla y de consulta de disparos
  *
  * @TODO HACER TODO BEBE, esta mas crudo que los bebes que se trago wanda
  * @TODO IMPLEMENTAR EXCEPCIONES PARA MALA CARGA DE POLITICA + TRANSICIONES ESTATICAS
@@ -21,11 +21,11 @@ public class Policy {
      */
     private policyType mode;
     /**
-     * Colas a aplicar las politicas.
+     * Colas a aplicar las politicas, utilizada para obtener estadisticas
      */
     private QueueManagement queue;
     /**
-     * Matriz random de politicas, de distribucion uniforme
+     * Matriz random de politicas, de distribucion uniforme, varia con cada utilizacion
      */
     private int[][] matPRandom;
 
@@ -34,7 +34,7 @@ public class Policy {
      */
     //boolean[][] matStatic;
     /**
-     * Matriz de politica usada para calcular las prioridades
+     * Matriz de politica usada en el momento para calcular las prioridades
      */
     int[][] matOfPolicy;
 
@@ -44,26 +44,27 @@ public class Policy {
      * La politica puede cambiar.
      * El administrador de colas es necesario para garantizar coinsitencia en la generacion de politicas (Armado de
      * matrices de politicas)
-     * @param mode Modo inicial para la politica
-     * @param queueManagement Cola de procesos al que se le aplicara la politica
-     *        el objeto no es modificado en ningun momento por Policy, se utiliza para garantizar consistencia
      * </pre>
+     *
+     * @param mode            Modo inicial para la politica
+     * @param queueManagement Cola de procesos al que se le aplicara la politica<br>
+     *                        el objeto no es modificado en ningun momento por Policy, se utiliza para garantizar consistencia
+     * @TODO Debo armar un metodo que arme las matrices?
      */
     public Policy(@NotNull QueueManagement queueManagement, policyType mode) {
-
-        /* Seteo politica por defecto y si hay cargo politica estatica */
-        this.setPolicy(mode);
+        // Guardo colas para hacer estadistica
         this.queue = queueManagement;
         int size = this.queue.size();
 
-        /* Si hay, Armo matriz de prioridad estica */
-        //int[][] mT = rdp.getMatrixT();
-
-        /* Deberia llamar un metodo que arme toda las matrices? */
-        /* Armo una matriz identidad para la politica random, luego sera desordenada */
+        /* RANDOM MAT - Luego sera desordenada */
         this.matPRandom = new int[size][size];
         for (int i = 0; i < size; i++)
             this.matPRandom[i][i] = 1;
+        /* STATIC MAT  */
+        //int[][] mT = rdp.getMatrixT();
+
+        /* Seteo politica al ultimo para generar antes las matrices */
+        this.setPolicy(mode);
 
     }
 
@@ -74,7 +75,7 @@ public class Policy {
      * @param policy Nueva politica para toma de desiciones.
      * @throws IllegalArgumentException Politica no esperada, por inexistencia o falta de implementacion.
      */
-    void setPolicy(policyType policy) throws IllegalArgumentException{
+    void setPolicy(policyType policy) throws IllegalArgumentException {
         this.mode = policy;
         switch (this.mode) {
             /*case STATICORDER:
@@ -83,6 +84,7 @@ public class Policy {
             */
             case RANDOM:
                 this.matOfPolicy = this.matPRandom;
+                break;
             default:
                 throw new java.lang.IllegalArgumentException("Politica no esperada");
         }
@@ -109,7 +111,7 @@ public class Policy {
      * @param whoIsAviable Vector binario de colas. <br>
      *                     True: La cola sera tomada en cuenta <br>
      *                     False: La cola no sera tomada en cuenta
-     * @return Cola seleccionada por la politica para desencolar, segun la politica establecida
+     * @return numero de cola seleccionada por la politica para desencolar, segun la politica establecida
      * @TODO Arrojaria exepcion si el vector esta vacio [0 0 0 ....] y otra distinta para null \
      * @TODO Ver el tema del casteo de bool a int si se puede mejorar operando bit a bit o pasar todo a int[] en rdp
      * ?? Deberia guardar el numero estatico de la cantidad de transiciones a recibir??
@@ -122,8 +124,8 @@ public class Policy {
 
         return this.getFirstOnTrue(
                 this.matMulVect(
-                    this.firstOnTrue(this.matMulVect(who, this.matOfPolicy, false)),
-                                                          this.matOfPolicy, true));
+                        this.firstOnTrue(this.matMulVect(who, this.matOfPolicy, false)),
+                                                    this.matOfPolicy, true));
 
     }
 
@@ -160,35 +162,26 @@ public class Policy {
     }
 
     /**
-     * Multiplica el vector V[ceros;unos] por la Matriz M [ceros;unos] y cuadrada
-     * Puede transponerse la matriz antes de multiplicarla
+     * Multiplica la Matriz M por el vector V
      *
-     * @param m           Matriz [0;1] de dimencion MxM
-     * @param v           Vector booleana de dimencion Mx1
-     * @param transpuesta Si es verdadero transpone la matriz M
-     * @return vector de Mx1
+     * @param m           Matriz de dimencion TxT
+     * @param v           Vector de dimencion Tx1
+     * @param transpuesta True si se quiere trasnponer la matrix T
+     * @return vector de Tx1 resultado de la multiplicacion de MxV
      * @throws ArithmeticException Matriz y vector de dimenciones incompatibles
      * @TODO No hay una forma de trabajarlo con booleanos que sea eficiente como C para multiplicar(AND BIT a BIT) de un array?
      */
     @NotNull
     @Contract(pure = true)
     int[] matMulVect(@NotNull int[] v, @NotNull int[][] m, boolean transpuesta) throws ArithmeticException {
-        if (v.length != m[0].length)
-            throw new ArithmeticException("Matrix y vector de tamanos incompatibles");
+        if (v.length != m.length || m.length != m[0].length)
+            throw new ArithmeticException("Matrix y vector de tamanos inesperados");
 
-        // Vector resultado inicializado en 0
         int[] result = new int[m.length];
 
-        // Opero por filas en la matriz
-        if (transpuesta)
-            for (int i = 0; i < v.length; i++)
-                for (int j = 0; j < v.length; j++)
-                    result[i] += v[i] * m[j][i];
-        else
-            for (int i = 0; i < v.length; i++)
-                for (int j = 0; j < v.length; j++)
-                    result[i] += v[i] * m[i][j];
-
+        for (int i = 0; i < v.length; i++)
+            for (int j = 0; j < v.length; j++)
+                result[i] += v[j] * (transpuesta ? m[j][i] : m[i][j]);
 
         return result;
     }

@@ -1,6 +1,7 @@
 package jmml.monitor.colas;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,7 @@ class QueueManagementTest {
      * a este metodo se supone que entran de a uno a la vez
      */
     @Test
+    @DisplayName("Add/rm/check queue")
     void whoIsWaiting() {
         try{
             QueueManagement qm = new QueueManagement(5);
