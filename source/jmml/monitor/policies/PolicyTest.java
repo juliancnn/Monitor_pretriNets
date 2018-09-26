@@ -5,15 +5,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 class PolicyTest {
+
+
 
     @Test
     void tellMeWho() {
     }
 
-    /* Test de operaciones matematica/logica */
+    /*==================================================================================================================
+                                    TEST DE OPERACIONES MATEMATICAS Y VECTORIALES
+     =================================================================================================================*/
 
     @Test
     @DisplayName("[MAT TEST] Primer valor en true")
