@@ -1,13 +1,29 @@
 package jmml.monitor.policies;
 
+import ext.junit5.MockitoExtension;
 import jmml.monitor.colas.QueueManagement;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+/*
+* https://junit.org/junit5/docs/5.0.0/user-guide/#writing-tests 3.11
+* */
+@ExtendWith(MockitoExtension.class)
 class PolicyTest {
 
+    /* Armo el Mocked and dummy objet */
+    @BeforeEach
+    void init(@Mock QueueManagement qm){
+        qm = mock(QueueManagement.class);
+        when(qm.size()).thenReturn(5);
+    }
 
 
     @Test
@@ -20,8 +36,7 @@ class PolicyTest {
 
     @Test
     @DisplayName("[MAT TEST] Primer valor en true")
-    void firstOnTrue() {
-        QueueManagement qm = new QueueManagement(5);
+    void firstOnTrue(@Mock QueueManagement qm) {
         Policy pol = new Policy(qm, policyType.RANDOM);
         Assertions.assertArrayEquals(new int[]{1, 0, 0, 0, 0}, pol.firstOnTrue(new int[]{1, 0, 1, 0, 0}));
         Assertions.assertArrayEquals(new int[]{0, 1, 0, 0, 0}, pol.firstOnTrue(new int[]{0, 1, 0, 1, 0}));
@@ -32,8 +47,7 @@ class PolicyTest {
 
     @Test
     @DisplayName("[MAT TEST] Mat Mul con traspuesta")
-    void matMulVect() {
-        QueueManagement qm = new QueueManagement(5);
+    void matMulVect(@Mock QueueManagement qm) {
         Policy pol = new Policy(qm, policyType.RANDOM);
         int[][] M = new int[][]{
             {1, 2, 3},
@@ -49,8 +63,7 @@ class PolicyTest {
 
     @DisplayName("[MAT TEST] Donde esta el true")
     @Test
-    void getFirstOnTrue() {
-        QueueManagement qm = new QueueManagement(5);
+    void getFirstOnTrue(@Mock QueueManagement qm) {
         Policy pol = new Policy(qm, policyType.RANDOM);
         Assertions.assertEquals(1, pol.getFirstOnTrue(new int[]{1, 0, 1, 0, 0}));
         Assertions.assertEquals(2, pol.getFirstOnTrue(new int[]{0, 1, 1, 0, 0}));
