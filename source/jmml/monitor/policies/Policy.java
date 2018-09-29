@@ -3,6 +3,7 @@ package jmml.monitor.policies;
 import jmml.monitor.colas.QueueManagement;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -11,6 +12,7 @@ import java.util.Random;
  *
  * @TODO HACER TODO BEBE, esta mas crudo que los bebes que se trago wanda
  * @TODO IMPLEMENTAR EXCEPCIONES PARA MALA CARGA DE POLITICA + TRANSICIONES ESTATICAS
+ * @TODO Chequear el constructor de la matrix t coinsida con cantidad de colas
  * @TODO Rehacer la documentacion
  * @TODO Debo guardad ultimo disparo y cantidad de veces que se disparo, para hacer matrices
  * @TODO TESTEAR TODOS LOS ARMADOS DE MATRICES y operaciones matematicas con matrices
@@ -32,7 +34,7 @@ public class Policy {
     /**
      * Matriz de prioridad estatica
      */
-    //boolean[][] matStatic;
+    private int[][] matStatic;
     /**
      * Matriz de politica usada en el momento para calcular las prioridades
      */
@@ -48,10 +50,16 @@ public class Policy {
      *
      * @param mode            Modo inicial para la politica
      * @param queueManagement Cola de procesos al que se le aplicara la politica<br>
-     *                        el objeto no es modificado en ningun momento por Policy, se utiliza para garantizar consistencia
+     *                        el objeto no es modificado en ningun momento por Policy, se utiliza para garantizar
+     *                        consistencia
+     * @param matrixStatic    Null para utilizar la matriz identidad como matriz de politicas estaticas
+     *                        El orden de prioridad esta dado por el orden de transiciones
+     *                        int[][] Matriz cuadrada de 2 dimenaciones coinsidente con el tamano de cola para
+     *                        prioridades esaticas (matriz identidad con irden de columnas cambiados)
      * @TODO Debo armar un metodo que arme las matrices?
+     * @TODO Verificar que la matriz sea identidad de filas interambiadas
      */
-    public Policy(@NotNull QueueManagement queueManagement, policyType mode) {
+    public Policy(@NotNull QueueManagement queueManagement, policyType mode, @Nullable int[][] matrixStatic) {
         // Guardo colas para hacer estadistica
         this.queue = queueManagement;
         int size = this.queue.size();
@@ -60,8 +68,9 @@ public class Policy {
         this.matPRandom = new int[size][size];
         for (int i = 0; i < size; i++)
             this.matPRandom[i][i] = 1;
+
         /* STATIC MAT  */
-        //int[][] mT = rdp.getMatrixT();
+        this.matStatic = matrixStatic == null ? this.matPRandom.clone() : matrixStatic.clone();
 
         /* Seteo politica al ultimo para generar antes las matrices */
         this.setPolicy(mode);
@@ -78,17 +87,15 @@ public class Policy {
     void setPolicy(policyType policy) throws IllegalArgumentException {
         this.mode = policy;
         switch (this.mode) {
-            /*case STATICORDER:
+            case STATICORDER:
                 this.matOfPolicy = this.matStatic;
                 break;
-            */
             case RANDOM:
                 this.matOfPolicy = this.matPRandom;
                 break;
             default:
                 throw new java.lang.IllegalArgumentException("Politica no esperada");
         }
-
 
     }
 

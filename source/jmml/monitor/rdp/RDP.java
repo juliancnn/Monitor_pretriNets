@@ -68,6 +68,7 @@ public class RDP {
      * @throws FileNotFoundException Lanzado cuando no se encuentra el archivo JSON
      * @throws ConfigException       Lanzado cuando esta mal formado el archivo JSON
      * @TODO Verificar que las matrices H y R sean binarias
+     * @TODO Verificar la estructura de la matix T
      * @see RDPraw Ver estructura completa del JSON
      */
     public RDP(String jsonFile) throws FileNotFoundException, ConfigException {
@@ -531,7 +532,7 @@ public class RDP {
     @Contract(pure = true)
     @Nullable
     public int[][] getMatrixT() {
-        return this.raw.matrixT;
+        return this.raw.matrixT != null ? this.raw.matrixT.clone() : null;
     }
 
 
