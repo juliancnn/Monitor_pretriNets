@@ -9,23 +9,26 @@ import java.util.NoSuchElementException;
 
 /**
  * <pre>
- * Manejador de todas las colas (Listas FIFO) de threads que estan
- * en el monitor a la espera  disponibilidad de recursos. Si esta en la cola el threads esta en waiting status
- * ------REVISAR DE ACA PARA ABAJO
- * El manejador es creado con un numero de colas predeterminado y fijo.
- * Posee mecanismos para:<br>
+ * Manejador de multiples colas (Listas FIFO) de threads.
+ * El manejador es creado con un numero de colas vacias fijo.
+ * Cuando un thread entra enuna cola, entonces pasa a waiting status.
+ * Cuando el thread vuelve a ready sale de la lista.
+ *
+ * Posee mecanismos para Agregar/Eliminar threads de una cola y consultar informacion sobre:
+ *     - @TODO Tamano de las pilas (Como evito overflow)
+ *     - @TODO Tiempo de espera del primer threads en cada cola
+ *     - @TODO Actividad por cola (Si se mueve mucho)
+ *
  * </pre>
  *
  * @TODO Hacer los test negrooo, banda de test
- * @TODO Rehacer la documentacion
- * @TODO <pre>Como evito que alguien externo al monitor me interrumpa el hilo con un interrupt?
+ * @TODO <pre>Como evito que alguien externo al monitor me interrumpa el hilo con un interrupt?/ y si lo mata?
  * Esto me trae problemas, por que si bien lo saco de la cola manejando la excepcion puede disparar igual
  * y en el mejor de los casos no dispara, pero si dispara me puede o romper la coinsistencia del monitor, y dsp de disparar
  * levantaria otro hilo, sabiendo que puede haber otro adentro del monitor levantando threads, dsp me devuelve
  * y queda incoinsistente el semaforo
  * Me podria podria implementar una excepcion
  * checkeada obligatoria del monitor para que no intente aceder al recurso que solico dsp de pedirlo no? </pre>
- * @see jmml.monitor.rdp.RDP
  */
 public class QueueManagement {
 
@@ -52,12 +55,10 @@ public class QueueManagement {
     }
 
     /**
-     * <pre>
      * Retorna un vector booleano seteado en true en la cola que se hay threads esperando
      * @return Vector booleano<br>
      *     True: Hay threads en la cola<br>
-     *     False: Si la cola esta vacia<br>
-     * </pre>
+     *     False: Si la cola esta vacia
      */
     @NotNull
     @Contract(pure = true)
@@ -85,7 +86,8 @@ public class QueueManagement {
             this.colas.get(nCola).add(tn);
             tn.waitNode();
         } catch (java.lang.InterruptedException e) {
-            /* Si alguien lo interrumpe lo saco de la cola */
+            /* Si alguien lo interrumpe lo saco de la cola, deberia finalizar el thread?
+             * o por lo menos sacarlo del monitor, podria lanzar excepcion y capturarla fuera del monitor */
             this.colas.get(nCola).remove(tn);
         }
 
@@ -123,6 +125,13 @@ public class QueueManagement {
     }
     /*==================================================================================================================
 
+                                  GETERS OF DYNAMIC INFORMATION AND PROPERTIES
+
+                            Devuelven informacion dinamica del estado  de las colas
+     =================================================================================================================*/
+
+    /*==================================================================================================================
+
                                    GETERS OF STATIC INFORMATION AND PROPERTIES
 
                         Devuelven informacion de estado y propiedades estaticas de las colas
@@ -136,6 +145,8 @@ public class QueueManagement {
     public int size() {
         return this.colas.size();
     }
+
+
 
     /**
      * Informacion del thread que guarda en la cola
@@ -158,6 +169,7 @@ public class QueueManagement {
          * Retorna el thread que creo el nodo
          * @return Thread creador del nodo
          */
+        @Contract(pure = true)
         @NotNull
         Thread getT() {
             return t;

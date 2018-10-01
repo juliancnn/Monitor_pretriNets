@@ -38,7 +38,7 @@ public class Policy {
     /**
      * Matriz de politica usada en el momento para calcular las prioridades
      */
-    int[][] matOfPolicy;
+    private int[][] matOfPolicy;
 
     /**
      * <pre>
@@ -121,7 +121,6 @@ public class Policy {
      * @return numero de cola seleccionada por la politica para desencolar, segun la politica establecida
      * @TODO Arrojaria exepcion si el vector esta vacio [0 0 0 ....] y otra distinta para null \
      * @TODO Ver el tema del casteo de bool a int si se puede mejorar operando bit a bit o pasar todo a int[] en rdp
-     * ?? Deberia guardar el numero estatico de la cantidad de transiciones a recibir??
      */
     @Contract(pure = true)
     public int tellMeWho(@NotNull boolean[] whoIsAviable) {

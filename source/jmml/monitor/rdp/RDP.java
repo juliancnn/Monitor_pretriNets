@@ -34,6 +34,7 @@ import java.lang.String;
  * @TODO agregar todo el checkeo de archivos para temporales NO COPIAR - CAMBIO LOGICA DE CREAR EL VECT TEMPORAL
  * @TODO Debe verificar la matrix cuadrada T del dimencion cantidad de transiciones,binara, un 1 por columna,
  * el resto cero, la fila no puede ser nula
+ * @TODO Verificar la captura de excepciones
  *
  */
 public class RDP {
