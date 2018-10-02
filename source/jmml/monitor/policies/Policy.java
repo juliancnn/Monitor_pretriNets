@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -34,7 +36,8 @@ public class Policy {
     /**
      * Matriz de prioridad estatica
      */
-    private int[][] matStatic;
+    private int[][] matPStatic;
+    private int[][] matPMaxSizeQueue;
     /**
      * Matriz de politica usada en el momento para calcular las prioridades
      */
@@ -70,7 +73,10 @@ public class Policy {
             this.matPRandom[i][i] = 1;
 
         /* STATIC MAT  */
-        this.matStatic = matrixStatic == null ? this.matPRandom.clone() : matrixStatic.clone();
+        this.matPStatic = matrixStatic == null ? this.matPRandom.clone() : matrixStatic.clone();
+
+        /* MAX SIZE QUEUE*/
+        this.matPMaxSizeQueue = new int[size][size];
 
         /* Seteo politica al ultimo para generar antes las matrices */
         this.setPolicy(mode);
@@ -88,7 +94,7 @@ public class Policy {
         this.mode = policy;
         switch (this.mode) {
             case STATICORDER:
-                this.matOfPolicy = this.matStatic;
+                this.matOfPolicy = this.matPStatic;
                 break;
             case RANDOM:
                 this.matOfPolicy = this.matPRandom;
@@ -119,6 +125,7 @@ public class Policy {
      *                     True: La cola sera tomada en cuenta <br>
      *                     False: La cola no sera tomada en cuenta
      * @return numero de cola seleccionada por la politica para desencolar, segun la politica establecida
+     * @TODO Update matrices
      * @TODO Arrojaria exepcion si el vector esta vacio [0 0 0 ....] y otra distinta para null \
      * @TODO Ver el tema del casteo de bool a int si se puede mejorar operando bit a bit o pasar todo a int[] en rdp
      */
@@ -131,15 +138,42 @@ public class Policy {
         return this.getFirstOnTrue(
                 this.matMulVect(
                         this.firstOnTrue(this.matMulVect(who, this.matOfPolicy, false)),
-                                                    this.matOfPolicy, true));
+                        this.matOfPolicy, true));
 
     }
 
     /*==================================================================================================================
 
-                                 Generacion dinamica de matrices de politicas
+                                 Generacion/actualizacion dinamica de matrices de politicas
 
      =================================================================================================================*/
+
+    /**
+     * Genera la matriz de prioridades segun el tamano de las colas, mientras mas grande sea la cola mayor prioridad
+     * @TODO QUE PASA SI 2 colas tienen mismo largo, como resuelvo la disputa de la matriz?
+     * @return Matrix cuadrada de prioridades generada segun el tamano de la cola
+     */
+    int[][] genMatPMaxSize() {
+        /* Matriz de politica - Vector de tamano de colas originales 0>= - vector ordenado */
+        int[][] policyMat = new int[this.queue.size()][this.queue.size()];
+        int[] orginalSizes = this.queue.siezeOfQueue();
+        int[] sortSizes = orginalSizes.clone();
+        Arrays.sort(sortSizes); // Vector ordenado de menor a mayor
+
+        // Busco por prioridad (p) a la cola mas larga (ultima)
+        // La busqueda no puede ser mas eficiente por que no puedo ordenar el array original
+        for (int i = sortSizes.length - 1, p = 0, cola; i > 0; i--) {
+            for (cola = 0; cola < orginalSizes.length; cola++)
+                if (orginalSizes[cola] == sortSizes[i]) {
+                    orginalSizes[cola] = -1; // Para no contar valores (Siempre positivos) repetidos
+                    break;
+                }
+            policyMat[p++][cola] = 1;
+        }
+
+        return policyMat;
+
+    }
 
 
 

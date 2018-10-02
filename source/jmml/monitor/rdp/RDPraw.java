@@ -76,8 +76,7 @@ package jmml.monitor.rdp;
  * }
  *
  * </pre>
- * @TODO Caundo se cambien lo de los pesos de los lectores resolver lo de la documentacion.
- * @TODO Documentar la ventana temporal
+ * @TODO Agregar lo de politica estatica al JSON (Ver de manera grafica como tien que ser)
  */
 
 class RDPraw {

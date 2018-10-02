@@ -129,6 +129,14 @@ public class QueueManagement {
 
                             Devuelven informacion dinamica del estado  de las colas
      =================================================================================================================*/
+    public int[] siezeOfQueue(){
+        int[] sizes = new int[this.colas.size()];
+        for(int i=0;i<this.colas.size();i++){
+            sizes[i] = this.colas.get(i).size();
+        }
+        return sizes;
+
+    }
 
     /*==================================================================================================================
 
@@ -199,6 +207,7 @@ public class QueueManagement {
          * Obtiene el tiempo de creacion del nodo
          * @return TimeStamp de la creacion del nodo en ms formato unix
          */
+        @Contract(pure = true)
         protected long getTimeStamp() {
             return timeStamp;
         }
