@@ -28,14 +28,14 @@ import java.lang.String;
  *  - [FUTURE SOPPORT] Arcos lectores con otro peso
  *  - Transiciones sensibilizadas temporalmente
  *
- *</pre>
+ * </pre>
+ *
  * @WARNING No implementa ningun mecanismo de proteccion de recursos para hilos multiples (como semaforo),
  * debe ser implementado externamente
  * @TODO agregar todo el checkeo de archivos para temporales NO COPIAR - CAMBIO LOGICA DE CREAR EL VECT TEMPORAL
  * @TODO Debe verificar la matrix cuadrada T del dimencion cantidad de transiciones,binara, un 1 por columna,
  * el resto cero, la fila no puede ser nula
  * @TODO Verificar la captura de excepciones
- *
  */
 public class RDP {
     /**
@@ -94,16 +94,16 @@ public class RDP {
         }
 
 
-
     }
 
 
     /**
      * Intenta realizar disparo de la red de petri, si este se puede disparar se dispara y altera el estado
      * de la red.
-     * @param tDisp  Numero de transicion a disparar
+     *
+     * @param tDisp Numero de transicion a disparar
      * @return <code>True</code> en caso de exito en el disparo de la transicion <br>
-     *         <code>False</code> en caso de que la transicion no este sencibilidaza
+     * <code>False</code> en caso de que la transicion no este sencibilidaza
      * @throws ShotException Excepcion por inexistencia de la transicion
      */
     public boolean shotT(int tDisp) throws ShotException {
@@ -150,9 +150,10 @@ public class RDP {
 
     /**
      * Analiza si la marca es valida, tomando en cuenta la posibilidad de maxima cantidad de tokens
+     *
      * @param mark Vector marca a analizar
      * @return <code>True</code> si la marca es valida.<br>
-     *         <code>False</code> si la marca no es valida
+     * <code>False</code> si la marca no es valida
      */
     @Contract(pure = true)
     private boolean valid4Mark(@NotNull int[] mark) {
@@ -181,11 +182,12 @@ public class RDP {
      * Retorna el posible resultado del disparo sin alterar el marcador y sin verificar su validez <br>
      * Calcula el marcado del disparo de 1 sola transicion, como: <br>
      * Nuevo mark = mark actual + RDP * Vector Disparo
+     *
      * @param tDisp numero de transicion a disparar
      * @return <code>boolean[]</code>  Proxima marca, sea alcanzable o no. <br>
-     *         <code>null</code> en caso de inexistencia de transicion
+     * <code>null</code> en caso de inexistencia de transicion
      * @throws ShotException Si la transicion no existe
-     * </pre>
+     *                       </pre>
      */
     @NotNull
     @Contract(pure = true)
@@ -211,8 +213,9 @@ public class RDP {
      * Genera el vector Q de plazas inhibidoras, generadas con la relacion UNO(Marcador(Plaza)) <br>
      * Los unos multiplicados con los unos de las transiciones con arcos inhibidores
      * generan unos en el vector de no sensibilizado
+     *
      * @return <code>int[]</code>, 1 si la plaza tiene Tokens<br>
-     *         <code>0</code> Si la plaza no tiene Tokens
+     * <code>0</code> Si la plaza no tiene Tokens
      */
     @Contract(pure = true)
     @NotNull
@@ -226,8 +229,9 @@ public class RDP {
     /**
      * Los unos multiplicados con los unos de las transiciones con arcos lectores
      * generan unos en el vector de no sensibilizado por arcos lectores
+     *
      * @return <code>int[]</code>, 1 si la plaza no tiene Toknes<br>
-     *         0 Si la plaza tiene Tokens
+     * 0 Si la plaza tiene Tokens
      */
     @Contract(pure = true)
     @NotNull
@@ -240,6 +244,7 @@ public class RDP {
 
     /**
      * Multiplica la Matriz M por el vector V
+     *
      * @param m Matriz de dimencion MxN
      * @param v Vector de dimencion Nx1
      * @return vector de Mx1
@@ -266,10 +271,11 @@ public class RDP {
 
     /**
      * Producto interno entre 2 vectores
+     *
      * @param v1 Vector tamano n
      * @param v2 Vector de tamano n
-     * @throws ArithmeticException Vectores de distinta dimencion
      * @return escalar, <code>null</code> en caso de tamanos incompatibles
+     * @throws ArithmeticException Vectores de distinta dimencion
      */
     @Contract(pure = true)
     private int vecMul(@NotNull int[] v1, @NotNull int[] v2) throws ArithmeticException {
@@ -472,6 +478,17 @@ public class RDP {
         return (this.raw.tempWindowTuple != null);
     }
 
+    /**
+     * Consulta si la red de petri contiene politicas
+     * <pre>
+     * @return <code>True</code>: Hay politicas establecidas para las transiciones <br>
+     *         false: Caso contrario
+     */
+    @Contract(pure = true)
+    boolean isExtPolicy() {
+        return (this.raw.matrixP != null);
+    }
+
 
     /**
      * Obtiene la matriz de doble incidencia de la red de petri
@@ -533,7 +550,7 @@ public class RDP {
     @Contract(pure = true)
     @Nullable
     public int[][] getMatrixT() {
-        return this.raw.matrixT != null ? this.raw.matrixT.clone() : null;
+        return this.raw.matrixP != null ? this.raw.matrixP.clone() : null;
     }
 
 
@@ -543,6 +560,7 @@ public class RDP {
 
     /**
      * Chequea la coinsistencia de los datos de JSON
+     *
      * @throws ConfigException Error en el formateo, formato o contenido del JSON de datos del JSON
      */
     @Contract(pure = true)
@@ -634,6 +652,67 @@ public class RDP {
                                 "no es constante", errorTypeConfig.invalidFormatMatrix);
                     }
                 }
+            }
+        }
+
+        /* Chequeo de longuitud de vector temporal, ausencia de elementos null y negativos. */
+        if (this.isExtTemp()) {
+            int dimension = this.raw.tempWindowTuple[0].length;
+            //Se verifica las dimensiones de la tupla.
+            if (dimension != 2) {
+                throw new ConfigException("Tupla temporal de dimensiones incorrectas",
+                        errorTypeConfig.invalidFormatMatrix);
+
+            } else if (this.raw.tempWindowTuple[1].length != this.raw.tempWindowTuple[0].length) {
+                throw new ConfigException("Tupla temporal de dimensiones incorrectas",
+                        errorTypeConfig.invalidFormatMatrix);
+            } else {
+                //Paso final se chequea la ausencia de elementos negativos
+                for (int i = 0; i < 2; ++i) {
+                    for (int j = 0; j < this.raw.tempWindowTuple[0].length; ++j) {
+                        if (this.raw.tempWindowTuple[i][j] < 0) {
+                            throw new ConfigException("Elemento negativo dentro de la tupla",
+                                    errorTypeConfig.invalidFormatMatrix);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        /*Chequeo de contancia de la matriz de politicas, equidad de transiciones respecto a la
+                   matriz de incidencia y compuesta por numeros binarios.*/
+        if (this.isExtPolicy()) {
+            //Verifico que la matriz sea cuadrada.
+            if (this.raw.matrixP.length != this.raw.matrixP[0].length) {
+                throw new ConfigException("La matriz no es constante",
+                        errorTypeConfig.invalidFormatMatrix);
+                //Verifico que el num de transiciones sea igual al de la matriz de incidencia.
+            } else if (this.raw.matrixP[0].length != this.raw.matrixI[0].length) {
+                throw new ConfigException("Numero de transiciones erroneo",
+                        errorTypeConfig.invalidFormatMatrix);
+            } else {
+                //Paso final chequeo elementos binarios y solo 1 por fila y columna.
+                boolean bin = false;
+                int[] element = new int[this.raw.matrixP[0].length];
+                for (int i = 0; i < this.raw.matrixP.length; ++i) {
+                    for (int j = 0; j < this.raw.matrixP[0].length; ++j) {
+                        if (this.raw.matrixP[i][j] == 1 && !bin) {
+                            if (element[j] == 1) {
+                                throw new ConfigException("Errores de prioridad", errorTypeConfig.invalidFormatMatrix);
+                            } else {
+                                bin = true;
+                                element[j]++;
+                            }
+                        } else if (this.raw.matrixP[i][j] > 1 || this.raw.matrixP[i][j] == 1) {
+                            throw new ConfigException("Error de politicas", errorTypeConfig.invalidFormatMatrix);
+                        }
+                    }
+                    if (!bin)
+                        throw new ConfigException("Ausencia de 1 en la fila", errorTypeConfig.invalidFormatMatrix);
+                    bin = false;
+                }
+
             }
         }
 
