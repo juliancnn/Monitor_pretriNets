@@ -122,6 +122,6 @@ class RDPraw {
     /**
      * Matriz de politicas (prioridades estaticas)
      */
-    int[][] matrixT;
+    int[][] matrixP;
 
 }
