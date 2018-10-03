@@ -1,13 +1,14 @@
 package jmml.monitor.policies;
 
 import jmml.monitor.colas.QueueManagement;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Random;
+
 
 /**
  * Encargado de manejar la politica de la cola, dando mecanimos para cambiarla y de consulta de disparos
@@ -25,6 +26,10 @@ public class Policy {
      */
     private policyType mode;
     /**
+     * Politica secundaria usada en el momento
+     */
+    private policyType modeSec;
+    /**
      * Colas a aplicar las politicas, utilizada para obtener estadisticas
      */
     private QueueManagement queue;
@@ -32,7 +37,6 @@ public class Policy {
      * Matriz random de politicas, de distribucion uniforme, varia con cada utilizacion
      */
     private int[][] matPRandom;
-
     /**
      * Matriz de prioridad estatica
      */
@@ -42,6 +46,13 @@ public class Policy {
      * Matriz de politica usada en el momento para calcular las prioridades
      */
     private int[][] matOfPolicy;
+    /**
+     * Matriz de politica secundaria usada en el momento para calcular las prioridades
+     */
+    private int[][] matOfPolicySec;
+    /**
+     * Matriz de politica secundaria usada en el momento para calcular las prioridades
+     */
 
     /**
      * <pre>
@@ -52,6 +63,9 @@ public class Policy {
      * </pre>
      *
      * @param mode            Modo inicial para la politica
+     * @param modeSec         Modo inicial para la politica secundaria, utilizada en caso de que la primaria<br>
+     *                        entre en conflicto, (ej: Igual tamano en 2 colas), solo puede ser RANDOM <br>
+     *                        o STATIC ya que ellas nunca entran en conflicto.
      * @param queueManagement Cola de procesos al que se le aplicara la politica<br>
      *                        el objeto no es modificado en ningun momento por Policy, se utiliza para garantizar
      *                        consistencia
@@ -59,10 +73,12 @@ public class Policy {
      *                        El orden de prioridad esta dado por el orden de transiciones
      *                        int[][] Matriz cuadrada de 2 dimenaciones coinsidente con el tamano de cola para
      *                        prioridades esaticas (matriz identidad con irden de columnas cambiados)
+     * @throws IllegalArgumentException En caso de que el seteo de politicas no sea valido
      * @TODO Debo armar un metodo que arme las matrices?
      * @TODO Verificar que la matriz sea identidad de filas interambiadas
      */
-    public Policy(@NotNull QueueManagement queueManagement, policyType mode, @Nullable int[][] matrixStatic) {
+    public Policy(@NotNull QueueManagement queueManagement, policyType mode, policyType modeSec,
+                  @Nullable int[][] matrixStatic) throws IllegalArgumentException{
         // Guardo colas para hacer estadistica
         this.queue = queueManagement;
         int size = this.queue.size();
@@ -79,7 +95,7 @@ public class Policy {
         this.matPMaxSizeQueue = new int[size][size];
 
         /* Seteo politica al ultimo para generar antes las matrices */
-        this.setPolicy(mode);
+        this.setPolicy(mode, modeSec);
 
     }
 
@@ -90,8 +106,10 @@ public class Policy {
      * @param policy Nueva politica para toma de desiciones.
      * @throws IllegalArgumentException Politica no esperada, por inexistencia o falta de implementacion.
      */
-    void setPolicy(policyType policy) throws IllegalArgumentException {
+    void setPolicy(policyType policy, policyType policySec) throws IllegalArgumentException {
         this.mode = policy;
+        this.modeSec = policySec;
+        /* Politica primaria */
         switch (this.mode) {
             case STATICORDER:
                 this.matOfPolicy = this.matPStatic;
@@ -101,6 +119,16 @@ public class Policy {
                 break;
             default:
                 throw new java.lang.IllegalArgumentException("Politica no esperada");
+        }
+        switch (this.modeSec) {
+            case STATICORDER:
+                this.matOfPolicySec = this.matPStatic;
+                break;
+            case RANDOM:
+                this.matOfPolicySec = this.matPRandom;
+                break;
+            default:
+                throw new java.lang.IllegalArgumentException("Politica Secundaria no esperada");
         }
 
     }
@@ -149,27 +177,51 @@ public class Policy {
      =================================================================================================================*/
 
     /**
-     * Genera la matriz de prioridades segun el tamano de las colas, mientras mas grande sea la cola mayor prioridad
-     * @TODO QUE PASA SI 2 colas tienen mismo largo, como resuelvo la disputa de la matriz?
-     * @return Matrix cuadrada de prioridades generada segun el tamano de la cola
+     * <pre>
+     * Genera una matriz de prioridades segun un vector de valores, una condicion y la politica secundaria
+     * La prioridad puede ser ascendente si el mayor valor del vector tiene la mayor prioridad o descendente si el
+     * menor valor del vector tiene menor prioridad. En caso de valores repetidos, la prioridad  se desempata solo
+     * ENTRE LOS VALORES REPETIDOS y se decide por la politca secundaria (RANDOM o ESTATICA).
+     * </pre>
+     * @param vector    Vector de valores que dan la forma de la matriz de prioridad, siempre de valores positivos
+     * @param desc      True: Mayor prioridad al valor mas alto del vector
+     *                  False: Establece mayor prioridad se le da al valor mas bajo del vector<br>
+     * @return Matrix cuadrada de prioridades generada segun el tamano del vector
+     * @throws IllegalArgumentException El vector no puede utilizarse para generar la prioridad faltan datos
+     * @WARNING  No hay chequeo de que los valores del vector sean positivos
      */
-    int[][] genMatPMaxSize() {
-        /* Matriz de politica - Vector de tamano de colas originales 0>= - vector ordenado */
-        int[][] policyMat = new int[this.queue.size()][this.queue.size()];
-        int[] orginalSizes = this.queue.siezeOfQueue();
-        int[] sortSizes = orginalSizes.clone();
-        Arrays.sort(sortSizes); // Vector ordenado de menor a mayor
+    int[][] genMatOfPol(int[] vector, boolean desc) {
+        if (vector.length != this.queue.size())
+            throw new IllegalArgumentException("El vector de prioridades no puede diferir del tamano de la cola");
 
-        // Busco por prioridad (p) a la cola mas larga (ultima)
-        // La busqueda no puede ser mas eficiente por que no puedo ordenar el array original
-        for (int i = sortSizes.length - 1, p = 0, cola; i > 0; i--) {
-            for (cola = 0; cola < orginalSizes.length; cola++)
-                if (orginalSizes[cola] == sortSizes[i]) {
-                    orginalSizes[cola] = -1; // Para no contar valores (Siempre positivos) repetidos
-                    break;
-                }
-            policyMat[p++][cola] = 1;
+        int[][] policyMat = new int[this.queue.size()][this.queue.size()];
+        int[] sortSizes = vector.clone(); // Vector de busqueda
+        int[] vec;
+        int[] vPrio = new int[this.queue.size()]; // Vector de prioridades
+
+        /* Ordeno vector para buscar prioridades */
+        Arrays.sort(sortSizes);
+        if(desc)
+            ArrayUtils.reverse(sortSizes);
+
+        /* Altero orden del vector:
+           Paso de orden de posicion a un orden de condicion en funcion de la politica secundaria
+           Vec[0] > Mayor proridad secundaria Vec[n] menor prioridad
+           Si no altero el orden cuando estan repetidos siempre disparo la transicion mas baja */
+        vec = matMulVect(vector, this.matOfPolicySec,false);
+
+        for(int i=0,p; i< vec.length;i++){
+            /* p = Priodidad vector[i]/Busco en orden primero las mas prioritarias segun politica secundarisas */
+            p = ArrayUtils.indexOf(sortSizes,vec[i]);
+            vPrio[i] = p;
+            sortSizes[p] = -1; // Envito busquedas duplicadas con numeros negativos
         }
+        /* Altero orden del vector again, volviendolo al orden original.
+           Paso de orden de condicion en funcion de la politica secundaria a orden de posicion */
+        vPrio = matMulVect(vector, this.matOfPolicySec,true);
+
+        for(int i=0; i< vPrio.length;i++)
+            policyMat[vPrio[i]][i] =1;
 
         return policyMat;
 
@@ -225,6 +277,7 @@ public class Policy {
 
         return result;
     }
+
 
 
     /**

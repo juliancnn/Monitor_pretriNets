@@ -11,7 +11,6 @@ import java.util.NoSuchElementException;
  * <pre>
  * Manejador de multiples colas (Listas FIFO) de threads.
  * El manejador es creado con un numero de colas vacias fijo.
- * Cuando un thread entra enuna cola, entonces pasa a waiting status.
  * Cuando el thread vuelve a ready sale de la lista.
  *
  * Posee mecanismos para Agregar/Eliminar threads de una cola y consultar informacion sobre:
@@ -29,6 +28,8 @@ import java.util.NoSuchElementException;
  * y queda incoinsistente el semaforo
  * Me podria podria implementar una excepcion
  * checkeada obligatoria del monitor para que no intente aceder al recurso que solico dsp de pedirlo no? </pre>
+ * Cuando un thread entra enuna cola, entonces pasa a waiting status.
+ * (No usa sleep por que no lo puede desperar otro hilo), no hay diferencia de rendimieto
  */
 public class QueueManagement {
 
