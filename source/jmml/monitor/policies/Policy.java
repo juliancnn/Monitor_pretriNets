@@ -20,6 +20,7 @@ import java.util.Random;
  * @TODO Debo guardad ultimo disparo y cantidad de veces que se disparo, para hacer matrices
  * @TODO TESTEAR TODOS LOS ARMADOS DE MATRICES y operaciones matematicas con matrices
  */
+@SuppressWarnings("ALL")
 public class Policy {
     /**
      * Politica usada en el momento
@@ -32,15 +33,18 @@ public class Policy {
     /**
      * Colas a aplicar las politicas, utilizada para obtener estadisticas
      */
-    private QueueManagement queue;
+    private final QueueManagement queue;
     /**
      * Matriz random de politicas, de distribucion uniforme, varia con cada utilizacion
      */
-    private int[][] matPRandom;
+    private final int[][] matPRandom;
     /**
      * Matriz de prioridad estatica
      */
-    private int[][] matPStatic;
+    private final int[][] matPStatic;
+    /**
+     * Matriz  de politicas generada por el tamano de las colas y una politica secundaria
+     */
     private int[][] matPMaxSizeQueue;
     /**
      * Matriz de politica usada en el momento para calcular las prioridades
@@ -50,9 +54,6 @@ public class Policy {
      * Matriz de politica secundaria usada en el momento para calcular las prioridades
      */
     private int[][] matOfPolicySec;
-    /**
-     * Matriz de politica secundaria usada en el momento para calcular las prioridades
-     */
 
     /**
      * <pre>
@@ -78,7 +79,7 @@ public class Policy {
      * @TODO Verificar que la matriz sea identidad de filas interambiadas
      */
     public Policy(@NotNull QueueManagement queueManagement, policyType mode, policyType modeSec,
-                  @Nullable int[][] matrixStatic) throws IllegalArgumentException{
+                  @Nullable int[][] matrixStatic) throws IllegalArgumentException {
         // Guardo colas para hacer estadistica
         this.queue = queueManagement;
         int size = this.queue.size();
@@ -106,7 +107,7 @@ public class Policy {
      * @param policy Nueva politica para toma de desiciones.
      * @throws IllegalArgumentException Politica no esperada, por inexistencia o falta de implementacion.
      */
-    void setPolicy(policyType policy, policyType policySec) throws IllegalArgumentException {
+    private void setPolicy(policyType policy, policyType policySec) throws IllegalArgumentException {
         this.mode = policy;
         this.modeSec = policySec;
         /* Politica primaria */
@@ -116,6 +117,9 @@ public class Policy {
                 break;
             case RANDOM:
                 this.matOfPolicy = this.matPRandom;
+                break;
+            case MAXSIZEQUEUE:
+                this.matOfPolicy = this.matPMaxSizeQueue;
                 break;
             default:
                 throw new java.lang.IllegalArgumentException("Politica no esperada");
@@ -128,18 +132,18 @@ public class Policy {
                 this.matOfPolicySec = this.matPRandom;
                 break;
             default:
-                throw new java.lang.IllegalArgumentException("Politica Secundaria no esperada");
+                throw new java.lang.IllegalArgumentException("Politica Secundaria solo pueder ser estatica o random");
         }
 
     }
 
     /***
-     * Retorna la politica Seteada actualmente
-     * @return Politica usada actualmente
+     * Retorna las politicas Seteada actualmente
+     * @return Vector con 2 valores, el primero la politica primaria y el segundo la politica secundaria
      */
     @Contract(pure = true)
-    public policyType getPolicy() {
-        return this.mode;
+    public policyType[] getPolicy() {
+        return new policyType[]{this.mode, this.modeSec};
     }
 
     /**
@@ -163,6 +167,7 @@ public class Policy {
         for (int i = 0; i < who.length; i++)
             who[i] = whoIsAviable[i] ? 1 : 0;
 
+        this.updateMatrixOfPolicies(); // usa genMatOfPol -> The best method ever
         return this.getFirstOnTrue(
                 this.matMulVect(
                         this.firstOnTrue(this.matMulVect(who, this.matOfPolicy, false)),
@@ -177,51 +182,74 @@ public class Policy {
      =================================================================================================================*/
 
     /**
+     * Actualiza la matriz de politica primaria utilizada
+     */
+    private void updateMatrixOfPolicies() {
+
+        if (this.mode == policyType.RANDOM || this.modeSec == policyType.RANDOM)
+            this.matReaorderRandom(this.matPRandom);
+
+
+        switch (this.mode) {
+            case MAXSIZEQUEUE:
+                /* Mayor tamano de la cola mayor prioridad, desempata la politica secundaria */
+                this.matPMaxSizeQueue = this.genMatOfPol(this.queue.siezeOfQueue(), true);
+                break;
+
+        }
+
+    }
+
+    /**
      * <pre>
      * Genera una matriz de prioridades segun un vector de valores, una condicion y la politica secundaria
      * La prioridad puede ser ascendente si el mayor valor del vector tiene la mayor prioridad o descendente si el
      * menor valor del vector tiene menor prioridad. En caso de valores repetidos, la prioridad  se desempata solo
      * ENTRE LOS VALORES REPETIDOS y se decide por la politca secundaria (RANDOM o ESTATICA).
      * </pre>
-     * @param vector    Vector de valores que dan la forma de la matriz de prioridad, siempre de valores positivos
-     * @param desc      True: Mayor prioridad al valor mas alto del vector
-     *                  False: Establece mayor prioridad se le da al valor mas bajo del vector<br>
+     *
+     * @param vector Vector de valores que dan la forma de la matriz de prioridad, siempre de valores positivos
+     * @param desc   True: Mayor prioridad al valor mas alto del vector
+     *               False: Establece mayor prioridad se le da al valor mas bajo del vector<br>
      * @return Matrix cuadrada de prioridades generada segun el tamano del vector
      * @throws IllegalArgumentException El vector no puede utilizarse para generar la prioridad faltan datos
-     * @WARNING  No hay chequeo de que los valores del vector sean positivos
+     * @WARNING No hay chequeo de que los valores del vector sean positivos
      */
     int[][] genMatOfPol(int[] vector, boolean desc) {
-        if (vector.length != this.queue.size())
-            throw new IllegalArgumentException("El vector de prioridades no puede diferir del tamano de la cola");
+        int dimM = this.queue.size();
+        if (vector.length != dimM)
+            throw new IllegalArgumentException("El vector de prioridades no puede " +
+                    "diferir del tamano de la cola = Matrix de prioridades)");
 
-        int[][] policyMat = new int[this.queue.size()][this.queue.size()];
+        int[][] policyMat = new int[dimM][dimM];
         int[] sortSizes = vector.clone(); // Vector de busqueda
         int[] vec;
-        int[] vPrio = new int[this.queue.size()]; // Vector de prioridades
+        int[] vPrio = new int[dimM]; // Vector de prioridades
 
         /* Ordeno vector para buscar prioridades */
         Arrays.sort(sortSizes);
-        if(desc)
+        if (desc)
             ArrayUtils.reverse(sortSizes);
 
         /* Altero orden del vector:
            Paso de orden de posicion a un orden de condicion en funcion de la politica secundaria
            Vec[0] > Mayor proridad secundaria Vec[n] menor prioridad
            Si no altero el orden cuando estan repetidos siempre disparo la transicion mas baja */
-        vec = matMulVect(vector, this.matOfPolicySec,false);
+        vec = matMulVect(vector, this.matOfPolicySec, false);
 
-        for(int i=0,p; i< vec.length;i++){
+        for (int i = 0, p; i < vec.length; i++) {
             /* p = Priodidad vector[i]/Busco en orden primero las mas prioritarias segun politica secundarisas */
-            p = ArrayUtils.indexOf(sortSizes,vec[i]);
+            //noinspection AssignmentToForLoopParameter
+            p = ArrayUtils.indexOf(sortSizes, vec[i]);
             vPrio[i] = p;
             sortSizes[p] = -1; // Envito busquedas duplicadas con numeros negativos
         }
         /* Altero orden del vector again, volviendolo al orden original.
            Paso de orden de condicion en funcion de la politica secundaria a orden de posicion */
-        vPrio = matMulVect(vPrio, this.matOfPolicySec,true);
+        vPrio = matMulVect(vPrio, this.matOfPolicySec, true);
 
-        for(int i=0; i< vPrio.length;i++)
-            policyMat[vPrio[i]][i] =1;
+        for (int i = 0; i < vPrio.length; i++)
+            policyMat[vPrio[i]][i] = 1;
 
         return policyMat;
 
@@ -261,7 +289,6 @@ public class Policy {
      * @param transpuesta True si se quiere trasnponer la matrix T
      * @return vector de Tx1 resultado de la multiplicacion de MxV
      * @throws ArithmeticException Matriz y vector de dimenciones incompatibles
-     * @TODO No hay una forma de trabajarlo con booleanos que sea eficiente como C para multiplicar(AND BIT a BIT) de un array?
      */
     @NotNull
     @Contract(pure = true)
@@ -279,35 +306,26 @@ public class Policy {
     }
 
 
-
     /**
      * Desordena una matriz cuadrada por filas, intercambia las filas de manera aleatorea<br>
      * con una distribucion uniforme, todas las filas al menos una vez.
-     *
      * @param matrix Matriz por filas que se quiere desordenar
-     * @param clone  True, Trabaja sobre una copia<br>
-     *               False, Modifica la matriz original
-     * @return matriz desordenadas por fila
      * @throws ArithmeticException Matriz no es cuadrada
      * @TODO Hay una forma mas eficiente de hacer esto?
      */
-    @NotNull
-    protected int[][] matReaorderRandom(@NotNull int[][] matrix, boolean clone) throws ArithmeticException {
+    private void matReaorderRandom(@NotNull int[][] matrix) throws ArithmeticException {
         if (matrix[0].length != matrix.length)
             throw new ArithmeticException("Matrix a desordenar no es cuadrada");
 
-        int[][] mat = clone ? matrix.clone() : matrix;
         Random rn = new Random();
         int[] swapRow;
         int randRow;
-        for (int i = 0; i < mat.length; ++i) {
+        for (int i = 0; i < matrix.length; ++i) {
             randRow = rn.nextInt(matrix.length);//Distribucion uniforme entre 0 y size-1
             swapRow = matrix[i]; //.clone(); No hace falta por punteros, no pasa el garbage collector
             matrix[i] = matrix[randRow];
             matrix[randRow] = swapRow;
         }
-
-        return mat;
     }
 
 

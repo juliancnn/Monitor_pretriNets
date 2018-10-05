@@ -3,18 +3,16 @@ package jmml.monitor.policies;
 import ext.junit5.MockitoExtension;
 import jmml.monitor.colas.QueueManagement;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /*
  * https://junit.org/junit5/docs/5.0.0/user-guide/#writing-tests 3.11
  * */
+@SuppressWarnings("ALL")
 @ExtendWith(MockitoExtension.class)
 class PolicyTest {
 
