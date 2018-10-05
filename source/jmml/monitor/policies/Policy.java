@@ -203,6 +203,7 @@ public class Policy {
                 this.matPMaxSizeQueue = this.genMatOfPol(this.queue.sizeOfQueues(), true);
                 break;
             case FIFO:
+                /* Mayor tiempo de espera en la cola mayor prioridad, desempata la politica secundaria */
                 this.matPMaxSizeQueue = this.genMatOfPol(this.queue.timeWaitFIOfQueues(), true);
                 break;
         }
