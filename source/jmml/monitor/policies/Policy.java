@@ -47,6 +47,10 @@ public class Policy {
      */
     private int[][] matPMaxSizeQueue;
     /**
+     * Matriz  de politicas generada por el tope tiempo que esta en el tope de la cola y una politica secundaria
+     */
+    private int[][] matPMaxTimeQueue;
+    /**
      * Matriz de politica usada en el momento para calcular las prioridades
      */
     private int[][] matOfPolicy;
@@ -121,6 +125,9 @@ public class Policy {
             case MAXSIZEQUEUE:
                 this.matOfPolicy = this.matPMaxSizeQueue;
                 break;
+            case FIFO:
+                this.matOfPolicy = this.matPMaxTimeQueue;
+                break;
             default:
                 throw new java.lang.IllegalArgumentException("Politica no esperada");
         }
@@ -193,9 +200,11 @@ public class Policy {
         switch (this.mode) {
             case MAXSIZEQUEUE:
                 /* Mayor tamano de la cola mayor prioridad, desempata la politica secundaria */
-                this.matPMaxSizeQueue = this.genMatOfPol(this.queue.siezeOfQueue(), true);
+                this.matPMaxSizeQueue = this.genMatOfPol(this.queue.sizeOfQueues(), true);
                 break;
-
+            case FIFO:
+                this.matPMaxSizeQueue = this.genMatOfPol(this.queue.timeWaitFIOfQueues(), true);
+                break;
         }
 
     }

@@ -35,7 +35,6 @@ public class QueueManagement {
 
     /***
      * Lista de colas
-     * @TODO Debe ser coinsidente con la cantidad de transicion
      */
     private List<List<ThreadNode>> colas;
 
@@ -46,20 +45,22 @@ public class QueueManagement {
      * @TODO Cambio de exepcion
      */
     public QueueManagement(int numColas) throws IllegalArgumentException {
+        super();
         if (numColas < 1)
             throw new IllegalArgumentException("A ver nene si  aca implemetas la excepxion");
 
-        /* Levantamos las colas */
         this.colas = new ArrayList<>();
         for (int i = 0; i < numColas; i++)
+            //noinspection Convert2Diamond
             this.colas.add(new ArrayList<ThreadNode>());
     }
 
     /**
      * Retorna un vector booleano seteado en true en la cola que se hay threads esperando
+     *
      * @return Vector booleano<br>
-     *     True: Hay threads en la cola<br>
-     *     False: Si la cola esta vacia
+     * True: Hay threads en la cola<br>
+     * False: Si la cola esta vacia
      */
     @NotNull
     @Contract(pure = true)
@@ -130,10 +131,37 @@ public class QueueManagement {
 
                             Devuelven informacion dinamica del estado  de las colas
      =================================================================================================================*/
-    public int[] siezeOfQueue(){
+
+    /**
+     * Retorna un vector de numeros no negativos con el tamano de cada cola
+     *
+     * @return Vector ordenado por colas, el primer elementos es la primera cola, y el valor representa la cantidad
+     * de elementos que posee la misma.
+     */
+    @Contract(pure = true)
+    public int[] sizeOfQueues() {
         int[] sizes = new int[this.colas.size()];
-        for(int i=0;i<this.colas.size();i++){
+        for (int i = 0; i < this.colas.size(); i++) {
             sizes[i] = this.colas.get(i).size();
+        }
+        return sizes;
+
+    }
+
+    /**
+     * Retorna un vector de numeros no negativos con el tiempo relativo de cuanto tiempo estan en la cola
+     * @return Tiempo del elemento en cola del primer elemento en cada cola, o 0 si la cola esta vacia.
+     */
+    @Contract(pure = true)
+    @NotNull
+    public int[] timeWaitFIOfQueues() {
+        int[] sizes = new int[this.colas.size()];
+        long actualTime = java.lang.System.currentTimeMillis();
+        List<ThreadNode> cola;
+        for (int i = 0; i < this.colas.size(); i++) {
+            // Aguanta 68 anios (2^31-1 seg) de software corriendo ininterrumpirdamente este casteo
+            cola = this.colas.get(i);
+            sizes[i] = cola.isEmpty() ? 0 : (int) (actualTime - cola.get(0).getTimeStamp());
         }
         return sizes;
 
@@ -156,7 +184,6 @@ public class QueueManagement {
     }
 
 
-
     /**
      * Informacion del thread que guarda en la cola
      */
@@ -169,6 +196,7 @@ public class QueueManagement {
          * Crea nodo de informacion del thread
          */
         ThreadNode() {
+            super();
             this.t = Thread.currentThread();
             this.timeStamp = java.lang.System.currentTimeMillis();
             this.lockObj = new Object();
@@ -176,6 +204,7 @@ public class QueueManagement {
 
         /**
          * Retorna el thread que creo el nodo
+         *
          * @return Thread creador del nodo
          */
         @Contract(pure = true)
@@ -186,10 +215,11 @@ public class QueueManagement {
 
         /**
          * Pone al thread en wait state con un objeto propio del nodo
+         *
          * @throws InterruptedException Producida por el wait al thread
          */
         void waitNode() throws InterruptedException {
-            synchronized (this.lockObj){
+            synchronized (this.lockObj) {
                 lockObj.wait();
             }
 
@@ -206,10 +236,11 @@ public class QueueManagement {
 
         /**
          * Obtiene el tiempo de creacion del nodo
+         *
          * @return TimeStamp de la creacion del nodo en ms formato unix
          */
         @Contract(pure = true)
-        protected long getTimeStamp() {
+        long getTimeStamp() {
             return timeStamp;
         }
 

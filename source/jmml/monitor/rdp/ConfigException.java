@@ -17,6 +17,7 @@ public class ConfigException extends Exception {
      * @param e Tipo de error
      */
     public ConfigException(String description, errorTypeConfig e) {
+        super();
         this.moreInfo = description;
         this.e = e;
     }

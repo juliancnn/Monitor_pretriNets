@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @TODO Falta todo en JFILE_RDP1_READERINH
  * @TODO Falta checkqueo de archivo en JFILE_RDP1_TEMPORAL
  */
+@SuppressWarnings("ALL")
 @Tag("RDP")
 class RDPTest {
 

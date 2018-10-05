@@ -73,6 +73,7 @@ public class RDP {
      * @see RDPraw Ver estructura completa del JSON
      */
     public RDP(String jsonFile) throws FileNotFoundException, ConfigException {
+        super();
 
         /* INICIO DE CARGA DE DATOS */
         Gson json = new Gson();
@@ -378,6 +379,7 @@ public class RDP {
             for (int i = 0; i < sensitizedT.length; i++)
                 sensitizedT[i] = this.valid4Mark(this.nextMark(i + 1));
         } catch (ShotException se) {
+            //noinspection UseOfSystemOutOrSystemErr
             System.out.println("Te las mandaste esto no puede pasar nunca por como se crea el vector");
             System.exit(-1);
         }
@@ -462,7 +464,7 @@ public class RDP {
      * </pre>
      */
     @Contract(pure = true)
-    boolean isExtReader() {
+    private boolean isExtReader() {
         return (this.raw.matrixR != null);
     }
 
@@ -474,7 +476,7 @@ public class RDP {
      * </pre>
      */
     @Contract(pure = true)
-    boolean isExtTemp() {
+    private boolean isExtTemp() {
         return (this.raw.tempWindowTuple != null);
     }
 
@@ -485,7 +487,7 @@ public class RDP {
      *         false: Caso contrario
      */
     @Contract(pure = true)
-    boolean isExtPolicy() {
+    private boolean isExtPolicy() {
         return (this.raw.matrixP != null);
     }
 

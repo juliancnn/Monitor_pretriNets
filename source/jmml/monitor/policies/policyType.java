@@ -19,13 +19,13 @@ public enum policyType {
      */
     MAXSIZEQUEUE,
     /**
-     * Selecciona la cola que hace mas tiempo que no se dispara
-     */
-    LASTESTSHOT,
-    /**
      * Selecciona la cola que hace mas tiempo esta esperando a ser disparada
      */
     FIFO,
+    /**
+     * Selecciona la cola que hace mas tiempo que no se dispara
+     */
+    LASTESTSHOT,
     /**
      * La cola temporal que ahce mas tiempo que esta sensibilizada
      */

@@ -79,6 +79,7 @@ package jmml.monitor.rdp;
  * @TODO Agregar lo de politica estatica al JSON (Ver de manera grafica como tien que ser)
  */
 
+@SuppressWarnings("unused")
 class RDPraw {
     /**
      * Informacion basica de la red de petri

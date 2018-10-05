@@ -27,7 +27,8 @@ class ShotException extends Exception {
      * @param tDisp numero de transicion a disparar
      * @param cantidadTrans Cantidad de transiciones de la RDP
      */
-    public ShotException(int[] mark, int tDisp, int cantidadTrans) {
+    ShotException(int[] mark, int tDisp, int cantidadTrans) {
+        super();
         this.marca = mark;
         this.tDisparo = tDisp;
         this.nTrans = cantidadTrans;
@@ -56,7 +57,7 @@ class ShotException extends Exception {
     /**
      * Imprime la informacion del disparo fallido junto con el estado del sistema
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "UseOfSystemOutOrSystemErr"})
     public void printInfo() {
         System.out.println("Disparo fallido para la transicion: " + this.tDisparo);
         System.out.println("Marca del sistema al momento del fallo:");
