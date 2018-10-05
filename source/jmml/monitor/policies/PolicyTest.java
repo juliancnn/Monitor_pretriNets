@@ -51,6 +51,94 @@ class PolicyTest {
 
     }
 
+    @Test
+    @DisplayName("[Policy dinamic matrix] Dinamic Matrix / duplicate values")
+    void genMatOfPol(@Mock QueueManagement qm) {
+        /* Testeo caso para valores repeditos:
+            - Primaria Menor valor mas prioridad y en caso de empate:
+                CASO 1) Secundaria con matriz identidad (Orden t1 mas prioridad tn menor prioridad)
+                CASO 2) Secundaria con matriz Estatica (Orden 3-2-4-1-5)
+            - Primaria Mayor valor
+                CASO 3) Secundaria con matriz identidad (Orden t1 mas prioridad tn menor prioridad)
+                CASO 4) Secundaria con matriz Estatica (Orden 3-2-4-1-5)
+         */
+        int[] testVector;
+        int[][] matPol;
+        int[][] matStatic = new int[][]{
+                {0, 0, 1, 0, 0},
+                {0, 1, 0, 0, 0},
+                {0, 0, 0, 1, 0},
+                {1, 0, 0, 0, 0},
+                {0, 0, 0, 0, 1},
+        };
+        when(qm.size()).thenReturn(5);
+        Policy pol;
+
+        /* ============================ CASO 1 ===================================== */
+        /* Prioridad primaria asendente menor valor del vector mayor prioridad */
+        /* Prioridad secundaria (Si hay empate) identidad: t1 hight priority tn low priority */
+        pol = new Policy(qm, policyType.STATICORDER,policyType.STATICORDER, null);
+        testVector = new int[] {0,5,2,3,3};
+        matPol = new int[][]{ // t0-t3-t4-t5-t2
+                {1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0},
+                {0, 0, 0, 1, 0},
+                {0, 0, 0, 0, 1},
+                {0, 1, 0, 0, 0},
+        };
+
+        Assertions.assertArrayEquals(matPol,pol.genMatOfPol(testVector,false));
+
+        /* ============================ CASO 2 ===================================== */
+        /* Prioridad primaria asendente menor valor del vector mayor prioridad */
+        /* Prioridad secundaria (Si hay empate): 2-1-3-0-4 */
+        pol = new Policy(qm, policyType.STATICORDER,policyType.STATICORDER, matStatic);
+        testVector = new int[] {0,2,3,3,2};
+        matPol = new int[][]{ // t0-t1-t4-t2-t3
+                {1, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0},
+                {0, 0, 0, 0, 1},
+                {0, 0, 1, 0, 0},
+                {0, 0, 0, 1, 0},
+        };
+        Assertions.assertArrayEquals(matPol,pol.genMatOfPol(testVector,false));
+
+
+        /* ============================ CASO 3 ===================================== */
+        /* Prioridad primaria desendente Mayor valor del vector mayot prioridad */
+        /* Prioridad secundaria (Si hay empate) identidad: t1 hight priority tn low priority */
+        pol = new Policy(qm, policyType.STATICORDER,policyType.STATICORDER, null);
+        testVector = new int[] {0,2,2,3,3};
+        matPol = new int[][]{ // t3-t4-t2-t1-t0
+                {0, 0, 0, 1, 0},
+                {0, 0, 0, 0, 1},
+                {0, 1, 0, 0, 0},
+                {0, 0, 1, 0, 0},
+                {1, 0, 0, 0, 0},
+        };
+
+        Assertions.assertArrayEquals(matPol,pol.genMatOfPol(testVector,true));
+
+        /* ============================ CASO 4 ===================================== */
+        /* Prioridad primaria desendente Mayor valor del vector mayot prioridad */
+        /* Prioridad secundaria (Si hay empate): 2-1-3-0-4 */
+        pol = new Policy(qm, policyType.STATICORDER,policyType.STATICORDER, matStatic);
+        testVector = new int[] {0,2,3,2,3};
+        matPol = new int[][]{ // t2-t4-t1-t3-t0
+                {0, 0, 1, 0, 0},
+                {0, 0, 0, 0, 1},
+                {0, 1, 0, 0, 0},
+                {0, 0, 0, 1, 0},
+                {1, 0, 0, 0, 0},
+        };
+
+        Assertions.assertArrayEquals(matPol,pol.genMatOfPol(testVector,true));
+
+
+
+
+    }
+
     /*==================================================================================================================
                                     TEST DE OPERACIONES MATEMATICAS Y VECTORIALES
      =================================================================================================================*/

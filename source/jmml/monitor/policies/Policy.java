@@ -218,7 +218,7 @@ public class Policy {
         }
         /* Altero orden del vector again, volviendolo al orden original.
            Paso de orden de condicion en funcion de la politica secundaria a orden de posicion */
-        vPrio = matMulVect(vector, this.matOfPolicySec,true);
+        vPrio = matMulVect(vPrio, this.matOfPolicySec,true);
 
         for(int i=0; i< vPrio.length;i++)
             policyMat[vPrio[i]][i] =1;
