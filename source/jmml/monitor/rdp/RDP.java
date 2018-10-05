@@ -657,7 +657,7 @@ public class RDP {
 
         /* Chequeo de longuitud de vector temporal, ausencia de elementos null y negativos. */
         if (this.isExtTemp()) {
-            int dimension = this.raw.tempWindowTuple[0].length;
+            int dimension = this.raw.tempWindowTuple.length;
             //Se verifica las dimensiones de la tupla.
             if (dimension != 2) {
                 throw new ConfigException("Tupla temporal de dimensiones incorrectas",
