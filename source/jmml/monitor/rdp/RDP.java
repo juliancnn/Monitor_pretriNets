@@ -480,16 +480,6 @@ public class RDP {
         return (this.raw.tempWindowTuple != null);
     }
 
-    /**
-     * Consulta si la red de petri contiene politicas
-     * <pre>
-     * @return <code>True</code>: Hay politicas establecidas para las transiciones <br>
-     *         false: Caso contrario
-     */
-    @Contract(pure = true)
-    private boolean isExtPolicy() {
-        return (this.raw.matrixP != null);
-    }
 
 
     /**
@@ -542,18 +532,6 @@ public class RDP {
         return this.isExtReader() ? this.raw.matrixR.clone() : null;
     }
 
-    /**
-     * Retorna la matriz de prioridades estaticas T
-     * <pre>
-     * @return Una copia de la matriz T de prioridades. <br>
-     *         <code>null</code> Si no posee
-     * </pre>
-     */
-    @Contract(pure = true)
-    @Nullable
-    public int[][] getMatrixT() {
-        return this.raw.matrixP != null ? this.raw.matrixP.clone() : null;
-    }
 
 
     /* =========================================================
@@ -684,6 +662,7 @@ public class RDP {
 
         /*Chequeo de contancia de la matriz de politicas, equidad de transiciones respecto a la
                    matriz de incidencia y compuesta por numeros binarios.*/
+        /*
         if (this.isExtPolicy()) {
             //Verifico que la matriz sea cuadrada.
             if (this.raw.matrixP.length != this.raw.matrixP[0].length) {
@@ -716,7 +695,7 @@ public class RDP {
                 }
 
             }
-        }
+        }*/
 
 
     }

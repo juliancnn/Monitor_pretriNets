@@ -79,8 +79,8 @@ package jmml.monitor.rdp;
  * @TODO Agregar lo de politica estatica al JSON (Ver de manera grafica como tien que ser)
  */
 
-@SuppressWarnings("unused")
-class RDPraw {
+
+public class RDPraw {
     /**
      * Informacion basica de la red de petri
      */
@@ -120,9 +120,5 @@ class RDPraw {
      * Tupla de inicio y final de ventana de tiempo, medida en milisegundos
      */
     long[][] tempWindowTuple;
-    /**
-     * Matriz de politicas (prioridades estaticas)
-     */
-    int[][] matrixP;
 
 }
