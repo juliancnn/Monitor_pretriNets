@@ -1,4 +1,4 @@
-package jmml.monitor;
+package jmml.monitor.parser;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
@@ -23,7 +23,7 @@ public class DataParser {
      * @param jsonFile Ruta del archivo JSON
      * @throws FileNotFoundException Si el archivo no se encuentra
      */
-    DataParser(String jsonFile) throws FileNotFoundException {
+    public DataParser(String jsonFile) throws FileNotFoundException {
         super();
         this.jsonFile = jsonFile;
         File f = new File(jsonFile);
@@ -44,7 +44,7 @@ public class DataParser {
      * NULL si el archivo no es posible de acceder luego de la creacion del dataparcer
      * @see <a href="https://docs.oracle.com/javase/tutorial/java/generics/index.html"> Metodo generico </a>
      */
-     <T> T generate(Type tipo) {
+    public <T> T generate(Type tipo) {
         JsonReader reader;
         Gson json;
         json = new Gson();
