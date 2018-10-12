@@ -5,22 +5,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Manejador de la red de petri
  * <pre>
- *
+ * Manejador de la red de petri
  * La clase se encarga de instanciar la red de petri con todas sus caracteristicas a partir de un RAWrdp
- *
- * Tiene la posibilidad de:
- *  - Dispara las transiciones y alterar el estado de la red
- *  - Informar las transiciones disponibles para disparar
- *  - Informar el marcado de la red
  *
  * Soporta caracteristicas independientes de redes de petri extendidas como:
  *  - Maxima cantidad de tokens por plaza
  *  - Arcos inhibidores
  *  - Arcos lectores con peso 1
  *  - Transiciones sensibilizadas temporalmente
- *
  * </pre>
  *
  * @WARNING No implementa ningun mecanismo de proteccion de recursos para hilos multiples (como semaforo),
@@ -34,15 +27,18 @@ public class RDP {
 
     /**
      * Crea la red de petri a partir del RAWrdp
+     *
      * @param rdpRAW Objeto de la red de petri plano
-     * @throws ConfigException       Lanzado cuando esta mal formado el archivo JSON
+     * @throws ConfigException Lanzado cuando esta mal formado el archivo JSON
      * @see RDPraw Ver estructura completa del RAW
      */
-
     public RDP(RDPraw rdpRAW) throws ConfigException {
         super();
+        if(rdpRAW == null)
+            throw new ConfigException("No puede crearse la red con un objeto nullo",errorTypeConfig.NullObjet);
+
         this.raw = rdpRAW.clone();
-        this.checkConfigJson();
+        new checkConfig(this.raw); // Throw ConfigException
 
         /* Si es temporal cargo los datos delos timestamp */
         if (this.isExtTemp()) {
@@ -80,11 +76,11 @@ public class RDP {
 
         /* Verifico si el tiro es valido  por arcos inhibidores > B(tDisp) = H[tdis][] x VectorQ */
         if (this.isExtInh())
-            validShot = (this.vecMul(this.raw.matrixH[tDisp - 1], this.genVectorQ()) == 0);
+            validShot = (this.vecMul(this.raw.matrixH[tDisp - 1], this.genVectorWMark(true)) == 0);
 
         /* Verifico si el tiro es valido  por arcos inhibidores > L(tDisp) = R[tdis][] x VectorW*/
         if (validShot && this.isExtReader())
-            validShot = (this.vecMul(this.raw.matrixR[tDisp - 1], this.genVectorW()) == 0);
+            validShot = (this.vecMul(this.raw.matrixR[tDisp - 1], this.genVectorWMark(false)) == 0);
 
         /* Si el tiro sigue siendo valido chequeo las restricciones temporales */
         if (validShot && this.isExtTemp())
@@ -172,38 +168,33 @@ public class RDP {
 
     }
 
+
     /**
-     * Genera el vector Q de plazas inhibidoras, generadas con la relacion UNO(Marcador(Plaza)) <br>
-     * Los unos multiplicados con los unos de las transiciones con arcos inhibidores
-     * generan unos en el vector de no sensibilizado
-     *
+     * <pre>
+     * Genera vector de la misma cantidad de plazas, en ralacion a los valores de cada plaza usando las relaciones:
+     * Q: UNO(Marcador(Plaza))  Pone uno si esa plaza tiene un marcado distinto de cero (para inhibidores)
+     * W: CERO(Marcador(Plaza)) Pone uno si esa plaza tiene un marcado igual a cero (para lectores)
+     * </pre>
+     * @param Relacion True Para generar Q, relacion de unos<br>
+     *                 false Para generar W, relacion de ceros
      * @return <code>int[]</code>, 1 si la plaza tiene Tokens<br>
      * <code>0</code> Si la plaza no tiene Tokens
      */
     @Contract(pure = true)
     @NotNull
-    private int[] genVectorQ() {
+    private int[] genVectorWMark(boolean Relacion) {
+        /*
+        Q: Los unos multiplicados con los unos de las transiciones con arcos inhibidores
+        generan unos en el vector de no sensibilizado por arcos lectores
+        W: Los unos multiplicados con los unos de las transiciones con arcos lectores
+        generan unos en el vector de no sensibilizado por arcos lectores
+        * */
         int[] q = new int[this.raw.vectorMark.length];
         for (int i = 0; i < q.length; i++)
-            q[i] = this.raw.vectorMark[i] == 0 ? 0 : 1;
+            q[i] = Relacion ? (this.raw.vectorMark[i] == 0 ? 0 : 1) : this.raw.vectorMark[i] == 0 ? 1 : 0;
         return q;
     }
 
-    /**
-     * Los unos multiplicados con los unos de las transiciones con arcos lectores
-     * generan unos en el vector de no sensibilizado por arcos lectores
-     *
-     * @return <code>int[]</code>, 1 si la plaza no tiene Toknes<br>
-     * 0 Si la plaza tiene Tokens
-     */
-    @Contract(pure = true)
-    @NotNull
-    private int[] genVectorW() {
-        int[] w = new int[this.raw.vectorMark.length];
-        for (int i = 0; i < w.length; i++)
-            w[i] = this.raw.vectorMark[i] == 0 ? 1 : 0;
-        return w;
-    }
 
     /**
      * Multiplica la Matriz M por el vector V
@@ -349,14 +340,14 @@ public class RDP {
 
         /* Sensibilizado por arcos inhibidores B = H*Q */
         if (this.isExtInh()) {
-            int[] notSensitizedB = this.matMulVect(this.raw.matrixH, this.genVectorQ());
+            int[] notSensitizedB = this.matMulVect(this.raw.matrixH, this.genVectorWMark(true));
             for (int i = 0; i < sensitizedT.length; i++)
                 sensitizedT[i] &= (notSensitizedB[i] == 0); // Si es cero esta sensibilizada
         }
 
         /* Sensibilizado por arcos lectores L = R*W */
         if (this.isExtReader()) {
-            int[] notSensitizedR = this.matMulVect(this.raw.matrixR, this.genVectorW());
+            int[] notSensitizedR = this.matMulVect(this.raw.matrixR, this.genVectorWMark(false));
             for (int i = 0; i < sensitizedT.length; i++)
                 sensitizedT[i] &= (notSensitizedR[i] == 0); // Si es cero esta sensibilizada
         }
@@ -395,18 +386,6 @@ public class RDP {
     }
 
     /**
-     * Devuelve el numero de transiciones que posee la red
-     * <pre>
-     * @return Numero de transiciones de la red
-     * </pre>
-     */
-    @Contract(pure = true)
-    int getNTrans() {
-        return this.raw.matrixI[0].length;
-    }
-
-
-    /**
      * Consulta si la red de petri es extendida arcos inhibidores
      * <pre>
      * @return <code>True</code>:  Si hay matriz de arcos inhibidores <br>
@@ -441,7 +420,6 @@ public class RDP {
     private boolean isExtTemp() {
         return (this.raw.tempWindowTuple != null);
     }
-
 
 
     /**
@@ -495,170 +473,4 @@ public class RDP {
     }
 
 
-
-    /* =========================================================
-      Chequeos de datos validos de estructura del archivo JSON.
-    ========================================================= */
-
-    /**
-     * Chequea la coinsistencia de los datos de JSON
-     *
-     * @throws ConfigException Error en el formateo, formato o contenido del JSON de datos del JSON
-     */
-    @Contract(pure = true)
-    private void checkConfigJson() throws ConfigException {
-
-        /* Chequeo de estructura JSON.  */
-        if (this.raw.matrixI == null || this.raw.vectorMark == null) {
-            throw new ConfigException("Error en la estructura JSON", errorTypeConfig.missingDataInJASON);
-        }
-
-        /* Chequeo de longuitud de matriz constante. */
-        int conlconst = -1;
-        for (int i = 0; i < this.raw.matrixI.length; ++i) {
-            if (conlconst == -1) {
-                conlconst = this.raw.matrixI[0].length;
-            } else if (conlconst != this.raw.matrixI[i].length) {
-                throw new ConfigException("La matriz de insidencia no es constante",
-                        errorTypeConfig.invalidFormatMatrix);
-            }
-        }
-
-        /* Chequeo de loguitud del vector y elementos positivos */
-        if (this.raw.matrixI.length != this.raw.vectorMark.length) {
-            throw new ConfigException("La cantidad de plazas  de marcado no es correcta",
-                    errorTypeConfig.invalidFormatArray);
-        } else {
-            for (int i = 0; i < this.raw.vectorMark.length; ++i) {
-                if (this.raw.vectorMark[i] < 0) {
-                    throw new ConfigException("Elemento negativo en la marca",
-                            errorTypeConfig.invalidFormatArray);
-                }
-            }
-        }
-
-
-        /* Chequeo de longuitud del vector de maximo de plazas y elementos positivos */
-        if (this.isExtMaxToken()) {
-            if (this.raw.vectorMaxMark.length != this.raw.vectorMark.length) {
-                throw new ConfigException("La cantidad de plazas no es correcta en " +
-                        "los elementos de maximo por plaza", errorTypeConfig.invalidFormatArray);
-            } else {
-                for (int anExtMaxToken : this.raw.vectorMaxMark) {
-                    if (anExtMaxToken < 0) {
-                        throw new ConfigException("Elemento negativo en la marca por plaza",
-                                errorTypeConfig.invalidFormatArray);
-                    }
-                }
-            }
-        }
-
-        /* Chequeo de longuitud del vector de arcos inhibidores */
-        if (this.isExtInh()) {
-            if (this.raw.matrixH[0].length != this.raw.matrixI.length) {
-                throw new ConfigException("La cantidad de plazas  en la matriz de arcos " +
-                        "inhibidores no es correcta", errorTypeConfig.invalidFormatArray);
-            } else if (this.raw.matrixH.length != this.raw.matrixI[0].length) {
-                throw new ConfigException("La cantidad de transiciones  en la matriz de arcos" +
-                        " inhibidores no es correcta", errorTypeConfig.invalidFormatArray);
-            } else {
-                /* Chequeo de longuitud de matriz constante. */
-                conlconst = -1;
-                for (int i = 0; i < this.raw.matrixH.length; ++i) {
-                    if (conlconst == -1) {
-                        conlconst = this.raw.matrixH[0].length;
-                    } else if (conlconst != this.raw.matrixH[i].length) {
-                        throw new ConfigException("La matriz en la matriz de arcos inhibidores " +
-                                "no es constante", errorTypeConfig.invalidFormatMatrix);
-                    }
-                }
-            }
-        }
-
-        /* Chequeo de longuitud del vector de arcos lectores */
-        if (this.isExtReader()) {
-            if (this.raw.matrixR[0].length != this.raw.matrixI.length) {
-                throw new ConfigException("La cantidad de plazas  en la matriz de arcos " +
-                        "lectores no es correcta", errorTypeConfig.invalidFormatArray);
-            } else if (this.raw.matrixR.length != this.raw.matrixI[0].length) {
-                throw new ConfigException("La cantidad de transiciones  en la matriz de arcos " +
-                        "lectores no es correcta", errorTypeConfig.invalidFormatArray);
-            } else {
-                /* Chequeo de longuitud de matriz constante. */
-                conlconst = -1;
-                for (int i = 0; i < this.raw.matrixR.length; ++i) {
-                    if (conlconst == -1) {
-                        conlconst = this.raw.matrixR[0].length;
-                    } else if (conlconst != this.raw.matrixR[i].length) {
-                        throw new ConfigException("La matriz en la matriz de arcos lectores" +
-                                "no es constante", errorTypeConfig.invalidFormatMatrix);
-                    }
-                }
-            }
-        }
-
-        /* Chequeo de longuitud de vector temporal, ausencia de elementos null y negativos. */
-        if (this.isExtTemp()) {
-            int dimension = this.raw.tempWindowTuple.length;
-            //Se verifica las dimensiones de la tupla.
-            if (dimension != 2) {
-                throw new ConfigException("Tupla temporal de dimensiones incorrectas",
-                        errorTypeConfig.invalidFormatMatrix);
-
-            } else if (this.raw.tempWindowTuple[1].length != this.raw.tempWindowTuple[0].length) {
-                throw new ConfigException("Tupla temporal de dimensiones incorrectas",
-                        errorTypeConfig.invalidFormatMatrix);
-            } else {
-                //Paso final se chequea la ausencia de elementos negativos
-                for (int i = 0; i < 2; ++i) {
-                    for (int j = 0; j < this.raw.tempWindowTuple[0].length; ++j) {
-                        if (this.raw.tempWindowTuple[i][j] < 0) {
-                            throw new ConfigException("Elemento negativo dentro de la tupla",
-                                    errorTypeConfig.invalidFormatMatrix);
-                        }
-                    }
-                }
-            }
-
-        }
-
-        /*Chequeo de contancia de la matriz de politicas, equidad de transiciones respecto a la
-                   matriz de incidencia y compuesta por numeros binarios.*/
-        /*
-        if (this.isExtPolicy()) {
-            //Verifico que la matriz sea cuadrada.
-            if (this.raw.matrixP.length != this.raw.matrixP[0].length) {
-                throw new ConfigException("La matriz no es constante",
-                        errorTypeConfig.invalidFormatMatrix);
-                //Verifico que el num de transiciones sea igual al de la matriz de incidencia.
-            } else if (this.raw.matrixP[0].length != this.raw.matrixI[0].length) {
-                throw new ConfigException("Numero de transiciones erroneo",
-                        errorTypeConfig.invalidFormatMatrix);
-            } else {
-                //Paso final chequeo elementos binarios y solo 1 por fila y columna.
-                boolean bin = false;
-                int[] element = new int[this.raw.matrixP[0].length];
-                for (int i = 0; i < this.raw.matrixP.length; ++i) {
-                    for (int j = 0; j < this.raw.matrixP[0].length; ++j) {
-                        if (this.raw.matrixP[i][j] == 1 && !bin) {
-                            if (element[j] == 1) {
-                                throw new ConfigException("Errores de prioridad", errorTypeConfig.invalidFormatMatrix);
-                            } else {
-                                bin = true;
-                                element[j]++;
-                            }
-                        } else if (this.raw.matrixP[i][j] > 1 || this.raw.matrixP[i][j] == 1) {
-                            throw new ConfigException("Error de politicas", errorTypeConfig.invalidFormatMatrix);
-                        }
-                    }
-                    if (!bin)
-                        throw new ConfigException("Ausencia de 1 en la fila", errorTypeConfig.invalidFormatMatrix);
-                    bin = false;
-                }
-
-            }
-        }*/
-
-
-    }
 }

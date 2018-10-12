@@ -12,6 +12,10 @@ public enum errorTypeConfig {
     /**
      * Faltan datos esenciales en la estructura del JSON.
      */
-    missingDataInJASON
+    missingDataInJASON,
+    /**
+     * No se puede crear una red de petri a partir de un objeto nullo
+     */
+    NullObjet
 
 }

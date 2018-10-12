@@ -18,5 +18,4 @@ public class Monitor {
      */
     private QueueManagement colas;
 
-
 }

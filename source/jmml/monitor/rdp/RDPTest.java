@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Testea la Red de Petri en base a los archivos ubicados en el directorio
- *
+ * @TODO PRIMERO QUE TODO MOCKEAR LOS RDPraw para no usar el dataparcer
  * @TODO Falta checkear el archiv JFILE_RDP5_READER
  * @TODO Falta todo en JFILE_RDP2_MAXTOKENS
  * @TODO Falta todo en JFILE_RDP3_MAXTOKENS
