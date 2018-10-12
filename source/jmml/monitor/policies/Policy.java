@@ -20,7 +20,6 @@ import java.util.Random;
  * @TODO Debo guardad ultimo disparo y cantidad de veces que se disparo, para hacer matrices
  * @TODO TESTEAR TODOS LOS ARMADOS DE MATRICES y operaciones matematicas con matrices
  */
-@SuppressWarnings("ALL")
 public class Policy {
     /**
      * Politica usada en el momento
@@ -84,6 +83,7 @@ public class Policy {
      */
     public Policy(@NotNull QueueManagement queueManagement, policyType mode, policyType modeSec,
                   @Nullable int[][] matrixStatic) throws IllegalArgumentException {
+        super();
         // Guardo colas para hacer estadistica
         this.queue = queueManagement;
         int size = this.queue.size();
@@ -111,7 +111,7 @@ public class Policy {
      * @param policy Nueva politica para toma de desiciones.
      * @throws IllegalArgumentException Politica no esperada, por inexistencia o falta de implementacion.
      */
-    private void setPolicy(policyType policy, policyType policySec) throws IllegalArgumentException {
+    public void setPolicy(policyType policy, policyType policySec) throws IllegalArgumentException {
         this.mode = policy;
         this.modeSec = policySec;
         /* Politica primaria */
@@ -225,7 +225,7 @@ public class Policy {
      * @throws IllegalArgumentException El vector no puede utilizarse para generar la prioridad faltan datos
      * @WARNING No hay chequeo de que los valores del vector sean positivos
      */
-    int[][] genMatOfPol(int[] vector, boolean desc) {
+    int[][] genMatOfPol(@NotNull int[] vector, boolean desc) {
         int dimM = this.queue.size();
         if (vector.length != dimM)
             throw new IllegalArgumentException("El vector de prioridades no puede " +
@@ -321,7 +321,6 @@ public class Policy {
      * con una distribucion uniforme, todas las filas al menos una vez.
      * @param matrix Matriz por filas que se quiere desordenar
      * @throws ArithmeticException Matriz no es cuadrada
-     * @TODO Hay una forma mas eficiente de hacer esto?
      */
     private void matReaorderRandom(@NotNull int[][] matrix) throws ArithmeticException {
         if (matrix[0].length != matrix.length)

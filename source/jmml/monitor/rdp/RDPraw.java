@@ -80,6 +80,7 @@ package jmml.monitor.rdp;
  */
 
 
+@SuppressWarnings("unused")
 public class RDPraw implements Cloneable{
     /**
      * Informacion basica de la red de petri

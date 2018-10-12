@@ -468,7 +468,7 @@ public class RDP {
      */
     @Contract(pure = true)
     @Nullable
-    int[][] getExtReader() {
+    private int[][] getExtReader() {
         return this.isExtReader() ? this.raw.matrixR.clone() : null;
     }
 
