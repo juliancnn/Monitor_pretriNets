@@ -1,12 +1,15 @@
 package jmml.monitor.rdp;
 
+import ext.junit5.MockitoExtension;
+import jmml.monitor.parser.DataParser;
 import org.junit.jupiter.api.*;
-
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Testea la Red de Petri en base a los archivos ubicados en el directorio
+ *
  * @TODO Falta checkear el archiv JFILE_RDP5_READER
  * @TODO Falta todo en JFILE_RDP2_MAXTOKENS
  * @TODO Falta todo en JFILE_RDP3_MAXTOKENS
@@ -18,20 +21,25 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SuppressWarnings("ALL")
 @Tag("RDP")
+@ExtendWith(MockitoExtension.class)
 class RDPTest {
 
-    /*
-     * Lista de archivos usados en los test
-     * */
+
     private static final String JFILE_RDP1 = "examples_rdp/ej1_basic.json";
+    private static DataParser DP_RDP1;
     private static final String JFILE_RDP1_MAXTOKENS = "examples_rdp/ej1_extended_MaxToken.json";
+    private static DataParser DP_RDP1_MAXTOKENS;
     //private static final String JFILE_RDP2_MAXTOKENS = "examples_rdp/ej2_extended_MaxToken.json";
     //private static final String JFILE_RDP3_MAXTOKENS = "examples_rdp/ej3_extended_MaxToken.json";
     private static final String JFILE_RDP1_INH = "examples_rdp/ej1_extended_Inh.json";
+    private static DataParser DP_RDP1_INH;
     private static final String JFILE_RDP4_INH = "examples_rdp/ej4_extended_Inh.json";
+    private static DataParser DP_RDP4_INH;
     private static final String JFILE_RDP5_READER = "examples_rdp/ej5_extended_Reader.json";
+    private static DataParser DP_RDP5_READER;
     //private static final String JFILE_RDP1_READERINH = "examples_rdp/ej1_extended_ReaderInh.json";
     private static final String JFILE_RDP1_TEMPORAL = "examples_rdp/ej1_extended_Temporal.json";
+    private static DataParser DP_RDP1_TEMPORAL;
 
 
     /**
@@ -47,9 +55,9 @@ class RDPTest {
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
-
         try {
-            RDP rdp1 = new RDP(JFILE_RDP1);
+            DP_RDP1 = new DataParser(JFILE_RDP1);
+            RDP rdp1 = new RDP(DP_RDP1.generate(RDPraw.class));
             Assertions.assertArrayEquals(new int[][]
                     {
                             {-1, 0, 0, 1},
@@ -71,7 +79,8 @@ class RDPTest {
                         tokens por plaza
           ================================================ */
         try {
-            RDP rdp1_extend = new RDP(JFILE_RDP1_MAXTOKENS);
+            DP_RDP1_MAXTOKENS = new DataParser(JFILE_RDP1_MAXTOKENS);
+            RDP rdp1_extend = new RDP(DP_RDP1_MAXTOKENS.generate(RDPraw.class));
             Assertions.assertArrayEquals(new int[][]
                     {
                             {-1, 0, 0, 1},
@@ -100,7 +109,9 @@ class RDPTest {
           tokens por plaza y suma arcos inhibidores
           ================================================ */
         try {
-            RDP rdp1_extend_H = new RDP(JFILE_RDP1_INH);
+            DP_RDP1_INH = new DataParser(JFILE_RDP1_INH);
+            RDP rdp1_extend_H = new RDP(DP_RDP1_INH.generate(RDPraw.class));
+
             Assertions.assertArrayEquals(new int[][]
                     {
                             {-1, 0, 0, 1},
@@ -136,6 +147,21 @@ class RDPTest {
             Assertions.fail(e.toString());
         }
 
+         /*================================================
+            RDP Arreglar esto plis
+            @TODO Armar bien esto esta hecho para crear los datapartecer nomas
+          ================================================ */
+        try {
+            DP_RDP5_READER = new DataParser(JFILE_RDP5_READER);
+            RDP rdp5_r = new RDP(DP_RDP5_READER.generate(RDPraw.class));
+            DP_RDP4_INH = new DataParser(JFILE_RDP4_INH);
+            DP_RDP1_TEMPORAL = new DataParser(JFILE_RDP1_TEMPORAL);
+        } catch (java.io.FileNotFoundException e) {
+            Assertions.fail("No existe el archivo");
+        } catch (ConfigException e) {
+            Assertions.fail(e.toString());
+        }
+
     }
 
     /**
@@ -149,28 +175,26 @@ class RDPTest {
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
-        try {
-            RDP rdp1 = new RDP(JFILE_RDP1);
-            Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1.getMark());
-            Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
-            Assertions.assertArrayEquals(new int[]{2, 1, 0, 1, 0}, rdp1.getMark(),
-                    "La red evoluciono mal o no evoluciono");
-            Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
-            Assertions.assertArrayEquals(new int[]{1, 2, 0, 2, 0}, rdp1.getMark(),
-                    "La red evoluciono mal o no evoluciono");
-            Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
-            Assertions.assertArrayEquals(new int[]{0, 3, 0, 3, 0}, rdp1.getMark(),
-                    "La red evoluciono mal o no evoluciono");
-            Assertions.assertFalse(rdp1.shotT(1), "No se disparo y debia");
-            Assertions.assertArrayEquals(new int[]{0, 3, 0, 3, 0}, rdp1.getMark(),
-                    "La red evoluciono mal o no evoluciono");
+            try {
+                RDP rdp1 = new RDP(DP_RDP1.generate(RDPraw.class));
+                Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1.getMark());
+                Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{2, 1, 0, 1, 0}, rdp1.getMark(),
+                        "La red evoluciono mal o no evoluciono");
+                Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{1, 2, 0, 2, 0}, rdp1.getMark(),
+                        "La red evoluciono mal o no evoluciono");
+                Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{0, 3, 0, 3, 0}, rdp1.getMark(),
+                        "La red evoluciono mal o no evoluciono");
+                Assertions.assertFalse(rdp1.shotT(1), "No se disparo y debia");
+                Assertions.assertArrayEquals(new int[]{0, 3, 0, 3, 0}, rdp1.getMark(),
+                        "La red evoluciono mal o no evoluciono");
 
 
-        }catch (ShotException e) {
-            Assertions.fail("Transicion no existe");
-        }
-        } catch (java.io.FileNotFoundException e) {
-            Assertions.fail("No se puede crear la red de petri");
+            } catch (ShotException e) {
+                Assertions.fail("Transicion no existe");
+            }
         } catch (ConfigException e) {
             Assertions.fail(e.toString());
         }
@@ -187,7 +211,7 @@ class RDPTest {
             RDP 1: Limitada en la plaza 2 con 2 tokens
           ================================================ */
             try {
-                RDP rdp1 = new RDP(JFILE_RDP1_MAXTOKENS);
+                RDP rdp1 = new RDP(DP_RDP1_MAXTOKENS.generate(RDPraw.class));
                 Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1.getMark());
                 Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{2, 1, 0, 1, 0}, rdp1.getMark(),
@@ -206,11 +230,9 @@ class RDPTest {
                         "La red evoluciono mal o no evoluciono");
 
 
-            }catch (ShotException e) {
+            } catch (ShotException e) {
                 Assertions.fail("Transicion no existe");
             }
-        } catch (java.io.FileNotFoundException e) {
-            Assertions.fail("No se puede crear la red de petri");
         } catch (ConfigException e) {
             Assertions.fail(e.toString());
         }
@@ -228,7 +250,7 @@ class RDPTest {
             RDP 4_extend: Extendida, con arcos inhibidores y max tokens
           ========================================================= */
         try {
-             RDP rdp4_extend = new RDP(JFILE_RDP4_INH);
+            RDP rdp4_extend = new RDP(DP_RDP4_INH.generate(RDPraw.class));
             Assertions.assertArrayEquals(new int[]{5, 0, 0}, rdp4_extend.getMark());
             try {
                 Assertions.assertTrue(rdp4_extend.shotT(2), "No se disparo y debia");
@@ -262,8 +284,6 @@ class RDPTest {
             } catch (ShotException e) {
                 Assertions.fail();
             }
-        } catch (java.io.FileNotFoundException e) {
-            Assertions.fail("No existe el archivo");
         } catch (ConfigException e) {
             Assertions.fail(e.toString());
         }
@@ -278,7 +298,7 @@ class RDPTest {
             RDP 4_extend: Extendida, con arcos inhibidores y max tokens
           ========================================================= */
         try {
-            RDP rdp5_extReader = new RDP(JFILE_RDP5_READER);
+            RDP rdp5_extReader = new RDP(DP_RDP5_READER.generate(RDPraw.class));
             Assertions.assertArrayEquals(new int[]{0, 0, 1, 0}, rdp5_extReader.getMark());
             try {
                 Assertions.assertFalse(rdp5_extReader.shotT(3), "Se disparo y no debia");
@@ -318,8 +338,6 @@ class RDPTest {
             } catch (ShotException e) {
                 Assertions.fail();
             }
-        } catch (java.io.FileNotFoundException e) {
-            Assertions.fail("No existe el archivo");
         } catch (ConfigException e) {
             Assertions.fail(e.toString());
         }
@@ -334,40 +352,38 @@ class RDPTest {
             RDP 1: Limitada en la plaza 2 con 2 tokens
           ================================================ */
             try {
-                RDP rdp1 = new RDP(JFILE_RDP1_MAXTOKENS);
+                RDP rdp1 = new RDP(DP_RDP1_MAXTOKENS.generate(RDPraw.class));
                 Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1.getMark());
-                Assertions.assertArrayEquals(new boolean[]{true,false,false,false}, rdp1.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray());
                 Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{2, 1, 0, 1, 0}, rdp1.getMark(),
                         "La red evoluciono mal o no evoluciono");
-                Assertions.assertArrayEquals(new boolean[]{true,true,true,false}, rdp1.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, true, true, false}, rdp1.getSensitizedArray());
                 Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{1, 2, 0, 2, 0}, rdp1.getMark(),
                         "La red evoluciono mal o no evoluciono");
-                Assertions.assertArrayEquals(new boolean[]{false,true,true,false}, rdp1.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{false, true, true, false}, rdp1.getSensitizedArray());
                 Assertions.assertFalse(rdp1.shotT(1), "Se disparo y no debia");
                 Assertions.assertArrayEquals(new int[]{1, 2, 0, 2, 0}, rdp1.getMark(),
                         "La red evoluciono mal o no evoluciono");
-                Assertions.assertArrayEquals(new boolean[]{false,true,true,false}, rdp1.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{false, true, true, false}, rdp1.getSensitizedArray());
                 Assertions.assertTrue(rdp1.shotT(2), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{1, 1, 1, 2, 0}, rdp1.getMark(),
                         "La red evoluciono mal o no evoluciono");
-                Assertions.assertArrayEquals(new boolean[]{true,true,true,false}, rdp1.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, true, true, false}, rdp1.getSensitizedArray());
                 Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{0, 2, 1, 3, 0}, rdp1.getMark(),
                         "La red evoluciono mal o no evoluciono");
-                Assertions.assertArrayEquals(new boolean[]{false,true,true,false}, rdp1.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{false, true, true, false}, rdp1.getSensitizedArray());
                 Assertions.assertTrue(rdp1.shotT(3), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{0, 2, 1, 2, 1}, rdp1.getMark(),
                         "La red evoluciono mal o no evoluciono");
-                Assertions.assertArrayEquals(new boolean[]{false,true,true,true}, rdp1.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{false, true, true, true}, rdp1.getSensitizedArray());
 
 
-            }catch (ShotException e) {
+            } catch (ShotException e) {
                 Assertions.fail("Transicion no existe");
             }
-        } catch (java.io.FileNotFoundException e) {
-            Assertions.fail("No se puede crear la red de petri");
         } catch (ConfigException e) {
             Assertions.fail(e.toString());
         }
@@ -385,54 +401,52 @@ class RDPTest {
             RDP 4_extend: Extendida, con arcos inhibidores y max tokens
           ========================================================= */
         try {
-            RDP rdp4_extend = new RDP(JFILE_RDP4_INH);
+            RDP rdp4_extend = new RDP(DP_RDP4_INH.generate(RDPraw.class));
             Assertions.assertArrayEquals(new int[]{5, 0, 0}, rdp4_extend.getMark());
             try {
-                Assertions.assertArrayEquals(new boolean[]{true,true,false,false}, rdp4_extend.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, true, false, false}, rdp4_extend.getSensitizedArray());
                 Assertions.assertTrue(rdp4_extend.shotT(2), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{4, 0, 1}, rdp4_extend.getMark(),
                         "La red no evoluciono y debia");
-                Assertions.assertArrayEquals(new boolean[]{false,true,false,true}, rdp4_extend.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{false, true, false, true}, rdp4_extend.getSensitizedArray());
                 Assertions.assertTrue(rdp4_extend.shotT(2), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{3, 0, 2}, rdp4_extend.getMark(),
                         "La red no evoluciono y debia");
-                Assertions.assertArrayEquals(new boolean[]{false,true,false,true}, rdp4_extend.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{false, true, false, true}, rdp4_extend.getSensitizedArray());
                 Assertions.assertFalse(rdp4_extend.shotT(1), "Se disparo y no debia");
                 Assertions.assertArrayEquals(new int[]{3, 0, 2}, rdp4_extend.getMark(),
                         "La red evoluciono y no debia");
-                Assertions.assertArrayEquals(new boolean[]{false,true,false,true}, rdp4_extend.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{false, true, false, true}, rdp4_extend.getSensitizedArray());
                 Assertions.assertTrue(rdp4_extend.shotT(2), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{2, 0, 3}, rdp4_extend.getMark(),
                         "La red no evoluciono y debia");
                 /*Por maxima cantidad de tokens*/
-                Assertions.assertArrayEquals(new boolean[]{false,false,false,true}, rdp4_extend.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{false, false, false, true}, rdp4_extend.getSensitizedArray());
                 Assertions.assertFalse(rdp4_extend.shotT(2), "Se disparo y no debia");
                 Assertions.assertArrayEquals(new int[]{2, 0, 3}, rdp4_extend.getMark(),
                         "La red no evoluciono y debia");
-                Assertions.assertArrayEquals(new boolean[]{false,false,false,true}, rdp4_extend.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{false, false, false, true}, rdp4_extend.getSensitizedArray());
                 Assertions.assertTrue(rdp4_extend.shotT(4), "No se disparo y debia");
-                Assertions.assertArrayEquals(new boolean[]{false,true,false,true}, rdp4_extend.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{false, true, false, true}, rdp4_extend.getSensitizedArray());
                 Assertions.assertTrue(rdp4_extend.shotT(4), "No se disparo y debia");
-                Assertions.assertArrayEquals(new boolean[]{false,true,false,true}, rdp4_extend.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{false, true, false, true}, rdp4_extend.getSensitizedArray());
                 Assertions.assertTrue(rdp4_extend.shotT(4), "No se disparo y debia");
-                Assertions.assertArrayEquals(new boolean[]{true,true,false,false}, rdp4_extend.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, true, false, false}, rdp4_extend.getSensitizedArray());
                 Assertions.assertArrayEquals(new int[]{5, 0, 0}, rdp4_extend.getMark());
                 Assertions.assertTrue(rdp4_extend.shotT(1), "No se disparo y debia");
-                Assertions.assertArrayEquals(new boolean[]{false,false,true,false}, rdp4_extend.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{false, false, true, false}, rdp4_extend.getSensitizedArray());
                 Assertions.assertArrayEquals(new int[]{4, 1, 0}, rdp4_extend.getMark());
                 Assertions.assertFalse(rdp4_extend.shotT(1), "No se disparo y debia");
-                Assertions.assertArrayEquals(new boolean[]{false,false,true,false}, rdp4_extend.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{false, false, true, false}, rdp4_extend.getSensitizedArray());
                 Assertions.assertArrayEquals(new int[]{4, 1, 0}, rdp4_extend.getMark());
                 Assertions.assertFalse(rdp4_extend.shotT(2), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{4, 1, 0}, rdp4_extend.getMark());
                 Assertions.assertTrue(rdp4_extend.shotT(3), "No se disparo y debia");
-                Assertions.assertArrayEquals(new boolean[]{true,true,false,false}, rdp4_extend.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, true, false, false}, rdp4_extend.getSensitizedArray());
                 Assertions.assertArrayEquals(new int[]{5, 0, 0}, rdp4_extend.getMark());
             } catch (ShotException e) {
                 Assertions.fail();
             }
-        } catch (java.io.FileNotFoundException e) {
-            Assertions.fail("No existe el archivo");
         } catch (ConfigException e) {
             Assertions.fail(e.toString());
         }
@@ -447,40 +461,40 @@ class RDPTest {
             RDP 4_extend: Extendida, con arcos inhibidores y max tokens
           ========================================================= */
         try {
-            RDP rdp5_extReader = new RDP(JFILE_RDP5_READER);
+            RDP rdp5_extReader = new RDP(DP_RDP5_READER.generate(RDPraw.class));
             Assertions.assertArrayEquals(new int[]{0, 0, 1, 0}, rdp5_extReader.getMark());
             try {
-                Assertions.assertArrayEquals(new boolean[]{true,false,false}, rdp5_extReader.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, false, false}, rdp5_extReader.getSensitizedArray());
                 Assertions.assertFalse(rdp5_extReader.shotT(3), "Se disparo y no debia");
                 Assertions.assertFalse(rdp5_extReader.shotT(2), "Se disparo y no debia");
                 Assertions.assertTrue(rdp5_extReader.shotT(1), "No se disparo y debia");
-                Assertions.assertArrayEquals(new boolean[]{true,false,true}, rdp5_extReader.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, false, true}, rdp5_extReader.getSensitizedArray());
                 Assertions.assertArrayEquals(new int[]{1, 0, 1, 0}, rdp5_extReader.getMark(),
                         "La red no evoluciono y debia");
                 Assertions.assertTrue(rdp5_extReader.shotT(3), "No se disparo y debia");
-                Assertions.assertArrayEquals(new boolean[]{true,true,false}, rdp5_extReader.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, true, false}, rdp5_extReader.getSensitizedArray());
                 Assertions.assertArrayEquals(new int[]{1, 0, 0, 1}, rdp5_extReader.getMark(),
                         "La red no evoluciono y debia");
                 Assertions.assertTrue(rdp5_extReader.shotT(2), "Se disparo y no debia");
-                Assertions.assertArrayEquals(new boolean[]{true,false,false}, rdp5_extReader.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, false, false}, rdp5_extReader.getSensitizedArray());
                 Assertions.assertArrayEquals(new int[]{0, 1, 1, 0}, rdp5_extReader.getMark(),
                         "La red no evoluciono y debia");
                 Assertions.assertFalse(rdp5_extReader.shotT(2), "Se disparo y no debia");
                 Assertions.assertTrue(rdp5_extReader.shotT(1), "No se disparo y debia");
                 Assertions.assertTrue(rdp5_extReader.shotT(1), "No se disparo y debia");
-                Assertions.assertArrayEquals(new boolean[]{true,false,true}, rdp5_extReader.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, false, true}, rdp5_extReader.getSensitizedArray());
                 Assertions.assertArrayEquals(new int[]{2, 1, 1, 0}, rdp5_extReader.getMark(),
                         "La red no evoluciono y debia");
                 Assertions.assertTrue(rdp5_extReader.shotT(3), "No se disparo y debia");
-                Assertions.assertArrayEquals(new boolean[]{true,true,false}, rdp5_extReader.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, true, false}, rdp5_extReader.getSensitizedArray());
                 Assertions.assertTrue(rdp5_extReader.shotT(2), "Se disparo y no debia");
-                Assertions.assertArrayEquals(new boolean[]{true,false,true}, rdp5_extReader.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, false, true}, rdp5_extReader.getSensitizedArray());
                 Assertions.assertArrayEquals(new int[]{1, 2, 1, 0}, rdp5_extReader.getMark(),
                         "La red no evoluciono y debia");
                 Assertions.assertTrue(rdp5_extReader.shotT(3), "No se disparo y debia");
-                Assertions.assertArrayEquals(new boolean[]{true,true,false}, rdp5_extReader.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, true, false}, rdp5_extReader.getSensitizedArray());
                 Assertions.assertTrue(rdp5_extReader.shotT(2), "Se disparo y no debia");
-                Assertions.assertArrayEquals(new boolean[]{true,false,false}, rdp5_extReader.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, false, false}, rdp5_extReader.getSensitizedArray());
                 Assertions.assertArrayEquals(new int[]{0, 3, 1, 0}, rdp5_extReader.getMark(),
                         "La red no evoluciono y debia");
                 Assertions.assertFalse(rdp5_extReader.shotT(3), "No se disparo y debia");
@@ -489,18 +503,16 @@ class RDPTest {
                         "La red no evoluciono y debia");
                 Assertions.assertFalse(rdp5_extReader.shotT(3), "No se disparo y debia");
                 Assertions.assertTrue(rdp5_extReader.shotT(1), "Se disparo y no debia");
-                Assertions.assertArrayEquals(new boolean[]{true,false,true}, rdp5_extReader.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, false, true}, rdp5_extReader.getSensitizedArray());
                 Assertions.assertTrue(rdp5_extReader.shotT(3), "No se disparo y debia");
-                Assertions.assertArrayEquals(new boolean[]{true,false,false}, rdp5_extReader.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, false, false}, rdp5_extReader.getSensitizedArray());
                 Assertions.assertArrayEquals(new int[]{1, 3, 0, 1}, rdp5_extReader.getMark(),
                         "La red no evoluciono y debia");
                 Assertions.assertFalse(rdp5_extReader.shotT(2), "Se disparo y no debia");
-                Assertions.assertArrayEquals(new boolean[]{true,false,false}, rdp5_extReader.getSensitizedArray());
+                Assertions.assertArrayEquals(new boolean[]{true, false, false}, rdp5_extReader.getSensitizedArray());
             } catch (ShotException e) {
                 Assertions.fail();
             }
-        } catch (java.io.FileNotFoundException e) {
-            Assertions.fail("No existe el archivo");
         } catch (ConfigException e) {
             Assertions.fail(e.toString());
         }
@@ -514,7 +526,7 @@ class RDPTest {
             RDP 1_extended: Extendida, con transiciones temporales
         ========================================================== */
         try {
-            RDP rdp1_extend_TEMP = new RDP(JFILE_RDP1_TEMPORAL);
+            RDP rdp1_extend_TEMP = new RDP(DP_RDP1_TEMPORAL.generate(RDPraw.class));
             Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1_extend_TEMP.getMark());
             try {
                 Assertions.assertFalse(rdp1_extend_TEMP.shotT(1), "Se disparo y no debia");
@@ -589,7 +601,7 @@ class RDPTest {
                 Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1_extend_TEMP.getSensitizedArray());
                 Thread.sleep(1100);
                 Assertions.assertTrue(rdp1_extend_TEMP.shotT(1), "No se disparo y debia");
-                Assertions.assertArrayEquals(new int[]{1, 1, 1, 2, 0}, rdp1_extend_TEMP.getMark(),"La red no evoluciono y debia");
+                Assertions.assertArrayEquals(new int[]{1, 1, 1, 2, 0}, rdp1_extend_TEMP.getMark(), "La red no evoluciono y debia");
                 Thread.sleep(3100);
                 Assertions.assertFalse(rdp1_extend_TEMP.shotT(2), "Se disparo y no debia");
                 Assertions.assertArrayEquals(new int[]{1, 1, 1, 2, 0}, rdp1_extend_TEMP.getMark(), "La red evoluciono y no debia");
@@ -599,8 +611,6 @@ class RDPTest {
             } catch (Exception e) {
                 Assertions.fail(e.toString());
             }
-        } catch (java.io.FileNotFoundException e) {
-            Assertions.fail("No existe el archivo");
         } catch (ConfigException e) {
             Assertions.fail(e.toString());
         }

@@ -76,11 +76,11 @@ package jmml.monitor.rdp;
  * }
  *
  * </pre>
- * @TODO Agregar lo de politica estatica al JSON (Ver de manera grafica como tien que ser)
+ * @TODO Eliminar la parte temporal
  */
 
 
-public class RDPraw {
+public class RDPraw implements Cloneable{
     /**
      * Informacion basica de la red de petri
      */
@@ -120,5 +120,17 @@ public class RDPraw {
      * Tupla de inicio y final de ventana de tiempo, medida en milisegundos
      */
     long[][] tempWindowTuple;
+
+    public RDPraw clone(){
+        Object obj=null;
+        try{
+            obj=super.clone();
+        }catch(CloneNotSupportedException ex){
+            //noinspection UseOfSystemOutOrSystemErr
+            System.err.print("Error grave no se puede clonar el objeto");
+            System.exit(-1);
+        }
+        return (RDPraw)obj;
+    }
 
 }

@@ -1,20 +1,14 @@
 package jmml.monitor.rdp;
 
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.lang.String;
 
 /**
  * Manejador de la red de petri
  * <pre>
  *
- * La clase se encarga de instanciar la red de petri con todas sus caracteristicas desde una archivo JSON
+ * La clase se encarga de instanciar la red de petri con todas sus caracteristicas a partir de un RAWrdp
  *
  * Tiene la posibilidad de:
  *  - Dispara las transiciones y alterar el estado de la red
@@ -25,17 +19,12 @@ import java.lang.String;
  *  - Maxima cantidad de tokens por plaza
  *  - Arcos inhibidores
  *  - Arcos lectores con peso 1
- *  - [FUTURE SOPPORT] Arcos lectores con otro peso
  *  - Transiciones sensibilizadas temporalmente
  *
  * </pre>
  *
  * @WARNING No implementa ningun mecanismo de proteccion de recursos para hilos multiples (como semaforo),
  * debe ser implementado externamente
- * @TODO agregar todo el checkeo de archivos para temporales NO COPIAR - CAMBIO LOGICA DE CREAR EL VECT TEMPORAL
- * @TODO Debe verificar la matrix cuadrada T del dimencion cantidad de transiciones,binara, un 1 por columna,
- * el resto cero, la fila no puede ser nula
- * @TODO Verificar la captura de excepciones
  */
 public class RDP {
     /**
@@ -44,43 +33,16 @@ public class RDP {
     private RDPraw raw;
 
     /**
-     * Crea la red de petri a partir de un archivo
-     * <p>
-     * El constructor setea el marcador inicial, la rdp y su configuracion en base a un archivo json de la
-     * misma estructura de RDPraw. (Vease RDPraw para ver la estructura completa del archivo)
-     * <pre>
-     *   Estructura del JSON:
-     *
-     *    {
-     *     "brief" : "Un breve descripcion de la red"
-     *     "info"  : "Una descripcion mas detallada de la red",
-     *     "matrixI" : [                              # La matriz de doble incidencia
-     *       [-1, 0, 0, 1],
-     *       [1, -1, 0, 0],
-     *       [0, 1, 0, -1],
-     *       [1, 0, -1, 0],
-     *       [0, 0, 1, -1]
-     *     ],
-     *     "vectorMark"     : [3, 0, 0, 0, 0],            # marcado inicial de la red
-     *   }
-     * </pre>
-     *
-     * @param jsonFile Ruta del archivo JSON que contiene la informacion
-     * @throws FileNotFoundException Lanzado cuando no se encuentra el archivo JSON
+     * Crea la red de petri a partir del RAWrdp
+     * @param rdpRAW Objeto de la red de petri plano
      * @throws ConfigException       Lanzado cuando esta mal formado el archivo JSON
-     * @TODO Verificar que las matrices H y R sean binarias
-     * @TODO Verificar la estructura de la matix T
-     * @see RDPraw Ver estructura completa del JSON
+     * @see RDPraw Ver estructura completa del RAW
      */
-    public RDP(String jsonFile) throws FileNotFoundException, ConfigException {
-        super();
 
-        /* INICIO DE CARGA DE DATOS */
-        Gson json = new Gson();
-        JsonReader reader = new JsonReader(new FileReader(jsonFile));
-        this.raw = json.fromJson(reader, RDPraw.class);
+    public RDP(RDPraw rdpRAW) throws ConfigException {
+        super();
+        this.raw = rdpRAW.clone();
         this.checkConfigJson();
-        /* FIN DE CARGA DE DATOS */
 
         /* Si es temporal cargo los datos delos timestamp */
         if (this.isExtTemp()) {
