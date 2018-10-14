@@ -14,19 +14,15 @@ import java.util.NoSuchElementException;
  * Cuando el thread vuelve a ready sale de la lista.
  *
  * Posee mecanismos para Agregar/Eliminar threads de una cola y consultar informacion sobre:
- *     - @TODO Tamano de las pilas (Como evito overflow)
- *     - @TODO Tiempo de espera del primer threads en cada cola
- *     - @TODO Actividad por cola (Si se mueve mucho)
- *
+ *     - Tamano de las colas
+ *     - Tiempo de espera del primer threads en cada cola
  * </pre>
  *
- * @TODO Hacer los test negrooo, banda de test
  * @TODO <pre>Como evito que alguien externo al monitor me interrumpa el hilo con un interrupt?/ y si lo mata?
  * Esto me trae problemas, por que si bien lo saco de la cola manejando la excepcion puede disparar igual
  * y en el mejor de los casos no dispara, pero si dispara me puede o romper la coinsistencia del monitor, y dsp de
- * disparar
- * levantaria otro hilo, sabiendo que puede haber otro adentro del monitor levantando threads, dsp me devuelve
- * y queda incoinsistente el semaforo
+ * disparar levantaria otro hilo y devuelve el semaforo binario, sabiendo que puede haber otro adentro del monitor
+ * levantando threads, dsp me devuelve y queda incoinsistente el semaforo
  * Me podria podria implementar una excepcion
  * checkeada obligatoria del monitor para que no intente aceder al recurso que solico dsp de pedirlo no? </pre>
  * Cuando un thread entra enuna cola, entonces pasa a waiting status.

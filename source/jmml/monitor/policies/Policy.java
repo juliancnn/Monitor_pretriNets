@@ -13,12 +13,10 @@ import java.util.Random;
 /**
  * Encargado de manejar la politica de la cola, dando mecanimos para cambiarla y de consulta de disparos
  *
- * @TODO HACER TODO BEBE, esta mas crudo que los bebes que se trago wanda
  * @TODO IMPLEMENTAR EXCEPCIONES PARA MALA CARGA DE POLITICA + TRANSICIONES ESTATICAS
  * @TODO Chequear el constructor de la matrix t coinsida con cantidad de colas
  * @TODO Rehacer la documentacion
  * @TODO Debo guardad ultimo disparo y cantidad de veces que se disparo, para hacer matrices
- * @TODO TESTEAR TODOS LOS ARMADOS DE MATRICES y operaciones matematicas con matrices
  */
 public class Policy {
     /**
@@ -96,8 +94,6 @@ public class Policy {
         /* STATIC MAT  */
         this.matPStatic = matrixStatic == null ? this.matPRandom.clone() : matrixStatic.clone();
 
-        /* MAX SIZE QUEUE*/
-        this.matPMaxSizeQueue = new int[size][size];
 
         /* Seteo politica al ultimo para generar antes las matrices */
         this.setPolicy(mode, modeSec);
@@ -204,7 +200,7 @@ public class Policy {
                 break;
             case FIFO:
                 /* Mayor tiempo de espera en la cola mayor prioridad, desempata la politica secundaria */
-                this.matPMaxSizeQueue = this.genMatOfPol(this.queue.timeWaitFIOfQueues(), true);
+                this.matPMaxTimeQueue = this.genMatOfPol(this.queue.timeWaitFIOfQueues(), true);
                 break;
         }
 
@@ -212,6 +208,7 @@ public class Policy {
 
     /**
      * <pre>
+     *     Welcome to the best method ever
      * Genera una matriz de prioridades segun un vector de valores, una condicion y la politica secundaria
      * La prioridad puede ser ascendente si el mayor valor del vector tiene la mayor prioridad o descendente si el
      * menor valor del vector tiene menor prioridad. En caso de valores repetidos, la prioridad  se desempata solo

@@ -14,6 +14,9 @@ import java.lang.reflect.Type;
  * @see <a href="https://www.json.org/json-es.html">JSON Struct</a>
  */
 public class DataParser {
+    /**
+     * Ruta al archivo JSON para extraer la informacion
+     */
 
     private String jsonFile;
 
