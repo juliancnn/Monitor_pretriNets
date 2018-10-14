@@ -106,42 +106,7 @@ class checkConfig {
 
         }
 */
-        /*Chequeo de contancia de la matriz de politicas, equidad de transiciones respecto a la
-                   matriz de incidencia y compuesta por numeros binarios.*/
-        /*
-        if (this.isExtPolicy()) {
-            //Verifico que la matriz sea cuadrada.
-            if (raw.matrixP.length != raw.matrixP[0].length) {
-                throw new ConfigException("La matriz no es constante",
-                        errorTypeConfig.invalidFormatMatrix);
-                //Verifico que el num de transiciones sea igual al de la matriz de incidencia.
-            } else if (raw.matrixP[0].length != raw.matrixI[0].length) {
-                throw new ConfigException("Numero de transiciones erroneo",
-                        errorTypeConfig.invalidFormatMatrix);
-            } else {
-                //Paso final chequeo elementos binarios y solo 1 por fila y columna.
-                boolean bin = false;
-                int[] element = new int[raw.matrixP[0].length];
-                for (int i = 0; i < raw.matrixP.length; ++i) {
-                    for (int j = 0; j < raw.matrixP[0].length; ++j) {
-                        if (raw.matrixP[i][j] == 1 && !bin) {
-                            if (element[j] == 1) {
-                                throw new ConfigException("Errores de prioridad", errorTypeConfig.invalidFormatMatrix);
-                            } else {
-                                bin = true;
-                                element[j]++;
-                            }
-                        } else if (raw.matrixP[i][j] > 1 || raw.matrixP[i][j] == 1) {
-                            throw new ConfigException("Error de politicas", errorTypeConfig.invalidFormatMatrix);
-                        }
-                    }
-                    if (!bin)
-                        throw new ConfigException("Ausencia de 1 en la fila", errorTypeConfig.invalidFormatMatrix);
-                    bin = false;
-                }
 
-            }
-        }*/
     }
 
     /**

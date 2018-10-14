@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
  *     - Tiempo de espera del primer threads en cada cola
  * </pre>
  *
- * @TODO <pre>Como evito que alguien externo al monitor me interrumpa el hilo con un interrupt?/ y si lo mata?
+ * @TODO Como evito que alguien externo al monitor me interrumpa el hilo con un interrupt?/ y si lo mata?
  * Esto me trae problemas, por que si bien lo saco de la cola manejando la excepcion puede disparar igual
  * y en el mejor de los casos no dispara, pero si dispara me puede o romper la coinsistencia del monitor, y dsp de
  * disparar levantaria otro hilo y devuelve el semaforo binario, sabiendo que puede haber otro adentro del monitor

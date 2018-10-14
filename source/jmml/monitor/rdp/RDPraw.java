@@ -30,15 +30,6 @@ package jmml.monitor.rdp;
  *  - Vector de tokens maximos por plaza
  *          * Lo valores deben ser 0 para sin restriccion o un numero mayor a 0 para setear un maximo de tokens en esa
  *          plaza
- *  - Matriz de de politicas T
- *          * Los valores deben ser binarios
- *          * La matriz es una matriz identidad de MxM con las filas cambiadas de orden, donde el orden reprensta
- *            la prioridad, esto es:
- *              - La matriz es cuadrada
- *              - Cada fila representa una transicion
- *              - En cada fila hay y solo hay un 1 (No pueden ser todos ceros y no pueden tener mas de uno)
- *              - La posicion del 1 representa el nivel de prioridad
- *              - Las tranciciones no pueden tener igual prioridad (No pueden haber 2 filas iguales)
  *
  * </pre>
  * <pre>
@@ -79,17 +70,27 @@ package jmml.monitor.rdp;
  * @TODO Eliminar la parte temporal
  */
 
+/*
+ Constructor insesario/inservible se crea con Reflection, matrixI y mark son los unicos obligatorios, no vamos
+ 7^2 constructures/getters/setters que no queremos tener en una clase publica que se usa como PRIVADA DE PAQUETE!
+
+ Crear un constructor significa hacer checkeo de datos y si usamos reflexion tenemos que hacer chequeo doble,
+ es mejor que lo chequee el constructor de la red de petri si la red RAW es valida, no un autochequeo , total no
+ tiene autofuncionalidad si no que solo es una estructura de datos.
+
+ No vamos a crear un constructor que no vamos a usar
+ */
 
 @SuppressWarnings("unused")
 public class RDPraw implements Cloneable{
     /**
      * Informacion basica de la red de petri
      */
-    protected String brief;
+    String brief;
     /**
      * Informacion extendida de la red de petri
      */
-    protected String info;
+    String info;
     /**
      * Matriz de doble incidencia de la red de petri
      */

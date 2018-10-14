@@ -64,14 +64,14 @@ public class Policy {
      * matrices de politicas)
      * </pre>
      *
+     * @param queueManagement Cola de procesos al que se le aplicara la politica<br>
+     *                        el objeto no es modificado en ningun momento por Policy, se utiliza para garantizar
+     *                        consistencia
      * @param mode            Modo inicial para la politica
      * @param modeSec         Modo inicial para la politica secundaria, utilizada en caso de que la primaria<br>
      *                        entre en conflicto, (ej: Igual tamano en 2 colas), solo puede ser RANDOM <br>
      *                        o STATIC ya que ellas nunca entran en conflicto.
-     * @param queueManagement Cola de procesos al que se le aplicara la politica<br>
-     *                        el objeto no es modificado en ningun momento por Policy, se utiliza para garantizar
-     *                        consistencia
-     * @param matrixStatic    Null para utilizar la matriz identidad como matriz de politicas estaticas
+     * @param staticPolicy    Null para utilizar la matriz identidad como matriz de politicas estaticas
      *                        El orden de prioridad esta dado por el orden de transiciones
      *                        int[][] Matriz cuadrada de 2 dimenaciones coinsidente con el tamano de cola para
      *                        prioridades esaticas (matriz identidad con irden de columnas cambiados)
@@ -80,7 +80,7 @@ public class Policy {
      * @TODO Verificar que la matriz sea identidad de filas interambiadas
      */
     public Policy(@NotNull QueueManagement queueManagement, policyType mode, policyType modeSec,
-                  @Nullable int[][] matrixStatic) throws IllegalArgumentException {
+                  @Nullable PolicyStaticRAW staticPolicy) throws IllegalArgumentException, ConfigException  {
         super();
         // Guardo colas para hacer estadistica
         this.queue = queueManagement;
@@ -92,7 +92,13 @@ public class Policy {
             this.matPRandom[i][i] = 1;
 
         /* STATIC MAT  */
-        this.matPStatic = matrixStatic == null ? this.matPRandom.clone() : matrixStatic.clone();
+        if(staticPolicy == null)
+            this.matPStatic = this.matPRandom.clone();
+        else{
+            new checkPol(staticPolicy, size); // ConfigException
+            this.matPStatic = staticPolicy.getMatrixT();
+
+        }
 
 
         /* Seteo politica al ultimo para generar antes las matrices */
@@ -119,10 +125,8 @@ public class Policy {
                 this.matOfPolicy = this.matPRandom;
                 break;
             case MAXSIZEQUEUE:
-                this.matOfPolicy = this.matPMaxSizeQueue;
                 break;
             case FIFO:
-                this.matOfPolicy = this.matPMaxTimeQueue;
                 break;
             default:
                 throw new java.lang.IllegalArgumentException("Politica no esperada");
@@ -146,6 +150,7 @@ public class Policy {
      */
     @Contract(pure = true)
     public policyType[] getPolicy() {
+        //return new policyType[]{this.mode, this.modeSec};
         return new policyType[]{this.mode, this.modeSec};
     }
 
@@ -196,11 +201,11 @@ public class Policy {
         switch (this.mode) {
             case MAXSIZEQUEUE:
                 /* Mayor tamano de la cola mayor prioridad, desempata la politica secundaria */
-                this.matPMaxSizeQueue = this.genMatOfPol(this.queue.sizeOfQueues(), true);
+                this.matOfPolicy = this.genMatOfPol(this.queue.sizeOfQueues(), true);
                 break;
             case FIFO:
                 /* Mayor tiempo de espera en la cola mayor prioridad, desempata la politica secundaria */
-                this.matPMaxTimeQueue = this.genMatOfPol(this.queue.timeWaitFIOfQueues(), true);
+                this.matOfPolicy = this.genMatOfPol(this.queue.timeWaitFIOfQueues(), true);
                 break;
         }
 
