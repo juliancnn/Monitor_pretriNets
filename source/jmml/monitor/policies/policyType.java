@@ -24,7 +24,6 @@ public enum policyType {
     FIFO,
     /**
      * Selecciona la cola que hace mas tiempo que no fue selecciona
-     * (seleccionada no significa disparada, por el temita temporal puede no dispararse luego de ser selccionada)
      */
     LASTESTSHOT,
     /**

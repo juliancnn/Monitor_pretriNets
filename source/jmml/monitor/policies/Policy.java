@@ -13,9 +13,6 @@ import java.util.Random;
 /**
  * Encargado de manejar la politica de la cola, dando mecanimos para cambiarla y de consulta de disparos
  *
- * @TODO IMPLEMENTAR EXCEPCIONES PARA MALA CARGA DE POLITICA + TRANSICIONES ESTATICAS
- * @TODO Chequear el constructor de la matrix t coinsida con cantidad de colas
- * @TODO Rehacer la documentacion
  * @TODO Debo guardad ultimo disparo y cantidad de veces que se disparo, para hacer matrices
  */
 public class Policy {
@@ -40,13 +37,6 @@ public class Policy {
      */
     private final int[][] matPStatic;
     /**
-     * Matriz  de politicas generada por el tamano de las colas y una politica secundaria
-     */
-    private int[][] matPMaxSizeQueue;
-    /**
-     * Matriz  de politicas generada por el tope tiempo que esta en el tope de la cola y una politica secundaria
-     */
-    private int[][] matPMaxTimeQueue;
     /**
      * Matriz de politica usada en el momento para calcular las prioridades
      */
@@ -76,8 +66,6 @@ public class Policy {
      *                        int[][] Matriz cuadrada de 2 dimenaciones coinsidente con el tamano de cola para
      *                        prioridades esaticas (matriz identidad con irden de columnas cambiados)
      * @throws IllegalArgumentException En caso de que el seteo de politicas no sea valido
-     * @TODO Debo armar un metodo que arme las matrices?
-     * @TODO Verificar que la matriz sea identidad de filas interambiadas
      */
     public Policy(@NotNull QueueManagement queueManagement, policyType mode, policyType modeSec,
                   @Nullable PolicyStaticRAW staticPolicy) throws IllegalArgumentException, ConfigException  {
@@ -95,14 +83,13 @@ public class Policy {
         if(staticPolicy == null)
             this.matPStatic = this.matPRandom.clone();
         else{
-            new checkPol(staticPolicy, size); // ConfigException
+            new checkPol(staticPolicy, size); // >> ConfigException
             this.matPStatic = staticPolicy.getMatrixT();
 
         }
 
-
         /* Seteo politica al ultimo para generar antes las matrices */
-        this.setPolicy(mode, modeSec);
+        this.setPolicy(mode, modeSec); // >>  IllegalArgumentException
 
     }
 
@@ -165,9 +152,7 @@ public class Policy {
      *                     True: La cola sera tomada en cuenta <br>
      *                     False: La cola no sera tomada en cuenta
      * @return numero de cola seleccionada por la politica para desencolar, segun la politica establecida
-     * @TODO Update matrices
      * @TODO Arrojaria exepcion si el vector esta vacio [0 0 0 ....] y otra distinta para null \
-     * @TODO Ver el tema del casteo de bool a int si se puede mejorar operando bit a bit o pasar todo a int[] en rdp
      */
     @Contract(pure = true)
     public int tellMeWho(@NotNull boolean[] whoIsAviable) {
@@ -199,6 +184,10 @@ public class Policy {
 
 
         switch (this.mode) {
+            case RANDOM:
+                return;
+            case STATICORDER:
+                return;
             case MAXSIZEQUEUE:
                 /* Mayor tamano de la cola mayor prioridad, desempata la politica secundaria */
                 this.matOfPolicy = this.genMatOfPol(this.queue.sizeOfQueues(), true);
