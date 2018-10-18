@@ -156,7 +156,7 @@ public class QueueManagement {
         long actualTime = java.lang.System.currentTimeMillis();
         List<ThreadNode> cola;
         for (int i = 0; i < this.colas.size(); i++) {
-            // Aguanta 68 anios (2^31-1 seg) de software corriendo ininterrumpirdamente este casteo
+            // Aguanta 68 años (2^31-1 seg) de software corriendo ininterrumpirdamente este casteo
             cola = this.colas.get(i);
             sizes[i] = cola.isEmpty() ? 0 : (int) (actualTime - cola.get(0).getTimeStamp());
         }
