@@ -45,6 +45,18 @@ public class Policy {
      * Matriz de politica secundaria usada en el momento para calcular las prioridades
      */
     private int[][] matOfPolicySec;
+    /**
+     * Tiempo en que se crea el objeto Policy, usado para politicas LASTESTSHOT.
+     */
+    private long InitialTime;
+    /**
+     * Vector de tiempo, usado para saber cuanto tiempo lleva una cola sin ser seleccionada.
+     */
+    private int[] timeLastestTime;
+    /**
+     * Vector en el cual se lleva la cuenta de las veces que se selecciono determinada cola
+     */
+    private int [] ContSelectQueue;
 
     /**
      * <pre>
@@ -70,9 +82,17 @@ public class Policy {
     public Policy(@NotNull QueueManagement queueManagement, policyType mode, policyType modeSec,
                   @Nullable PolicyStaticRAW staticPolicy) throws IllegalArgumentException, ConfigException  {
         super();
+        //Guardo el tiempo en el que se crea el objeto
+        InitialTime = java.lang.System.currentTimeMillis();
         // Guardo colas para hacer estadistica
         this.queue = queueManagement;
         int size = this.queue.size();
+
+        //Vector de tiempos de ultimo seleccion.
+        this.timeLastestTime = new int[size];
+
+        //Vector contador seleccion de colas.
+        this.ContSelectQueue = new int[size];
 
         /* RANDOM MAT - Luego sera desordenada */
         this.matPRandom = new int[size][size];
@@ -115,6 +135,7 @@ public class Policy {
                 break;
             case FIFO:
                 break;
+
             default:
                 throw new java.lang.IllegalArgumentException("Politica no esperada");
         }
@@ -161,11 +182,13 @@ public class Policy {
             who[i] = whoIsAviable[i] ? 1 : 0;
 
         this.updateMatrixOfPolicies(); // usa genMatOfPol -> The best method ever
-        return this.getFirstOnTrue(
+        int WhoIs = this.getFirstOnTrue(
                 this.matMulVect(
                         this.firstOnTrue(this.matMulVect(who, this.matOfPolicy, false)),
                         this.matOfPolicy, true));
-
+        this.timeLastestTime[WhoIs - 1] = (int) (InitialTime - java.lang.System.currentTimeMillis());
+        this.ContSelectQueue[WhoIs - 1] ++;
+        return WhoIs;
     }
 
     /*==================================================================================================================
@@ -195,6 +218,14 @@ public class Policy {
             case FIFO:
                 /* Mayor tiempo de espera en la cola mayor prioridad, desempata la politica secundaria */
                 this.matOfPolicy = this.genMatOfPol(this.queue.timeWaitFIOfQueues(), true);
+                break;
+            case LASTESTSHOT:
+                /* Mayor tiempo desde que la ultima cola se selecciono, mayor prioridad la de menor tiempo */
+                this.matOfPolicy = this.genMatOfPol(this.timeLastestTime, false);
+                break;
+            case MINORSHOT:
+                /* Selecciona la cola que menos veces fue disparada */
+                this.matOfPolicy = this.genMatOfPol(this.ContSelectQueue, false);
                 break;
         }
 
