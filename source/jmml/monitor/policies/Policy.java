@@ -46,15 +46,15 @@ public class Policy {
     /**
      * Tiempo en que se crea el objeto Policy, usado para politicas LASTESTSHOT.
      */
-    private long InitialTime;
+    private final long InitialTime;
     /**
      * Vector de tiempo, usado para saber cuanto tiempo lleva una cola sin ser seleccionada.
      */
-    private int[] timeLastestTime;
+    private final int[] timeLastestTime;
     /**
      * Vector en el cual se lleva la cuenta de las veces que se selecciono determinada cola
      */
-    private int [] ContSelectQueue;
+    private final int [] ContSelectQueue;
 
     /**
      * <pre>
@@ -76,10 +76,10 @@ public class Policy {
      *                        El orden de prioridad esta dado por el orden de transiciones
      *                        int[][] Matriz cuadrada de 2 dimenaciones coinsidente con el tamano de cola para
      *                        prioridades esaticas (matriz identidad con irden de columnas cambiados)
-     * @throws IllegalArgumentException En caso de que el seteo de politicas no sea valido
+     * @throws ConfigException En caso de que el seteo de politicas no sea valido o la politica estatica este formada
      */
     public Policy(@NotNull QueueManagement queueManagement, policyType mode, policyType modeSec,
-                  @Nullable PolicyStaticRAW staticPolicy) throws IllegalArgumentException, ConfigException  {
+                  @Nullable PolicyStaticRAW staticPolicy) throws ConfigException  {
         super();
         //Guardo el tiempo en el que se crea el objeto
         InitialTime = java.lang.System.currentTimeMillis();
@@ -119,7 +119,7 @@ public class Policy {
      * @param policy Nueva politica para toma de desiciones.
      * @throws IllegalArgumentException Politica no esperada, por inexistencia o falta de implementacion.
      */
-    public void setPolicy(policyType policy, policyType policySec) throws IllegalArgumentException {
+    public void setPolicy(policyType policy, policyType policySec) throws ConfigException {
         this.mode = policy;
         this.modeSec = policySec;
         /* Politica primaria */
@@ -139,7 +139,7 @@ public class Policy {
             case MINORSHOT:
                 break;
             default:
-                throw new java.lang.IllegalArgumentException("Politica no esperada");
+                throw new ConfigException("Politica primaria no esperada");
         }
         switch (this.modeSec) {
             case STATICORDER:
@@ -149,7 +149,7 @@ public class Policy {
                 this.matOfPolicySec = this.matPRandom;
                 break;
             default:
-                throw new java.lang.IllegalArgumentException("Politica Secundaria solo pueder ser estatica o random");
+                throw new ConfigException("Politica Secundaria solo pueder ser estatica o random");
         }
 
     }

@@ -35,5 +35,6 @@ public class PolicyStaticRAW {
     /**
      * Matriz de politica estatica
      */
+    @SuppressWarnings("MismatchedReadAndWriteOfArray")
     private int [][] matrixT;
 }

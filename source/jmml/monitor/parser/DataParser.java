@@ -18,7 +18,7 @@ public class DataParser {
      * Ruta al archivo JSON para extraer la informacion
      */
 
-    private String jsonFile;
+    private final String jsonFile;
 
     /**
      * Crea el parser del JSON

@@ -160,7 +160,6 @@ public class QueueManagement {
      * @return cantidad de colas que posee el manejador
      */
     @Contract(pure = true)
-    @NotNull
     public int size() {
         return this.colas.size();
     }
@@ -169,6 +168,7 @@ public class QueueManagement {
     /**
      * Informacion del thread que guarda en la cola
      */
+    @SuppressWarnings("unused")
     final class ThreadNode {
         final private Thread t;
         final long timeStamp;

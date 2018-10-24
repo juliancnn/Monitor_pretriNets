@@ -5,7 +5,7 @@ package jmml.monitor.rdp;
  * El disparo es invalido por que el numero de transicion es menor que 1 o mayor que el numero de
  * transiciones que tiene la red. Es decir cuando la transicion es inexistente
  */
-class ShotException extends Exception {
+public class ShotException extends Exception {
 
     /**
      * Marca al momento del disparo
