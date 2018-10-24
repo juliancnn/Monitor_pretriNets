@@ -56,7 +56,12 @@ class QueueManagementTest {
                 if (this.wake) {
                     this.queueManagement.wakeUpTo(this.cola);
                 } else {
-                    this.queueManagement.addMe(this.cola);
+                    try{
+                        this.queueManagement.addMe(this.cola);
+                    }catch (QueueInterrupException e){
+                        Assertions.fail(e.getMessage());
+                    }
+
 
             }
         }

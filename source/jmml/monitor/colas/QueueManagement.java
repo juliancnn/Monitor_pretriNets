@@ -18,15 +18,6 @@ import java.util.NoSuchElementException;
  *     - Tiempo de espera del primer threads en cada cola
  * </pre>
  *
- * @TODO Como evito que alguien externo al monitor me interrumpa el hilo con un interrupt?/ y si lo mata?
- * Esto me trae problemas, por que si bien lo saco de la cola manejando la excepcion puede disparar igual
- * y en el mejor de los casos no dispara, pero si dispara me puede o romper la coinsistencia del monitor, y dsp de
- * disparar levantaria otro hilo y devuelve el semaforo binario, sabiendo que puede haber otro adentro del monitor
- * levantando threads, dsp me devuelve y queda incoinsistente el semaforo
- * Me podria podria implementar una excepcion
- * checkeada obligatoria del monitor para que no intente aceder al recurso que solico dsp de pedirlo no? </pre>
- * Cuando un thread entra enuna cola, entonces pasa a waiting status.
- * (No usa sleep por que no lo puede desperar otro hilo), no hay diferencia de rendimieto
  */
 public class QueueManagement {
 
@@ -37,14 +28,12 @@ public class QueueManagement {
 
     /**
      * Crea la lista de colas de Threads
-     *
      * @param numColas Numero de colas a crear
-     * @TODO Cambio de exepcion
      */
     public QueueManagement(int numColas) throws IllegalArgumentException {
         super();
         if (numColas < 1)
-            throw new IllegalArgumentException("A ver nene si  aca implemetas la excepxion");
+            throw new IllegalArgumentException("No se pueden crear colas vacias");
 
         this.colas = new ArrayList<>();
         for (int i = 0; i < numColas; i++)
@@ -85,11 +74,10 @@ public class QueueManagement {
             this.colas.get(nCola).add(tn);
             tn.waitNode();
         } catch (java.lang.InterruptedException e) {
-            /* Si alguien lo interrumpe lo saco de la cola, deberia finalizar el thread?
-             * o por lo menos sacarlo del monitor, podria lanzar excepcion y capturarla fuera del monitor */
+            /* Si alguien lo interrumpe lo saco de la cola lanzar excepcion a capturar fuera del monitor */
             this.colas.get(nCola).remove(tn);
             throw new QueueInterrupException("Hilo despertado mientras estaba dentro de una cola de espera " +
-                    "Fue expulsado de la cola y piere su estado dentro de las mismas.");
+                    "Fue expulsado de la cola y piere su estado dentro de la misma.");
         }
 
     }
@@ -100,6 +88,7 @@ public class QueueManagement {
      * @param nCola numero de cola del thread a despertar
      * @throws IndexOutOfBoundsException Se quiere quitar a una cola que no existe
      * @throws NoSuchElementException    La cola de Threads esta vacia
+     * @TODO resolver que pasa si matan el thread que estaba encolado
      */
     public void wakeUpTo(int nCola) {
         if (nCola < 1 || nCola > colas.size())
@@ -109,16 +98,7 @@ public class QueueManagement {
         if (this.colas.get(nCola).isEmpty())
             throw new NoSuchElementException("La cola de threads esta vacia");
 
-        /* Antes de despertarlo lo elimino por si hay un cambio de ctx
-         * Igual nadie puede entrar por que no se devolvio el semaforo,
-         * y no puede alterar el estado de la red hasta desencolarse y que termine el metodo,
-         * por lo tanto como maximo solo puede haber 2 hilos en el monitor y solo el segundo puede volver
-         * a despertar a un tercero. Por lo cual el orden de desperarlo y sacarlo de la cola es indistino
-         * aunque si lo despierta y cambia de conexto, sin volver al primer hilo
-         * no habria 3 hilos en el monitor? esta bien, 2 estan saliendo, pero tecnicamente no estan dentro
-         * del moinitor? */
         /* que pasa si el proceso lo mataron por X causa. */
-
         ThreadNode tn = this.colas.get(nCola).get(0);
         this.colas.get(nCola).remove(tn);
         tn.notifyNode();
@@ -138,6 +118,7 @@ public class QueueManagement {
      * de elementos que posee la misma.
      */
     @Contract(pure = true)
+    @NotNull
     public int[] sizeOfQueues() {
         int[] sizes = new int[this.colas.size()];
         for (int i = 0; i < this.colas.size(); i++) {
@@ -178,6 +159,8 @@ public class QueueManagement {
      *
      * @return cantidad de colas que posee el manejador
      */
+    @Contract(pure = true)
+    @NotNull
     public int size() {
         return this.colas.size();
     }
@@ -217,6 +200,7 @@ public class QueueManagement {
          *
          * @throws InterruptedException Producida por el wait al thread
          */
+        @Contract(pure = true)
         void waitNode() throws InterruptedException {
             synchronized (this.lockObj) {
                 lockObj.wait();
@@ -227,6 +211,7 @@ public class QueueManagement {
         /**
          * Levanta al thread de wait state a ready con un objeto propio del nodo
          */
+        @Contract(pure = true)
         synchronized void notifyNode() {
             synchronized (this.lockObj) {
                 lockObj.notify();
