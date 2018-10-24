@@ -1,0 +1,1147 @@
+<?xml version="1.0" encoding="ISO-8859-1"?><pnml>
+<net id="Net-One" type="P/T net">
+<token id="Default" enabled="true" red="0" green="0" blue="0"/>
+<place id="BarreraIn1Alta">
+<graphics>
+<position x="570.0" y="360.0"/>
+</graphics>
+<name>
+<value>BarreraIn1Alta</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,0</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<place id="BarreraIn1Baja">
+<graphics>
+<position x="570.0" y="495.0"/>
+</graphics>
+<name>
+<value>BarreraIn1Baja</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,1</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<place id="BarreraOu1Alta">
+<graphics>
+<position x="555.0" y="1320.0"/>
+</graphics>
+<name>
+<value>BarreraOu1Alta</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,0</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<place id="BarreraOu1Baja">
+<graphics>
+<position x="555.0" y="1485.0"/>
+</graphics>
+<name>
+<value>BarreraOu1Baja</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,1</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<place id="Caja">
+<graphics>
+<position x="885.0" y="1110.0"/>
+</graphics>
+<name>
+<value>Caja</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,1</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<place id="CobrandoSalida1">
+<graphics>
+<position x="720.0" y="1335.0"/>
+</graphics>
+<name>
+<value>CobrandoSalida1</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,0</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<place id="CobrandoSalida2">
+<graphics>
+<position x="1050.0" y="1335.0"/>
+</graphics>
+<name>
+<value>CobrandoSalida2</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,0</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<place id="EsperandoIngreso">
+<graphics>
+<position x="765.0" y="255.0"/>
+</graphics>
+<name>
+<value>EsperandoIngreso</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,0</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>3</value>
+</capacity>
+</place>
+<place id="EsperandoLugar">
+<graphics>
+<position x="885.0" y="570.0"/>
+</graphics>
+<name>
+<value>EsperandoLugar</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,0</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<place id="FreePlaces">
+<graphics>
+<position x="870.0" y="135.0"/>
+</graphics>
+<name>
+<value>FreePlaces</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,6</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<place id="lugaresEntrada">
+<graphics>
+<position x="645.0" y="165.0"/>
+</graphics>
+<name>
+<value>lugaresEntrada</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,3</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<place id="P14">
+<graphics>
+<position x="1185.0" y="1335.0"/>
+</graphics>
+<name>
+<value>P14</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,0</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<place id="P15">
+<graphics>
+<position x="1185.0" y="1500.0"/>
+</graphics>
+<name>
+<value>P15</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,1</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<place id="PisoALibres">
+<graphics>
+<position x="690.0" y="660.0"/>
+</graphics>
+<name>
+<value>PisoALibres</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,3</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<place id="PisoAOcupados">
+<graphics>
+<position x="765.0" y="840.0"/>
+</graphics>
+<name>
+<value>PisoAOcupados</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,0</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<place id="SaliendoLugar">
+<graphics>
+<position x="885.0" y="1035.0"/>
+</graphics>
+<name>
+<value>SaliendoLugar</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</name>
+<initialMarking>
+<value>Default,0</value>
+<graphics>
+<offset x="0.0" y="0.0"/>
+</graphics>
+</initialMarking>
+<capacity>
+<value>0</value>
+</capacity>
+</place>
+<transition id="AbreBarreraIn1">
+<graphics>
+<position x="570.0" y="420.0"/>
+</graphics>
+<name>
+<value>AbreBarreraIn1</value>
+<graphics>
+<offset x="-5.0" y="35.0"/>
+</graphics>
+</name>
+<orientation>
+<value>90</value>
+</orientation>
+<rate>
+<value>1.0</value>
+</rate>
+<timed>
+<value>false</value>
+</timed>
+<infiniteServer>
+<value>false</value>
+</infiniteServer>
+<priority>
+<value>1</value>
+</priority>
+</transition>
+<transition id="AbreBarreraOut1">
+<graphics>
+<position x="555.0" y="1410.0"/>
+</graphics>
+<name>
+<value>AbreBarreraOut1</value>
+<graphics>
+<offset x="-5.0" y="35.0"/>
+</graphics>
+</name>
+<orientation>
+<value>90</value>
+</orientation>
+<rate>
+<value>1.0</value>
+</rate>
+<timed>
+<value>false</value>
+</timed>
+<infiniteServer>
+<value>false</value>
+</infiniteServer>
+<priority>
+<value>1</value>
+</priority>
+</transition>
+<transition id="AbreBarreraOut2">
+<graphics>
+<position x="1185.0" y="1410.0"/>
+</graphics>
+<name>
+<value>AbreBarreraOut2</value>
+<graphics>
+<offset x="-5.0" y="35.0"/>
+</graphics>
+</name>
+<orientation>
+<value>90</value>
+</orientation>
+<rate>
+<value>1.0</value>
+</rate>
+<timed>
+<value>false</value>
+</timed>
+<infiniteServer>
+<value>false</value>
+</infiniteServer>
+<priority>
+<value>1</value>
+</priority>
+</transition>
+<transition id="Generador">
+<graphics>
+<position x="570.0" y="255.0"/>
+</graphics>
+<name>
+<value>Generador</value>
+<graphics>
+<offset x="-5.0" y="35.0"/>
+</graphics>
+</name>
+<orientation>
+<value>0</value>
+</orientation>
+<rate>
+<value>1.0</value>
+</rate>
+<timed>
+<value>false</value>
+</timed>
+<infiniteServer>
+<value>false</value>
+</infiniteServer>
+<priority>
+<value>1</value>
+</priority>
+</transition>
+<transition id="IngresaaA">
+<graphics>
+<position x="765.0" y="735.0"/>
+</graphics>
+<name>
+<value>IngresaaA</value>
+<graphics>
+<offset x="-5.0" y="35.0"/>
+</graphics>
+</name>
+<orientation>
+<value>90</value>
+</orientation>
+<rate>
+<value>1.0</value>
+</rate>
+<timed>
+<value>false</value>
+</timed>
+<infiniteServer>
+<value>false</value>
+</infiniteServer>
+<priority>
+<value>1</value>
+</priority>
+</transition>
+<transition id="IngresoTermina">
+<graphics>
+<position x="765.0" y="375.0"/>
+</graphics>
+<name>
+<value>IngresoTermina</value>
+<graphics>
+<offset x="-5.0" y="35.0"/>
+</graphics>
+</name>
+<orientation>
+<value>90</value>
+</orientation>
+<rate>
+<value>1.0</value>
+</rate>
+<timed>
+<value>false</value>
+</timed>
+<infiniteServer>
+<value>false</value>
+</infiniteServer>
+<priority>
+<value>1</value>
+</priority>
+</transition>
+<transition id="SaleA">
+<graphics>
+<position x="765.0" y="930.0"/>
+</graphics>
+<name>
+<value>SaleA</value>
+<graphics>
+<offset x="-5.0" y="35.0"/>
+</graphics>
+</name>
+<orientation>
+<value>90</value>
+</orientation>
+<rate>
+<value>1.0</value>
+</rate>
+<timed>
+<value>false</value>
+</timed>
+<infiniteServer>
+<value>false</value>
+</infiniteServer>
+<priority>
+<value>1</value>
+</priority>
+</transition>
+<transition id="SalePor1">
+<graphics>
+<position x="720.0" y="1215.0"/>
+</graphics>
+<name>
+<value>SalePor1</value>
+<graphics>
+<offset x="-5.0" y="35.0"/>
+</graphics>
+</name>
+<orientation>
+<value>90</value>
+</orientation>
+<rate>
+<value>1.0</value>
+</rate>
+<timed>
+<value>false</value>
+</timed>
+<infiniteServer>
+<value>false</value>
+</infiniteServer>
+<priority>
+<value>1</value>
+</priority>
+</transition>
+<transition id="SalePor2">
+<graphics>
+<position x="1050.0" y="1215.0"/>
+</graphics>
+<name>
+<value>SalePor2</value>
+<graphics>
+<offset x="-5.0" y="35.0"/>
+</graphics>
+</name>
+<orientation>
+<value>90</value>
+</orientation>
+<rate>
+<value>1.0</value>
+</rate>
+<timed>
+<value>false</value>
+</timed>
+<infiniteServer>
+<value>false</value>
+</infiniteServer>
+<priority>
+<value>1</value>
+</priority>
+</transition>
+<transition id="SalioPor1">
+<graphics>
+<position x="720.0" y="1410.0"/>
+</graphics>
+<name>
+<value>SalioPor1</value>
+<graphics>
+<offset x="-5.0" y="35.0"/>
+</graphics>
+</name>
+<orientation>
+<value>90</value>
+</orientation>
+<rate>
+<value>1.0</value>
+</rate>
+<timed>
+<value>false</value>
+</timed>
+<infiniteServer>
+<value>false</value>
+</infiniteServer>
+<priority>
+<value>1</value>
+</priority>
+</transition>
+<transition id="SalioPor2">
+<graphics>
+<position x="1050.0" y="1410.0"/>
+</graphics>
+<name>
+<value>SalioPor2</value>
+<graphics>
+<offset x="-5.0" y="35.0"/>
+</graphics>
+</name>
+<orientation>
+<value>90</value>
+</orientation>
+<rate>
+<value>1.0</value>
+</rate>
+<timed>
+<value>false</value>
+</timed>
+<infiniteServer>
+<value>false</value>
+</infiniteServer>
+<priority>
+<value>1</value>
+</priority>
+</transition>
+<transition id="seRetira">
+<graphics>
+<position x="900.0" y="255.0"/>
+</graphics>
+<name>
+<value>seRetira</value>
+<graphics>
+<offset x="-5.0" y="35.0"/>
+</graphics>
+</name>
+<orientation>
+<value>0</value>
+</orientation>
+<rate>
+<value>1.0</value>
+</rate>
+<timed>
+<value>false</value>
+</timed>
+<infiniteServer>
+<value>false</value>
+</infiniteServer>
+<priority>
+<value>1</value>
+</priority>
+</transition>
+<arc id="AbreBarreraIn1 to BarreraIn1Alta" source="AbreBarreraIn1" target="BarreraIn1Alta">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="581" y="426" curvePoint="false"/>
+<arcpath id="001" x="581" y="386" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="AbreBarreraOut1 to BarreraOu1Alta" source="AbreBarreraOut1" target="BarreraOu1Alta">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="566" y="1416" curvePoint="false"/>
+<arcpath id="001" x="566" y="1346" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="AbreBarreraOut2 to P14" source="AbreBarreraOut2" target="P14">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="1196" y="1416" curvePoint="false"/>
+<arcpath id="001" x="1196" y="1361" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="BarreraIn1Alta to IngresoTermina" source="BarreraIn1Alta" target="IngresoTermina">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="595" y="365" curvePoint="false"/>
+<arcpath id="001" x="719" y="347" curvePoint="true"/>
+<arcpath id="002" x="768" y="381" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="BarreraIn1Baja to AbreBarreraIn1" source="BarreraIn1Baja" target="AbreBarreraIn1">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="581" y="492" curvePoint="false"/>
+<arcpath id="001" x="581" y="436" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="BarreraOu1Alta to SelePor1" source="BarreraOu1Alta" target="SalioPor1">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="577" y="1342" curvePoint="false"/>
+<arcpath id="001" x="716" y="1422" curvePoint="true"/>
+<type value="normal"/>
+</arc>
+<arc id="BarreraOu1Baja to AbreBarreraOut1" source="BarreraOu1Baja" target="AbreBarreraOut1">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="566" y="1482" curvePoint="false"/>
+<arcpath id="001" x="566" y="1426" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="Caja to SalePor1" source="Caja" target="SalePor1">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="882" y="1125" curvePoint="false"/>
+<arcpath id="001" x="736" y="1222" curvePoint="true"/>
+<type value="normal"/>
+</arc>
+<arc id="Caja to SalePor2" source="Caja" target="SalePor2">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="911" y="1125" curvePoint="false"/>
+<arcpath id="001" x="1056" y="1221" curvePoint="true"/>
+<type value="normal"/>
+</arc>
+<arc id="CobrandoSalida1 to SelePor1" source="CobrandoSalida1" target="SalioPor1">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="731" y="1361" curvePoint="false"/>
+<arcpath id="001" x="731" y="1416" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="CobrandoSalida2 to SalioPor2" source="CobrandoSalida2" target="SalioPor2">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="1061" y="1361" curvePoint="false"/>
+<arcpath id="001" x="1061" y="1416" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="EsperandoIngreso to IngresoTermina" source="EsperandoIngreso" target="IngresoTermina">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="776" y="281" curvePoint="false"/>
+<arcpath id="001" x="775" y="381" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="EsperandoIngreso to seRetira" source="EsperandoIngreso" target="seRetira">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="791" y="267" curvePoint="false"/>
+<arcpath id="001" x="906" y="267" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="EsperandoLugar to IngresaaA" source="EsperandoLugar" target="IngresaaA">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="888" y="594" curvePoint="false"/>
+<arcpath id="001" x="781" y="742" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="FreePlaces to IngresoTermina" source="FreePlaces" target="IngresoTermina">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="876" y="160" curvePoint="false"/>
+<arcpath id="001" x="782" y="382" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="Generador to EsperandoIngreso" source="Generador" target="EsperandoIngreso">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="586" y="267" curvePoint="false"/>
+<arcpath id="001" x="762" y="267" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="IngresaaA to PisoAOcupados" source="IngresaaA" target="PisoAOcupados">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="776" y="751" curvePoint="false"/>
+<arcpath id="001" x="776" y="837" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="IngresoTermina to BarreraIn1Baja" source="IngresoTermina" target="BarreraIn1Baja">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="767" y="391" curvePoint="false"/>
+<arcpath id="001" x="594" y="499" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="IngresoTermina to EsperandoLugar" source="IngresoTermina" target="EsperandoLugar">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="785" y="392" curvePoint="false"/>
+<arcpath id="001" x="889" y="569" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="IngresoTermina to lugaresEntrada" source="IngresoTermina" target="lugaresEntrada">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="773" y="391" curvePoint="false"/>
+<arcpath id="001" x="597" y="537" curvePoint="true"/>
+<arcpath id="002" x="417" y="522" curvePoint="false"/>
+<arcpath id="003" x="477" y="177" curvePoint="true"/>
+<arcpath id="004" x="642" y="177" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="lugaresEntrada to Generador" source="lugaresEntrada" target="Generador">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="642" y="181" curvePoint="false"/>
+<arcpath id="001" x="522" y="252" curvePoint="true"/>
+<arcpath id="002" x="576" y="267" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="P14 to SalioPor2" source="P14" target="SalioPor2">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="1186" y="1357" curvePoint="false"/>
+<arcpath id="001" x="1076" y="1422" curvePoint="true"/>
+<type value="normal"/>
+</arc>
+<arc id="P15 to AbreBarreraOut2" source="P15" target="AbreBarreraOut2">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="1196" y="1497" curvePoint="false"/>
+<arcpath id="001" x="1196" y="1426" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="PisoALibres to IngresaaA" source="PisoALibres" target="IngresaaA">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="712" y="682" curvePoint="false"/>
+<arcpath id="001" x="771" y="741" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="PisoAOcupados to SaleA" source="PisoAOcupados" target="SaleA">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="776" y="866" curvePoint="false"/>
+<arcpath id="001" x="776" y="936" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="SaleA to PisoALibres" source="SaleA" target="PisoALibres">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="761" y="942" curvePoint="false"/>
+<arcpath id="001" x="662" y="1004" curvePoint="true"/>
+<arcpath id="002" x="589" y="824" curvePoint="true"/>
+<arcpath id="003" x="690" y="681" curvePoint="true"/>
+<type value="normal"/>
+</arc>
+<arc id="SaleA to SaliendoLugar" source="SaleA" target="SaliendoLugar">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="776" y="946" curvePoint="false"/>
+<arcpath id="001" x="885" y="1037" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="SalePor1 to CobrandoSalida1" source="SalePor1" target="CobrandoSalida1">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="731" y="1231" curvePoint="false"/>
+<arcpath id="001" x="731" y="1332" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="SalePor2 to CobrandoSalida2" source="SalePor2" target="CobrandoSalida2">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="1061" y="1231" curvePoint="false"/>
+<arcpath id="001" x="1061" y="1332" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="SaliendoLugar to SalePor1" source="SaliendoLugar" target="SalePor1">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="883" y="1054" curvePoint="false"/>
+<arcpath id="001" x="726" y="1221" curvePoint="true"/>
+<type value="normal"/>
+</arc>
+<arc id="SaliendoLugar to SalePor2" source="SaliendoLugar" target="SalePor2">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="910" y="1054" curvePoint="false"/>
+<arcpath id="001" x="1066" y="1222" curvePoint="true"/>
+<type value="normal"/>
+</arc>
+<arc id="SalioPor1 to Caja" source="SalioPor1" target="Caja">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="736" y="1427" curvePoint="false"/>
+<arcpath id="001" x="828" y="1566" curvePoint="true"/>
+<arcpath id="002" x="895" y="1136" curvePoint="true"/>
+<type value="normal"/>
+</arc>
+<arc id="SalioPor2 to Caja" source="SalioPor2" target="Caja">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="1055" y="1426" curvePoint="false"/>
+<arcpath id="001" x="957" y="1568" curvePoint="true"/>
+<arcpath id="002" x="898" y="1136" curvePoint="true"/>
+<type value="normal"/>
+</arc>
+<arc id="SalioPor2 to FreePlaces" source="SalioPor2" target="FreePlaces">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="1062" y="1427" curvePoint="false"/>
+<arcpath id="001" x="1142" y="1611" curvePoint="true"/>
+<arcpath id="002" x="1396" y="1501" curvePoint="true"/>
+<arcpath id="003" x="1589" y="404" curvePoint="true"/>
+<arcpath id="004" x="896" y="146" curvePoint="true"/>
+<type value="normal"/>
+</arc>
+<arc id="SalioPor2 to P15" source="SalioPor2" target="P15">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="1069" y="1427" curvePoint="false"/>
+<arcpath id="001" x="1182" y="1508" curvePoint="true"/>
+<type value="normal"/>
+</arc>
+<arc id="SelePor1 to BarreraOu1Baja" source="SalioPor1" target="BarreraOu1Baja">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="716" y="1422" curvePoint="false"/>
+<arcpath id="001" x="580" y="1490" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+<arc id="SelePor1 to FreePlaces" source="SalioPor1" target="FreePlaces">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="726" y="1426" curvePoint="false"/>
+<arcpath id="001" x="707" y="1494" curvePoint="false"/>
+<arcpath id="002" x="369" y="1532" curvePoint="true"/>
+<arcpath id="003" x="369" y="219" curvePoint="true"/>
+<arcpath id="004" x="868" y="139" curvePoint="true"/>
+<type value="normal"/>
+</arc>
+<arc id="seRetira to lugaresEntrada" source="seRetira" target="lugaresEntrada">
+<graphics/>
+<inscription>
+<value>Default,1</value>
+<graphics/>
+</inscription>
+<tagged>
+<value>false</value>
+</tagged>
+<arcpath id="000" x="912" y="252" curvePoint="false"/>
+<arcpath id="001" x="912" y="207" curvePoint="true"/>
+<arcpath id="002" x="671" y="178" curvePoint="false"/>
+<type value="normal"/>
+</arc>
+</net>
+</pnml>
