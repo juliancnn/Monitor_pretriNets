@@ -74,7 +74,7 @@ public class QueueManagement {
      * @param nCola Numero de cola a anadirse
      * @throws IndexOutOfBoundsException Cuando se quiere anadir a una cola que no existe
      */
-    public void addMe(int nCola) {
+    public void addMe(int nCola) throws QueueInterrupException{
         if (nCola < 1 || nCola > colas.size())
             throw new java.lang.IndexOutOfBoundsException("La cola a la que se quiere anadir no existe");
 
@@ -88,6 +88,8 @@ public class QueueManagement {
             /* Si alguien lo interrumpe lo saco de la cola, deberia finalizar el thread?
              * o por lo menos sacarlo del monitor, podria lanzar excepcion y capturarla fuera del monitor */
             this.colas.get(nCola).remove(tn);
+            throw new QueueInterrupException("Hilo despertado mientras estaba dentro de una cola de espera " +
+                    "Fue expulsado de la cola y piere su estado dentro de las mismas.");
         }
 
     }
