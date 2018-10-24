@@ -12,8 +12,6 @@ import java.util.Random;
 
 /**
  * Encargado de manejar la politica de la cola, dando mecanimos para cambiarla y de consulta de disparos
- *
- * @TODO Debo guardad ultimo disparo y cantidad de veces que se disparo, para hacer matrices
  */
 public class Policy {
     /**
@@ -70,9 +68,10 @@ public class Policy {
      *                        el objeto no es modificado en ningun momento por Policy, se utiliza para garantizar
      *                        consistencia
      * @param mode            Modo inicial para la politica
-     * @param modeSec         Modo inicial para la politica secundaria, utilizada en caso de que la primaria<br>
-     *                        entre en conflicto, (ej: Igual tamano en 2 colas), solo puede ser RANDOM <br>
-     *                        o STATIC ya que ellas nunca entran en conflicto.
+     * @param modeSec         Modo inicial para la politica secundaria, utilizada para desempatar en caso de que
+     *                        politica la primaria entre en conflicto, solo puede ser RANDOM o o STATIC ya <br>
+     *                        que ellas nunca entran en conflicto.<br>
+     *                        ej: Igual tamano en 2 colas
      * @param staticPolicy    Null para utilizar la matriz identidad como matriz de politicas estaticas
      *                        El orden de prioridad esta dado por el orden de transiciones
      *                        int[][] Matriz cuadrada de 2 dimenaciones coinsidente con el tamano de cola para
@@ -135,7 +134,10 @@ public class Policy {
                 break;
             case FIFO:
                 break;
-
+            case LASTESTSHOT:
+                break;
+            case MINORSHOT:
+                break;
             default:
                 throw new java.lang.IllegalArgumentException("Politica no esperada");
         }
@@ -158,7 +160,6 @@ public class Policy {
      */
     @Contract(pure = true)
     public policyType[] getPolicy() {
-        //return new policyType[]{this.mode, this.modeSec};
         return new policyType[]{this.mode, this.modeSec};
     }
 

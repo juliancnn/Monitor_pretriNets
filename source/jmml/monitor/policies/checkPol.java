@@ -16,6 +16,7 @@ class checkPol {
      * @throws ConfigException Si la politica es invalida
      */
     checkPol(@NotNull PolicyStaticRAW psr, int size)  throws ConfigException  {
+        super();
         if(size<1)
             throw new InvalidParameterException("Really nigga?");
         int[][] mat = psr.getMatrixT();
