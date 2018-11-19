@@ -5,6 +5,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Proxima Version etiquetada] - 2018-12-00
 ### Agregado
+- Diagrama de monitor con tiempo alternativo
+- Dudas con monitor tiempo lev
 ### Cambiado
 ### Removido
 
