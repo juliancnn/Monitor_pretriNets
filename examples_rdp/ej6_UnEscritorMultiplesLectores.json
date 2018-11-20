@@ -1,0 +1,43 @@
+{
+  "brief" : "Ejemplo 6: Un escritor Multiples lectores simultaneos",
+  "info" : "Conjunto de procesos (P0), que pueden leer (P4) simultaneamente o escribir (P3)",
+  "matrixI" :  [
+    [-1, -1, 0, 0, 1, 1], //P1  procesos Idle
+    [ 1,  0,-1, 0, 0, 0], //P2 Quieren escribir
+    [ 0,  0,-1, 0, 1, 0], //P3 recurso
+    [ 0,  0, 1, 0,-1, 0], //P4 escribiendo
+    [ 0,  0, 0, 1, 0,-1], //P5 leyendo
+    [ 0,  1, 0,-1, 0, 0]  //P6 quire leer
+  ],
+  "vectorMark"     : [7, 0, 1, 0, 0, 0], // 7 procesos
+  "matrixH" :  [ // Al revez que I, transiciones por plaza
+    [ 0,  0, 0, 0, 0, 0], //t1 Agregarse a la cola de escritura
+    [ 0,  0, 0, 0, 0, 0], //t2 Agregarse a la cola de lectura
+    [ 0,  0, 0, 0, 1, 0], //t3 Entrar a escribir (La escritura queda inhibida si hay alguien leyendo P5)
+    [ 0,  0, 0, 0, 0, 0], //t4 Entrar a leer
+    [ 0,  0, 0, 0, 0, 0], //t5 Termina de escribir
+    [ 0,  0, 0, 0, 0, 0]  //t6 Termina de leer
+  ],
+  "matrixR" :[ // Al revez que I, transiciones por plaza
+    [ 0,  0, 0, 0, 0, 0], //t1 Agregarse a la cola de escritura
+    [ 0,  0, 0, 0, 0, 0], //t2 Agregarse a la cola de lectura
+    [ 0,  0, 0, 0, 0, 0], //t3 Entrar a escribir
+    [ 0,  0, 1, 0, 0, 0], //t4 Entrar a leer Si el recurso (p3) no fue tomado para escritura
+    [ 0,  0, 0, 0, 0, 0], //t5 Termina de escribir
+    [ 0,  0, 0, 0, 0, 0]  //t6 Termina de leer
+  ],
+  "matrixT" :[
+  //t1-t2-t3-t4-t5-t6 ** Escritor
+    [0, 0, 0, 0, 0, 1],         // Un escritor con multiples lectores
+    [1, 0, 0, 0, 0, 0],         // Prioridad escritor cuando:
+    [0, 0, 1, 0, 0, 0],         // t6>t1>t3>t5>t2>t4
+    [0, 0, 0, 0, 1, 0],         // Prioridad lector cuando:
+    [0, 1, 0, 0, 0, 0],         // t5>t4>t2>t6>t1>t3
+    [0, 0, 0, 1, 0, 0]
+  ],
+  "matrixInvariantP" :[
+    [ 1,  1, 0, 1, 1, 1],
+    [ 0,  0, 1, 1, 0, 0]
+  ],
+  "vectorSumInvariantP" : [7, 1]
+}
