@@ -2,6 +2,10 @@ package jmml.monitor.complex_test;
 
 import jmml.monitor.Monitor;
 
+/**
+ * @TODO Documentar esto
+ * @TODO Revisar cuando este lo del loggeo de todo, cambiar print con Loggeo.
+ */
 public class ej6 {
 
     public ej6(Monitor monitor) {
