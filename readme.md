@@ -1,6 +1,6 @@
 # Monitor basado en redes de petri
 
-Una descripcion del monitor, bla bla cla
+Una descripcion del monitor, bla bla bla
 
 ## Getting Started
 
@@ -153,7 +153,7 @@ git checkout -b ver1 v1.1   # Crea branch basado en el commit de la etiqeta
 0. Revisar la parte del JSON Invariantes de este documento
 1. Checkeo de invariantes de plazas luego de cada disparo
 2. Chequeo de invariantes de transicion, luego de cada disparo? o dsp te la ejecucion?
-3. Cambiar el estado ‚Äúsaliendo‚Äù a ‚Äúir a pagar‚Äù, esto estaba mal tenia que ir a pagar y dsp elegir o no?, no se veian las 2 salidas?`
+3. Cambiar el estado ìsaliendoî a ìir a pagarî, esto estaba mal tenia que ir a pagar y dsp elegir o no?, no se veian las 2 salidas?`
 4. Cambiar de la red cuando se devuelve el token en la salida  (a la plaza que contiene los 60). ??
 5. Hacer la tabla de eventos
 6. Hacer la tabla de estados o actividades
