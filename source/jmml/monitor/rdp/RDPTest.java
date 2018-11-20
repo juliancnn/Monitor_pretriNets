@@ -51,7 +51,7 @@ class RDPTest {
      */
     @BeforeAll
     @Tag("files")
-    static void checkInitFiles() {
+    static void checkInitFiles() throws invariantPExecption{
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
@@ -170,7 +170,7 @@ class RDPTest {
      */
     @Test
     @DisplayName("Disparos acertados chequeo de marcado")
-    void shotT_ok() {
+    void shotT_ok() throws invariantPExecption{
         try {
         /*================================================
             RDP 1: Basica, no exendida en ninguna forma
@@ -205,7 +205,7 @@ class RDPTest {
     @Test
     @Tag("extMAX")
     @DisplayName("[extMaxToken] Disparos acertados chequeo de marcado con plazas limitadas")
-    void shotT_extendedMAxTokens() {
+    void shotT_extendedMAxTokens () throws invariantPExecption {
         try {
         /*================================================
             RDP 1: Limitada en la plaza 2 con 2 tokens
@@ -244,7 +244,7 @@ class RDPTest {
     @Test
     @Tag("extINH")
     @DisplayName("[extInh] Disparos con arcos inhibidores + MaxTokens")
-    void shotT_extendedInh() {
+    void shotT_extendedInh() throws invariantPExecption{
 
         /*=========================================================
             RDP 4_extend: Extendida, con arcos inhibidores y max tokens
@@ -292,7 +292,7 @@ class RDPTest {
     @Test
     @Tag("extReader")
     @DisplayName("[extReader] Disparos con arcos Lectores + MaxTokens")
-    void shotT_extendedReader() {
+    void shotT_extendedReader() throws invariantPExecption{
 
         /*=========================================================
             RDP 4_extend: Extendida, con arcos inhibidores y max tokens
@@ -346,7 +346,7 @@ class RDPTest {
     @Test
     @Tag("extMAX")
     @DisplayName("[extMaxToken - Sensibilizado] Disparos acertados chequeo de marcado con plazas limitadas")
-    void shotT_extendedMAxTokens_sen() {
+    void shotT_extendedMAxTokens_sen() throws invariantPExecption {
         try {
         /*================================================
             RDP 1: Limitada en la plaza 2 con 2 tokens
@@ -395,7 +395,7 @@ class RDPTest {
     @Test
     @Tag("extINH")
     @DisplayName("[extInh - Sensibilizado] Disparos con arcos inhibidores + MaxTokens")
-    void shotT_extendedInh_sen() {
+    void shotT_extendedInh_sen() throws invariantPExecption {
 
         /*=========================================================
             RDP 4_extend: Extendida, con arcos inhibidores y max tokens
@@ -455,7 +455,7 @@ class RDPTest {
     @Test
     @Tag("extReader")
     @DisplayName("[extReader - Sensibilizado] Disparos con arcos Lectores + MaxTokens")
-    void shotT_extendedReader_sen() {
+    void shotT_extendedReader_sen() throws invariantPExecption{
 
         /*=========================================================
             RDP 4_extend: Extendida, con arcos inhibidores y max tokens
@@ -521,7 +521,7 @@ class RDPTest {
     @Test
     @Tag("TimeTest")
     @DisplayName("[ext Temporal] Checkeo de disparos con transiciones temporales:")
-    void shotT_Temporal() {
+    void shotT_Temporal() throws invariantPExecption {
         /*==========================================================
             RDP 1_extended: Extendida, con transiciones temporales
         ========================================================== */

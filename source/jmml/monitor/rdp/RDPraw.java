@@ -22,7 +22,6 @@ package jmml.monitor.rdp;
  *          * 0 Si no hay relacion
  *  - Matriz de Incidencia R
  *          * Los valores deben ser binarios
- *          * Los valores deben ser binarios
  *          * Filas representan transiciones
  *          * Columnas representan plazas
  *          * 1 Si hay un arco lector entre la plaza y la transicion
@@ -30,6 +29,9 @@ package jmml.monitor.rdp;
  *  - Vector de tokens maximos por plaza
  *          * Lo valores deben ser 0 para sin restriccion o un numero mayor a 0 para setear un maximo de tokens en esa
  *          plaza
+ *  - Vectores de ventana temporal
+ *          * Cada columna es asignada a una transicion, donde la primera fila es el inicio de la ventana temporal
+ *          y la otra fila representa el fin de la ventana temporal.
  *
  * </pre>
  * <pre>
@@ -67,7 +69,6 @@ package jmml.monitor.rdp;
  * }
  *
  * </pre>
- * @TODO Eliminar la parte temporal
  */
 
 /*
@@ -122,6 +123,15 @@ public class RDPraw implements Cloneable{
      * Tupla de inicio y final de ventana de tiempo, medida en milisegundos
      */
     long[][] tempWindowTuple;
+    /**
+     * Matriz de invariantes de plaza
+     */
+    int[][] matrixInvariantP;
+    /**
+     * vector de invariantes placa.
+     */
+    int[] vectorSumInvariantP;
+
 
     public RDPraw clone(){
         Object obj=null;

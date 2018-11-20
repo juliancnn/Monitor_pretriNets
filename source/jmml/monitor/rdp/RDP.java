@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
  *  - Arcos inhibidores
  *  - Arcos lectores con peso 1
  *  - Transiciones sensibilizadas temporalmente
+ *  - Chequeo de invariantes de plaza luego de cada disparo
  * </pre>
  *
  * @WARNING No implementa ningun mecanismo de proteccion de recursos para hilos multiples (como semaforo),
@@ -24,6 +25,8 @@ public class RDP {
      * Contiene toda la configuracion de la red de petri y su estado.
      */
     private RDPraw raw;
+    /** Checker de los pInvariant */
+    private PInvariant pInvariant;
 
     /**
      * Crea la red de petri a partir del RAWrdp
@@ -32,7 +35,7 @@ public class RDP {
      * @throws ConfigException Lanzado cuando esta mal formado el archivo JSON
      * @see RDPraw Ver estructura completa del RAW
      */
-    public RDP(RDPraw rdpRAW) throws ConfigException {
+    public RDP(RDPraw rdpRAW) throws ConfigException, invariantPExecption {
         super();
         if(rdpRAW == null)
             throw new ConfigException("No puede crearse la red con un objeto nullo",errorTypeConfig.NullObjet);
@@ -51,7 +54,9 @@ public class RDP {
             }
 
         }
-
+        // Chequeo inicial de invariantes
+        this.pInvariant = new PInvariant(this.raw.matrixInvariantP, this.raw.vectorSumInvariantP);
+        this.pInvariant.check(this.raw.vectorMark);
 
     }
 
@@ -65,7 +70,7 @@ public class RDP {
      * <code>False</code> en caso de que la transicion no este sencibilidaza
      * @throws ShotException Excepcion por inexistencia de la transicion
      */
-    public boolean shotT(int tDisp) throws ShotException {
+    public boolean shotT(int tDisp) throws ShotException, invariantPExecption {
         // Si la transicion no existe lanza la excepcion
         if (tDisp > this.raw.matrixI[0].length || tDisp < 1)
             throw new ShotException(this.raw.vectorMark, tDisp, this.raw.matrixI[0].length);
@@ -103,7 +108,7 @@ public class RDP {
                         this.raw.vectorTimestamp[i] = timestamp;
             }
         }
-
+        if(validShot) this.pInvariant.check(this.raw.vectorMark);
         return validShot;
     }
 

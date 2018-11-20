@@ -5,8 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Chequea la coinsitencia de un objeto de la red de petri
- * @TODO Sacar el checkeo de temporal y mterlo donde tenga que ir
- * @TODO Sacar el checkeo de politicas y meterlo donde tenga que ir
  */
 class checkConfig {
     /**
@@ -58,54 +56,58 @@ class checkConfig {
 
 
         /* Chequeo de longuitud del vector de arcos inhibidores */
-        if (raw.matrixH != null){
-            if(this.invalidDimMatrix(raw.matrixH, sizeT, sizeP)) // Trans y arcos al revez
+        if (raw.matrixH != null)
+            if (this.invalidDimMatrix(raw.matrixH, sizeT, sizeP)) // Trans y arcos al revez
                 throw new ConfigException("Faltan/sobran elementos en la matriz H, no es de dimenciones" +
                         "constantes o tiene dimenciones errones", errorTypeConfig.invalidFormatMatrix);
-            if(this.isNotBinaryMatrix(raw.matrixH))
+            else if (this.isNotBinaryMatrix(raw.matrixH))
                 throw new ConfigException("La matriz de arcos inhibidores debe ser binaria",
                         errorTypeConfig.invalidFormatMatrix);
-        }
+
 
 
         /* Chequeo de longuitud del vector de arcos lectores */
-        if (raw.matrixR !=null){
-            if(this.invalidDimMatrix(raw.matrixR, sizeT, sizeP)) // Trans y arcos al revez
+        if (raw.matrixR != null) {
+            if (this.invalidDimMatrix(raw.matrixR, sizeT, sizeP)) // Trans y arcos al revez
                 throw new ConfigException("Faltan/sobran elementos en la matriz R, no es de dimenciones" +
                         "constantes o tiene dimenciones errones", errorTypeConfig.invalidFormatMatrix);
-            if(this.isNotBinaryMatrix(raw.matrixR))
+            if (this.isNotBinaryMatrix(raw.matrixR))
                 throw new ConfigException("La matriz de arcos lectores debe ser binaria",
                         errorTypeConfig.invalidFormatMatrix);
         }
 
-
+        /* Chequeo de configuracion de invariantes */
+        if (raw.matrixInvariantP != null || raw.vectorSumInvariantP != null)
+            if (raw.matrixInvariantP == null || raw.vectorSumInvariantP == null)
+                throw new ConfigException("Falta/sobra vector o matriz de invariantes",
+                        errorTypeConfig.missingDataInJASON);
+            else if (this.invalidDimMatrix(raw.matrixInvariantP, raw.vectorSumInvariantP.length, sizeP))
+                throw new ConfigException("Faltan/sobran elementos en la matriz de invariantes, no es de dimenciones" +
+                        "constantes o tiene dimenciones errones o no coinsistentes con las del vector de invariantes",
+                        errorTypeConfig.invalidFormatMatrix);
+            else if (this.isNotBinaryMatrix(raw.matrixInvariantP))
+                throw new ConfigException("La matriz de invariantes debe ser binaria",
+                        errorTypeConfig.invalidFormatMatrix);
 
         /* Chequeo de longuitud de vector temporal, ausencia de elementos null y negativos. */
-        /*
-        if (this.isExtTemp()) {
+        if (raw.tempWindowTuple != null) {
             int dimension = raw.tempWindowTuple.length;
             //Se verifica las dimensiones de la tupla.
-            if (dimension != 2) {
+            if (dimension != 2)
                 throw new ConfigException("Tupla temporal de dimensiones incorrectas",
                         errorTypeConfig.invalidFormatMatrix);
 
-            } else if (raw.tempWindowTuple[1].length != raw.tempWindowTuple[0].length) {
+            else if (raw.tempWindowTuple[1].length != raw.tempWindowTuple[0].length)
                 throw new ConfigException("Tupla temporal de dimensiones incorrectas",
                         errorTypeConfig.invalidFormatMatrix);
-            } else {
+            else
                 //Paso final se chequea la ausencia de elementos negativos
-                for (int i = 0; i < 2; ++i) {
-                    for (int j = 0; j < raw.tempWindowTuple[0].length; ++j) {
-                        if (raw.tempWindowTuple[i][j] < 0) {
+                for (int i = 0; i < 2; ++i)
+                    for (int j = 0; j < raw.tempWindowTuple[0].length; ++j)
+                        if (raw.tempWindowTuple[i][j] < 0)
                             throw new ConfigException("Elemento negativo dentro de la tupla",
                                     errorTypeConfig.invalidFormatMatrix);
-                        }
-                    }
-                }
-            }
-
         }
-*/
 
     }
 
@@ -121,7 +123,7 @@ class checkConfig {
      */
     @Contract(pure = true)
     private boolean invalidDimMatrix(@NotNull int[][] matrix, int filas, int columnas) {
-        for (int[] row : matrix){
+        for (int[] row : matrix) {
             filas--;
             if (columnas != row.length)
                 return true;
@@ -133,15 +135,16 @@ class checkConfig {
 
     /**
      * Chequea si la matriz es binaria
+     *
      * @param matrix Matriz a analizar
      * @return false si la matriz es binaria<br>
-     *     true si la matriz es no binaria
+     * true si la matriz es no binaria
      */
     @Contract(pure = true)
-    private boolean isNotBinaryMatrix(@NotNull int[][] matrix){
+    private boolean isNotBinaryMatrix(@NotNull int[][] matrix) {
         for (int[] row : matrix)
             for (int e : row)
-                if(e != 0 && e != 1)
+                if (e != 0 && e != 1)
                     return true;
         return false;
     }

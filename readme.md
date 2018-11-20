@@ -23,35 +23,54 @@ Donde el primer lugar representa la transicion o la plaza uno dependiente el cas
 Las matrices de incidencia estan ordenadas por filas que representan las plazas
 y columnas que representan las transiciones.
 Ningun valor puede ser salteado.
- 
+> N: Cantidad de transiciones  
+> M: cantidad de plazas
+
 Campos obligatorios del JSON:
- - Matriz de incidencia I
- - Vector de marcado
+  - Matriz de incidencia I  _\[dim: MxN]_
+  - Vector de marcado _\[dim: M]_
+  
 Campos opcionales del JSON:
- - Matriz de Incidencia H
+ - Matriz de Incidencia H _\[dim: NxM]_
    - Los valores deben ser binarios
    - Filas representan transiciones
    - Columnas representan plazas
    - 1 Si hay un arco inhibidorentre entre la plaza y la transicion
    - 0 Si no hay relacion
- - Matriz de Incidencia R
-   - Los valores deben ser binarios
+ - Matriz de Incidencia R _\[dim: NxM]_
    - Los valores deben ser binarios
    - Filas representan transiciones
    - Columnas representan plazas
    - 1 Si hay un arco lector entre la plaza y la transicion
    - 0 Si no hay relacion
- - Vector de tokens maximos por plaza
+ - Vector de tokens maximos por plaza _\[dim: M]_
+   - Cada valor representa una plaza
    - Lo valores deben ser 0 para sin restriccion o un numero mayor a 0 para setear un maximo de tokens en esa plaza
 
- - Matriz de de politicas T (Politica estatica, plana. Utilizada para crear las Policies.)
+ - Matriz de de politicas T _\[dim: NxN]_ 
+   - Politica estatica, plana. Utilizada para crear las Policies.
    - Los valores deben ser binarios
-   - La matriz es una matriz identidad de MxM con las filas cambiadas de orden, donde el orden reprensta la prioridad, esto es:
-   - La matriz es cuadrada
-   - Cada colunas representa una transicion
-   - En cada fila/columnas hay y solo hay un 1 (No pueden ser todos ceros y no pueden tener mas de uno)
-   - La posicion del 1 representa el nivel de prioridad
-   - Las tranciciones no pueden tener igual prioridad (No pueden haber 2 filas/columnas iguales)
+   - La matriz es una matriz identidad de NxN con las filas cambiadas de orden, donde el orden reprensta la prioridad,  
+   esto es:
+     - La matriz es cuadrada
+     - Cada colunas representa una transicion
+     - En cada fila/columnas hay y solo hay un 1 (No pueden ser todos ceros y no pueden tener mas de uno)
+     - La posicion del 1 representa el nivel de prioridad
+     - Las tranciciones no pueden tener igual prioridad (No pueden haber 2 filas/columnas iguales)
+ - Vectores de ventana temporal _\[dim: 2xN]_
+   - Cada columna es asignada a una transicion
+   - La primera fila es el inicio de la ventana temporal.
+   - la otra fila representa el fin de la ventana temporal.
+ - Matriz y vector de invariantes de plaza
+   - Deben ser ambos utilizados o ninguno, funcionan en conjunto
+   - Matriz de invariantes de plaza. _\[dim: IPxM]_
+     - Cada fila representa un conjunto de de plazas que formar el invariante (IP Invariantes)
+     - Cada columna representa con un 1 si forma parte de algun invariante o no (0).
+     - El la dimencion de la fila es la cantidad de plazas M
+   - Vector de invariantes de plaza. _\[dim: IP]_
+     - el valor 's' del vector representa la suma invariante de plas plazas en la matriz de invariantes
+   - El invariante 's' se chequea haciendo el productor interno entre la fila 's' de la matriz y el vector de marcado, 
+   donde el resultado del (escalar), es el valor 's' del vector de invariantes. 
 
 ```
 {
@@ -87,7 +106,12 @@ Campos opcionales del JSON:
  "tempWindowTuple" : [                                          # (Opcional) Tupla de tiempos en transiciones
    [1000, 1000,    0,    0],                                    # Vector de minimo tiempo antes que se pueda disparar
    [   0, 3000, 1000,    0]                                     # Vector de maximo timeout para disparar
- ]
+ ],
+ "matrixInvariantP" :[
+    [0, 0, 0, 0],                                               # (Opcional) Matriz de invariantes
+    [0, 0, 0, 0]                                                # 2 invariantes
+  ],
+  "vectorSumInvariantP" : [0, 0],                               # (Opcional) Vector de invariantes
 }
 ```
 ## Caracteriticas del monitor
@@ -126,11 +150,16 @@ git checkout -b ver1 v1.1   # Crea branch basado en el commit de la etiqeta
 
 ## @TO-DO
 
+0. Revisar la parte del JSON Invariantes de este documento
 1. Checkeo de invariantes de plazas luego de cada disparo
 2. Chequeo de invariantes de transicion, luego de cada disparo? o dsp te la ejecucion?
-4. Cambiar el estado “saliendo” a “ir a pagar”, esto estaba mal tenia que ir a pagar y dsp elegir o no?
-5. Cambiar de la red cuando se devuelve el token en la salida  (a la plaza que contiene los 60). ??
-
+3. Cambiar el estado “saliendo” a “ir a pagar”, esto estaba mal tenia que ir a pagar y dsp elegir o no?, no se veian las 2 salidas?`
+4. Cambiar de la red cuando se devuelve el token en la salida  (a la plaza que contiene los 60). ??
+5. Hacer la tabla de eventos
+6. Hacer la tabla de estados o actividades
+7. Determinar la cantidad de hilos necesarios (justificarlo)
+8. Armar el JSON del problema
+9. Armar el problema fuera usando el monitor
 
 ## Dudas del monitor con tiempo del lev
 Se ve que no es todo el monitor, si no que es el disparo de la red de petri no mas, 

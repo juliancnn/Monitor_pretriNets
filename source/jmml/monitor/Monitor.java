@@ -9,6 +9,7 @@ import jmml.monitor.policies.policyType;
 import jmml.monitor.rdp.RDP;
 import jmml.monitor.rdp.RDPraw;
 import jmml.monitor.rdp.ShotException;
+import jmml.monitor.rdp.invariantPExecption;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +59,8 @@ public class Monitor {
      * @throws jmml.monitor.policies.ConfigException Seleccion incompatible de politicas para el monitor
      */
     public Monitor(String jsonConfig, policyType polPrimaria, policyType polSecundaria)
-            throws FileNotFoundException, jmml.monitor.rdp.ConfigException, jmml.monitor.policies.ConfigException {
+            throws FileNotFoundException, jmml.monitor.rdp.ConfigException, jmml.monitor.policies.ConfigException,
+            invariantPExecption {
         super();
 
         DataParser parser = new DataParser(jsonConfig); // >> FileNotFound
@@ -75,7 +77,7 @@ public class Monitor {
 
     @SuppressWarnings("FeatureEnvy")
     public void acquireProcedure(int numberOfProcedure)
-            throws InterruptedException, ShotException, QueueInterrupException {
+            throws InterruptedException, ShotException, QueueInterrupException, invariantPExecption {
 
         this.mutex.acquire(); // >> InterruptExcp, Si se lo saca de la cola del monitor antes que entre
 
