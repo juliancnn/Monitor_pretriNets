@@ -13,10 +13,10 @@ class PInvariant {
      * cada columnas en cada fila representa el numero de plaza
      * la matriz es de dimencion NxM Donde N es la cantidad de invariantes de plaza y M es la cantidad maxima
      * del los invariantes de plaza
-     * */
-    private int matrixPInvariant[][];
+     */
+    private final int[][] matrixPInvariant;
     /** De dimencion N, posee el valor que debe poseer el invariante de plaza */
-    private int invariantP [];
+    private final int[] invariantP;
 
     /**
      * Chequeador de invariantes de plaza
@@ -24,6 +24,7 @@ class PInvariant {
      * @param invariantP Posee el valor que debe poseer el invariante de plaza (Dimencion N)
      */
     PInvariant(@Nullable int[][] matrixPInvariant,@Nullable int[] invariantP) {
+        super();
         this.matrixPInvariant = matrixPInvariant;
         this.invariantP = invariantP;
     }
@@ -33,7 +34,7 @@ class PInvariant {
      * @param mark del sistema
      * @throws invariantPExecption Si no cumple con los invariantes de plaza
      */
-    void check(int [] mark) throws invariantPExecption{
+    void check(@NotNull int [] mark) throws invariantPExecption{
         // Si no hay invariantes de plaza retorno true
         if(this.matrixPInvariant == null || this.invariantP == null)
             return;
@@ -61,6 +62,7 @@ class PInvariant {
      * @return escalar, <code>null</code> en caso de tamanos incompatibles
      * @throws ArithmeticException Vectores de distinta dimencion
      */
+    @SuppressWarnings("Duplicates")
     @Contract(pure = true)
     private int vecMul(@NotNull int[] v1, @NotNull int[] v2) throws ArithmeticException {
         // Chequeo tamanos compatibles

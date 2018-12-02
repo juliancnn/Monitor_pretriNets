@@ -9,6 +9,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - [ ] Ejemplo productores/consumidores (con tiempo)
 ### Cambiado
 - [ ] Actualizar documentacion
+- [ ] Actualizar el json en el readme y doc
 ### Removido
 - 
 

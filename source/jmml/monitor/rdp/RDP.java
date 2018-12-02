@@ -37,10 +37,12 @@ public class RDP {
      * Crea la red de petri a partir del RAWrdp
      *
      * @param rdpRAW Objeto de la red de petri plano
+     * @param logger Logger opcional para guardar el trace de los disparos
      * @throws ConfigException Lanzado cuando esta mal formado el archivo JSON
+     * @throws invariantPExecption Lanzado cuando la red no cumple con los invariantes de plaza del archivo
      * @see RDPraw Ver estructura completa del RAW
      */
-    public RDP(RDPraw rdpRAW, Logger logger) throws ConfigException, invariantPExecption {
+    public RDP(@NotNull RDPraw rdpRAW, Logger logger) throws ConfigException, invariantPExecption {
         super();
         if(rdpRAW == null)
             throw new ConfigException("No puede crearse la red con un objeto nullo",errorTypeConfig.NullObjet);
@@ -52,7 +54,7 @@ public class RDP {
         if (this.isExtTemp()) {
             //Chequeos ok - Carga vector de tiempo para transiciones sensibilizadas
             this.raw.vectorTimestamp = new long[this.raw.matrixI[0].length];
-            boolean SensAux[] = getSensitizedArray(true);
+            boolean[] SensAux = getSensitizedArray(true);
             long timestamp = java.lang.System.currentTimeMillis();
             for (int i = 0; i < this.raw.vectorTimestamp.length; ++i) {
                 this.raw.vectorTimestamp[i] = SensAux[i] ? timestamp : 0;
@@ -75,6 +77,7 @@ public class RDP {
      * @return <code>True</code> en caso de exito en el disparo de la transicion <br>
      * <code>False</code> en caso de que la transicion no este sencibilidaza
      * @throws ShotException Excepcion por inexistencia de la transicion
+     * @throws invariantPExecption Excepcion producida por violacion de los invariatnes de plaza
      */
     public boolean shotT(int tDisp) throws ShotException, invariantPExecption {
         // Si la transicion no existe lanza la excepcion
@@ -246,6 +249,7 @@ public class RDP {
      * @return escalar, <code>null</code> en caso de tamanos incompatibles
      * @throws ArithmeticException Vectores de distinta dimencion
      */
+    @SuppressWarnings("Duplicates")
     @Contract(pure = true)
     private int vecMul(@NotNull int[] v1, @NotNull int[] v2) throws ArithmeticException {
         // Chequeo tamanos compatibles
@@ -287,14 +291,52 @@ public class RDP {
      */
     @NotNull
     @Contract(pure = true)
-    String getStringMark() {
-        String mark = "[";
+    private String getStringMark() {
+        StringBuilder mark = new StringBuilder("[");
         int i;
         for (i=0; i < this.raw.vectorMark.length-1; i++){
-            mark += String.format("%3d ",this.raw.vectorMark[i]);
+            mark.append(String.format("%3d ", this.raw.vectorMark[i]));
         }
 
         return mark+String.format("%3d ]",this.raw.vectorMark[i]);
+    }
+
+    /**
+     * Retorna el vector de los tiempos en milisegundos faltantes para que la transicion entre en la ventana temporal
+     * @return 0 en caso de que no sea temporal o que el alpha ya haya pasado.
+     */
+    @NotNull
+    @Contract(pure = true)
+    public long[] getWaitTime(){
+
+        long[] timesToWait = new long[this.raw.matrixI[0].length];
+
+        if(!this.isExtTemp())
+            return timesToWait;
+
+        long timestamp = java.lang.System.currentTimeMillis();
+
+        long tempAlpha; // Tiempo que lleva sensibilizada
+        for (int i = 0; i < timesToWait.length; i++) {
+            /* Chequeo de la ventana de tiempo */
+            if (this.raw.tempWindowTuple[0][i] != 0) {
+                // Tiempo que lleva sensibilizada
+                tempAlpha = (timestamp - this.raw.vectorTimestamp[i]);
+                // Tiempo que lleva sensibilizada es menor al que necesita, calculo el tiempo que falta
+                if(tempAlpha < this.raw.tempWindowTuple[0][i])
+                    timesToWait[i] =  this.raw.tempWindowTuple[0][i] - tempAlpha;
+            }
+        }
+        return timesToWait;
+    }
+    /**
+     * Retorna el tiempo en milisegundos faltantes para que la transicion entre en la ventana temporal
+     * @return 0 en caso de que no sea temporal o que el alpha ya haya pasado.
+     */
+    @NotNull
+    @Contract(pure = true)
+    public long getWaitTime(int t){
+        return (this.getWaitTime())[t-1];
     }
 
 
