@@ -134,6 +134,7 @@ v1.0.
 
 ### Etiquetado
 
+- v1.5 Version estable con logger del monitor sin tiempo
 - v1.0 Primera version estable del monitor sin tiempo
 - v0.2 Primera version estable de la red de petri
 
@@ -150,35 +151,12 @@ git checkout -b ver1 v1.1   # Crea branch basado en el commit de la etiqeta
 
 ## @TO-DO
 
-0. Revisar la parte del JSON Invariantes de este documento
-1. Checkeo de invariantes de plazas luego de cada disparo
-2. Chequeo de invariantes de transicion, luego de cada disparo? o dsp te la ejecucion?
-3. Cambiar el estado 'saliendo' a 'ir a pagarv, esto estaba mal tenia que ir a pagar y dsp elegir o no?, no se veian las 2 salidas?`
-4. Cambiar de la red cuando se devuelve el token en la salida  (a la plaza que contiene los 60). ??
-5. Hacer la tabla de eventos
-6. Hacer la tabla de estados o actividades
-7. Determinar la cantidad de hilos necesarios (justificarlo)
-8. Armar el JSON del problema
-9. Armar el problema fuera usando el monitor
+1. Chequeo de invariantes de transicion
+2. Cambiar el estado 'saliendo' a 'ir a pagarv, esto estaba mal tenia que ir a pagar y dsp elegir o no?, no se veian las 2 salidas?`
+3. Cambiar de la red cuando se devuelve el token en la salida  (a la plaza que contiene los 60). ??
+4. Hacer la tabla de eventos
+5. Hacer la tabla de estados o actividades
+6. Determinar la cantidad de hilos necesarios (justificarlo)
+7. Armar el JSON del problema
+8. Armar el problema fuera usando el monitor
 
-## Dudas del monitor con tiempo del lev
-Se ve que no es todo el monitor, si no que es el disparo de la red de petri no mas, 
-pero genera ciertas dudas o problemas:
-1. La red de petri debe conocer un semaforo que nunca pide, y solo le hace release:
-   - Va en contra de la modularidad e independencia del modulo.
-   - Es confuso, por que una red de petri debe conocer un semaforo que nunca pide y ademas
-   los threads pueden quedar dormidos en las colas y adentro de la red de petri?? :/
-2. Como sabe cuando se despierta en el mensaje 4 que el monitor esta disponible
-    - Si no pido el semaforo esta mal, no hay garantias de que este libre del monitor
-    - Si pido el semaforo comipito contra la cola de entrada y entre todos los que se despiertan
-3. No se ve la justicia:
-    - Por que un distintos threads que quieren disparar la misma transicion terminarian compitiendo entre ellos
-    cuando tienen que dispararse en el orden que llegaron (Si van a disparar la misma transicion)
-4. No se ve la resolucion de politicas: 
-    - Si una transicion se dispara, y habilita 2 transiciones temporales t1 y t2:
-        - t1 y t2 tienen el mismo alfa, lo que quiere decir que se habilitan temporalmente al mismo momento
-        - Llega h1 a disparar t1 antes que se cumpla alpha
-        - Luego llega h2 a disparar t2 antes que se cumpla alpha, pero despues de h1
-    - En ese caso tambien compiten entre ellas mientras deberia ser la politca quien decida
-
-      

@@ -164,7 +164,6 @@ public class RDP {
      * @return <code>boolean[]</code>  Proxima marca, sea alcanzable o no. <br>
      * <code>null</code> en caso de inexistencia de transicion
      * @throws ShotException Si la transicion no existe
-     *                       </pre>
      */
     @NotNull
     @Contract(pure = true)
@@ -331,6 +330,7 @@ public class RDP {
     }
     /**
      * Retorna el tiempo en milisegundos faltantes para que la transicion entre en la ventana temporal
+     * @param t Transicion que se quiere calcular el temporal
      * @return 0 en caso de que no sea temporal o que el alpha ya haya pasado.
      */
     @NotNull
@@ -548,7 +548,7 @@ public class RDP {
 
     /**
      * Devuelve la cantidad de transiciones de la red
-     * @return int > 0 con la cantidad de transiciones de la red
+     * @return int mayor a 0 con la cantidad de transiciones de la red
      */
     @Contract(pure = true)
     public int getNumberOfTransitions(){return this.raw.matrixI[0].length;}
