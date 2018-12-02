@@ -57,7 +57,7 @@ class RDPTest {
           ================================================ */
         try {
             DP_RDP1 = new DataParser(JFILE_RDP1);
-            RDP rdp1 = new RDP(DP_RDP1.generate(RDPraw.class));
+            RDP rdp1 = new RDP(DP_RDP1.generate(RDPraw.class),null);
             Assertions.assertArrayEquals(new int[][]
                     {
                             {-1, 0, 0, 1},
@@ -80,7 +80,7 @@ class RDPTest {
           ================================================ */
         try {
             DP_RDP1_MAXTOKENS = new DataParser(JFILE_RDP1_MAXTOKENS);
-            RDP rdp1_extend = new RDP(DP_RDP1_MAXTOKENS.generate(RDPraw.class));
+            RDP rdp1_extend = new RDP(DP_RDP1_MAXTOKENS.generate(RDPraw.class),null);
             Assertions.assertArrayEquals(new int[][]
                     {
                             {-1, 0, 0, 1},
@@ -110,7 +110,7 @@ class RDPTest {
           ================================================ */
         try {
             DP_RDP1_INH = new DataParser(JFILE_RDP1_INH);
-            RDP rdp1_extend_H = new RDP(DP_RDP1_INH.generate(RDPraw.class));
+            RDP rdp1_extend_H = new RDP(DP_RDP1_INH.generate(RDPraw.class),null);
 
             Assertions.assertArrayEquals(new int[][]
                     {
@@ -153,7 +153,7 @@ class RDPTest {
           ================================================ */
         try {
             DP_RDP5_READER = new DataParser(JFILE_RDP5_READER);
-            RDP rdp5_r = new RDP(DP_RDP5_READER.generate(RDPraw.class));
+            RDP rdp5_r = new RDP(DP_RDP5_READER.generate(RDPraw.class),null);
             DP_RDP4_INH = new DataParser(JFILE_RDP4_INH);
             DP_RDP1_TEMPORAL = new DataParser(JFILE_RDP1_TEMPORAL);
         } catch (java.io.FileNotFoundException e) {
@@ -176,7 +176,7 @@ class RDPTest {
             RDP 1: Basica, no exendida en ninguna forma
           ================================================ */
             try {
-                RDP rdp1 = new RDP(DP_RDP1.generate(RDPraw.class));
+                RDP rdp1 = new RDP(DP_RDP1.generate(RDPraw.class),null);
                 Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1.getMark());
                 Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{2, 1, 0, 1, 0}, rdp1.getMark(),
@@ -211,7 +211,7 @@ class RDPTest {
             RDP 1: Limitada en la plaza 2 con 2 tokens
           ================================================ */
             try {
-                RDP rdp1 = new RDP(DP_RDP1_MAXTOKENS.generate(RDPraw.class));
+                RDP rdp1 = new RDP(DP_RDP1_MAXTOKENS.generate(RDPraw.class),null);
                 Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1.getMark());
                 Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
                 Assertions.assertArrayEquals(new int[]{2, 1, 0, 1, 0}, rdp1.getMark(),
@@ -250,7 +250,7 @@ class RDPTest {
             RDP 4_extend: Extendida, con arcos inhibidores y max tokens
           ========================================================= */
         try {
-            RDP rdp4_extend = new RDP(DP_RDP4_INH.generate(RDPraw.class));
+            RDP rdp4_extend = new RDP(DP_RDP4_INH.generate(RDPraw.class),null);
             Assertions.assertArrayEquals(new int[]{5, 0, 0}, rdp4_extend.getMark());
             try {
                 Assertions.assertTrue(rdp4_extend.shotT(2), "No se disparo y debia");
@@ -298,7 +298,7 @@ class RDPTest {
             RDP 4_extend: Extendida, con arcos inhibidores y max tokens
           ========================================================= */
         try {
-            RDP rdp5_extReader = new RDP(DP_RDP5_READER.generate(RDPraw.class));
+            RDP rdp5_extReader = new RDP(DP_RDP5_READER.generate(RDPraw.class),null);
             Assertions.assertArrayEquals(new int[]{0, 0, 1, 0}, rdp5_extReader.getMark());
             try {
                 Assertions.assertFalse(rdp5_extReader.shotT(3), "Se disparo y no debia");
@@ -352,7 +352,7 @@ class RDPTest {
             RDP 1: Limitada en la plaza 2 con 2 tokens
           ================================================ */
             try {
-                RDP rdp1 = new RDP(DP_RDP1_MAXTOKENS.generate(RDPraw.class));
+                RDP rdp1 = new RDP(DP_RDP1_MAXTOKENS.generate(RDPraw.class),null);
                 Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1.getMark());
                 Assertions.assertArrayEquals(new boolean[]{true, false, false, false}, rdp1.getSensitizedArray());
                 Assertions.assertTrue(rdp1.shotT(1), "No se disparo y debia");
@@ -401,7 +401,7 @@ class RDPTest {
             RDP 4_extend: Extendida, con arcos inhibidores y max tokens
           ========================================================= */
         try {
-            RDP rdp4_extend = new RDP(DP_RDP4_INH.generate(RDPraw.class));
+            RDP rdp4_extend = new RDP(DP_RDP4_INH.generate(RDPraw.class),null);
             Assertions.assertArrayEquals(new int[]{5, 0, 0}, rdp4_extend.getMark());
             try {
                 Assertions.assertArrayEquals(new boolean[]{true, true, false, false}, rdp4_extend.getSensitizedArray());
@@ -461,7 +461,7 @@ class RDPTest {
             RDP 4_extend: Extendida, con arcos inhibidores y max tokens
           ========================================================= */
         try {
-            RDP rdp5_extReader = new RDP(DP_RDP5_READER.generate(RDPraw.class));
+            RDP rdp5_extReader = new RDP(DP_RDP5_READER.generate(RDPraw.class),null);
             Assertions.assertArrayEquals(new int[]{0, 0, 1, 0}, rdp5_extReader.getMark());
             try {
                 Assertions.assertArrayEquals(new boolean[]{true, false, false}, rdp5_extReader.getSensitizedArray());
@@ -526,7 +526,7 @@ class RDPTest {
             RDP 1_extended: Extendida, con transiciones temporales
         ========================================================== */
         try {
-            RDP rdp1_extend_TEMP = new RDP(DP_RDP1_TEMPORAL.generate(RDPraw.class));
+            RDP rdp1_extend_TEMP = new RDP(DP_RDP1_TEMPORAL.generate(RDPraw.class),null);
             Assertions.assertArrayEquals(new int[]{3, 0, 0, 0, 0}, rdp1_extend_TEMP.getMark());
             try {
                 Assertions.assertFalse(rdp1_extend_TEMP.shotT(1), "Se disparo y no debia");

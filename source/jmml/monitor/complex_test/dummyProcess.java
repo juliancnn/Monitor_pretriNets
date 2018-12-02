@@ -42,7 +42,7 @@ public class dummyProcess implements Runnable{
     }
 
     @Override
-    public void run() {
+    public void run(){
         int sleepTime, sleepAfterCicle;
         int nSec = 0;
         String msj = "";
@@ -58,6 +58,13 @@ public class dummyProcess implements Runnable{
 
             for(int i=0;i<secShotCicle.length;i++){
                 System.out.println(msj+ "Intentidisparar " + secShotCicle[i]);
+                try{
+                    this.monitor.acquireProcedure(secShotCicle[i]);
+                }catch (Exception e){
+                    System.out.print(e.toString());
+                    System.exit(-5);
+                }
+
                 msj = "["+Thread.currentThread().getId()+"]["+name+"]   " + System.currentTimeMillis() + " -> ";
                 System.out.println(msj+ "Dispare         " + secShotCicle[i]);
                 sleepTime = (int) (Math.random() * timeSleepRange[1]) + timeSleepRange[0];

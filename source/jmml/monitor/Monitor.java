@@ -2,6 +2,8 @@ package jmml.monitor;
 
 import jmml.monitor.colas.QueueInterrupException;
 import jmml.monitor.colas.QueueManagement;
+import jmml.monitor.logger.Logger;
+import jmml.monitor.logger.LoggerRaw;
 import jmml.monitor.parser.DataParser;
 import jmml.monitor.policies.Policy;
 import jmml.monitor.policies.PolicyStaticRAW;
@@ -36,6 +38,10 @@ public class Monitor {
      */
     private QueueManagement colas;
     /**
+     * Logger del monitor, se encarga de tracear el uso del mismo
+     */
+    private Logger log;
+    /**
      * Semaforo de control
      */
     private Semaphore mutex;
@@ -65,7 +71,8 @@ public class Monitor {
 
         DataParser parser = new DataParser(jsonConfig); // >> FileNotFound
 
-        petri = new RDP(parser.generate(RDPraw.class)); // >> ConfigException
+        log   = new Logger(parser.generate(LoggerRaw.class));
+        petri = new RDP(parser.generate(RDPraw.class),log); // >> ConfigException
         colas = new QueueManagement(petri.getNumberOfTransitions());
         polyc = new Policy(colas, polPrimaria, polSecundaria, parser.generate(PolicyStaticRAW.class));//>ConfigException
 
@@ -140,6 +147,10 @@ public class Monitor {
                 return true;
         return false;
 
+    }
+
+    public void closeLog(){
+        this.log.close();
     }
 
 

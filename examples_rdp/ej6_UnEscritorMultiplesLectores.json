@@ -1,6 +1,7 @@
 {
   "brief" : "Ejemplo 6: Un escritor Multiples lectores simultaneos",
   "info" : "Conjunto de procesos (P0), que pueden leer (P4) simultaneamente o escribir (P3)",
+  "logFile": "log_ej6.txt",
   "matrixI" :  [
     [-1, -1, 0, 0, 1, 1], //P1  procesos Idle
     [ 1,  0,-1, 0, 0, 0], //P2 Quieren escribir
