@@ -1,5 +1,6 @@
 package jmml.monitor.colas;
 
+import jmml.monitor.logger.Logger;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,12 +26,16 @@ public class QueueManagement {
      * Lista de colas
      */
     private List<List<ThreadNode>> colas;
+    /**
+     * Logger
+     */
+    private Logger log;
 
     /**
      * Crea la lista de colas de Threads
      * @param numColas Numero de colas a crear
      */
-    public QueueManagement(int numColas) throws IllegalArgumentException {
+    public QueueManagement(int numColas, Logger logger) throws IllegalArgumentException {
         super();
         if (numColas < 1)
             throw new IllegalArgumentException("No se pueden crear colas vacias");
@@ -39,6 +44,7 @@ public class QueueManagement {
         for (int i = 0; i < numColas; i++)
             //noinspection Convert2Diamond
             this.colas.add(new ArrayList<ThreadNode>());
+        this.log = logger;
     }
 
     /**
@@ -70,9 +76,13 @@ public class QueueManagement {
         --nCola; // las colas coinsiden con las tranciones arrancan en 1.
         ThreadNode tn = new ThreadNode();
         try {
+            if(log != null)
+                log.print(this, String.format("AddEvent  | c:%2d ", nCola+1));
             /* Mete el thread al final de la lista */
             this.colas.get(nCola).add(tn);
             tn.waitNode();
+            if(log != null)
+                log.print(this, String.format("DelEvent  | c:%2d ", nCola+1));
         } catch (java.lang.InterruptedException e) {
             /* Si alguien lo interrumpe lo saco de la cola lanzar excepcion a capturar fuera del monitor */
             this.colas.get(nCola).remove(tn);

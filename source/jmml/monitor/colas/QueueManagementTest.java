@@ -16,7 +16,7 @@ class QueueManagementTest {
     @DisplayName("Add/rm/check queue")
     void whoIsWaiting() {
         try{
-            QueueManagement qm = new QueueManagement(5);
+            QueueManagement qm = new QueueManagement(5,null);
             (new Thread(new demoThread(false, 1, qm))).start();
             Thread.sleep(300);
             (new Thread(new demoThread(false, 1, qm))).start();

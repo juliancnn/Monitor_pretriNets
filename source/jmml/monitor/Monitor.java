@@ -73,7 +73,7 @@ public class Monitor {
 
         log   = new Logger(parser.generate(LoggerRaw.class));
         petri = new RDP(parser.generate(RDPraw.class),log); // >> ConfigException
-        colas = new QueueManagement(petri.getNumberOfTransitions());
+        colas = new QueueManagement(petri.getNumberOfTransitions(),log);
         polyc = new Policy(colas, polPrimaria, polSecundaria, parser.generate(PolicyStaticRAW.class));//>ConfigException
 
         mutex = new Semaphore(1, true); // Binario tipo fifo
