@@ -2,6 +2,7 @@ package jmml.monitor;
 
 import jmml.monitor.colas.QueueInterrupException;
 import jmml.monitor.colas.QueueManagement;
+import jmml.monitor.colas.QueueManagementRAW;
 import jmml.monitor.logger.Logger;
 import jmml.monitor.logger.LoggerRaw;
 import jmml.monitor.parser.DataParser;
@@ -73,7 +74,8 @@ public class Monitor {
 
         log   = new Logger(parser.generate(LoggerRaw.class));
         petri = new RDP(parser.generate(RDPraw.class),log); // >> ConfigException
-        colas = new QueueManagement(petri.getNumberOfTransitions(),log);
+        //colas = new QueueManagement(petri.getNumberOfTransitions(),log);
+        colas = new QueueManagement(new QueueManagementRAW(),log);
         polyc = new Policy(colas, polPrimaria, polSecundaria, parser.generate(PolicyStaticRAW.class));//>ConfigException
 
         mutex = new Semaphore(1, true); // Binario tipo fifo
@@ -105,7 +107,7 @@ public class Monitor {
 
             } else {
                 this.mutex.release();
-                this.colas.addMe(numberOfProcedure);
+               // this.colas.addMe(numberOfProcedure);
             }
         } while (this.state.loopIn);
 

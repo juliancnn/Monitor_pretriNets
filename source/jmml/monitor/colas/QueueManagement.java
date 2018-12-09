@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.Semaphore;
 
 /**
  * <pre>
@@ -26,6 +27,20 @@ public class QueueManagement {
      * Lista de colas
      */
     private List<List<ThreadNode>> colas;
+
+    /***
+     * AutoWakeup, colas manejadas por eventos temporales
+     */
+    private boolean[] autoWakeUp;
+
+    /***
+     * timeToWakeup marca la hora a la que se pueden levantar los hilos
+     */
+    private long[] timeToWakeup;
+    /**
+     * Semaforo para el autoWakeUp
+     */
+    private Semaphore mutexTimeToWakeup;
     /**
      * Logger
      */
@@ -33,23 +48,29 @@ public class QueueManagement {
 
     /**
      * Crea la lista de colas de Threads
-     * @param numColas Numero de colas a crear
+     * @param qraw Informacion de las colas a crear, con un 1 en las colas temporales
+     * @TODO Setear las colas temporales autowakeup (las que tienen alfa)
      */
-    public QueueManagement(int numColas, Logger logger) throws IllegalArgumentException {
+    public QueueManagement(QueueManagementRAW qraw, Logger logger) throws IllegalArgumentException {
         super();
-        if (numColas < 1)
+        if (qraw.tempQ.length < 1)
             throw new IllegalArgumentException("No se pueden crear colas vacias");
 
         this.colas = new ArrayList<>();
-        for (int i = 0; i < numColas; i++)
+        this.autoWakeUp = new boolean[qraw.tempQ.length];
+        this.timeToWakeup = new long[qraw.tempQ.length];
+        this.mutexTimeToWakeup = new Semaphore(1,true);
+        for (int i = 0; i < qraw.tempQ.length; i++){
             //noinspection Convert2Diamond
             this.colas.add(new ArrayList<ThreadNode>());
+            this.autoWakeUp[i] = qraw.tempQ[i] == 1;
+        }
+
         this.log = logger;
     }
 
     /**
-     * Retorna un vector booleano seteado en true en la cola que se hay threads esperando
-     *
+     * Retorna un vector booleano seteado en true en la cola que se hay threads esperando y no se despiertan solos
      * @return Vector booleano<br>
      * True: Hay threads en la cola<br>
      * False: Si la cola esta vacia
@@ -59,9 +80,10 @@ public class QueueManagement {
     public boolean[] whoIsWaiting() {
         boolean[] who = new boolean[this.colas.size()];
         for (int i = 0; i < who.length; i++)
-            who[i] = !this.colas.get(i).isEmpty();
+            who[i] = !this.colas.get(i).isEmpty() && !this.autoWakeUp[i];
         return who;
     }
+
 
     /**
      * Anade el thread que lo llamo a la cola nCola
@@ -69,7 +91,8 @@ public class QueueManagement {
      * @param nCola Numero de cola a anadirse
      * @throws IndexOutOfBoundsException Cuando se quiere anadir a una cola que no existe
      */
-    public void addMe(int nCola) throws QueueInterrupException{
+    @SuppressWarnings("FeatureEnvy")
+    public boolean addMe(int nCola, long timeToSleep) throws QueueInterrupException{
         if (nCola < 1 || nCola > colas.size())
             throw new java.lang.IndexOutOfBoundsException("La cola a la que se quiere anadir no existe");
 
@@ -80,7 +103,32 @@ public class QueueManagement {
                 log.print(this, String.format("AddEvent  | c:%2d ", nCola+1));
             /* Mete el thread al final de la lista */
             this.colas.get(nCola).add(tn);
-            tn.waitNode();
+            /*Si tiene que esperar un tiempo y esta solo*/
+            if(this.autoWakeUp[nCola]){
+                /* Si la cola esta vacia es un hilo que debe dormirse por tiempo*/
+                boolean sleeper = this.colas.get(nCola).isEmpty();
+                do{
+                    if(log != null)
+                        log.print(this, String.format("TempEvent  | c:%2d  | wait: %8d| Slepper: %b ",
+                                nCola+1, timeToSleep, sleeper));
+                    tn.waitNode(timeToSleep,sleeper);
+                    /* Si se levanto puede ser por tiempo o por notify,
+                     Tiene que volver a dormir si todavia no entro en venatana o si se le paso*/
+                    this.mutexTimeToWakeup.acquire();
+                    sleeper = this.timeToWakeup[nCola] != 0; // True Si no le paso la ventana
+                    /* 0 > si tiene que volver a dormir Nuevo tiempo si tiene que volver a dormir */
+                    timeToSleep = this.timeToWakeup[nCola] - java.lang.System.currentTimeMillis();
+                    this.mutexTimeToWakeup.release();
+                    // Se levanta solo si ya paso el tiempo para dormir o se fue de la ventana
+                }while(timeToSleep > 0);
+                /* Se elimina solo de la cola */
+                this.colas.get(nCola).remove(tn);
+            }
+            else{
+                tn.waitNode();
+            }
+
+
             if(log != null)
                 log.print(this, String.format("DelEvent  | c:%2d ", nCola+1));
         } catch (java.lang.InterruptedException e) {
@@ -89,6 +137,8 @@ public class QueueManagement {
             throw new QueueInterrupException("Hilo despertado mientras estaba dentro de una cola de espera " +
                     "Fue expulsado de la cola y piere su estado dentro de la misma.");
         }
+
+        return this.autoWakeUp[nCola];
 
     }
 
@@ -112,6 +162,35 @@ public class QueueManagement {
         ThreadNode tn = this.colas.get(nCola).get(0);
         this.colas.get(nCola).remove(tn);
         tn.notifyNode();
+
+    }
+
+    /**
+     * Setea los nuevos tiempos para las colas temporales
+     * @param newTimes vector con los nuevos alfas, tiempos que faltan para que se despierte cada hilo
+     */
+    public void setNewSleep(long[] newTimes){
+        long timeStamp = java.lang.System.currentTimeMillis();
+        try{
+            this.mutexTimeToWakeup.acquire();
+            for(int i=0; i < newTimes.length; i++){
+                if(newTimes[i] != 0){
+                    // No importa que notifique antes de actualizar el tiempo por que no lo pueden leer
+                    // hasta que devuelva el semoro
+                    if(timeToWakeup[i]==0 && !this.colas.get(i).isEmpty())
+                        this.colas.get(i).get(0).notifyNode();
+                    timeToWakeup[i] = timeStamp + newTimes[i];
+                }
+                else
+                    timeToWakeup[i] = 0;
+
+            }
+
+            this.mutexTimeToWakeup.release();
+        }catch (InterruptedException e){
+            System.exit(-10);
+        }
+
 
     }
     /*==================================================================================================================
@@ -217,6 +296,20 @@ public class QueueManagement {
             }
 
         }
+        /**
+         * Pone al thread en wait state con un objeto propio del nodo
+         * @param timeToSleep Tiempo hasta que se despierta
+         * @param b True si tiene que encolarse con tiempo, falso si hay alguien esperando o se le paso la ventana
+         * @throws InterruptedException Producida por el wait al thread
+         */
+        void waitNode(long timeToSleep, boolean b) throws InterruptedException{
+            synchronized (this.lockObj) {
+                if(b && timeToSleep > 0)
+                    lockObj.wait(timeToSleep);
+                else
+                    lockObj.wait();
+            }
+        }
 
         /**
          * Levanta al thread de wait state a ready con un objeto propio del nodo
@@ -237,6 +330,7 @@ public class QueueManagement {
         long getTimeStamp() {
             return timeStamp;
         }
+
 
     }
 

@@ -15,21 +15,23 @@ class QueueManagementTest {
     @Test
     @DisplayName("Add/rm/check queue")
     void whoIsWaiting() {
+        QueueManagementRAW queueManagementRAW = new QueueManagementRAW();
+        queueManagementRAW.tempQ = new int[]{0,1,0,0,0};
         try{
-            QueueManagement qm = new QueueManagement(5,null);
+            QueueManagement qm = new QueueManagement(queueManagementRAW,null);
             (new Thread(new demoThread(false, 1, qm))).start();
             Thread.sleep(300);
             (new Thread(new demoThread(false, 1, qm))).start();
             (new Thread(new demoThread(false, 2, qm))).start();
             (new Thread(new demoThread(false, 5, qm))).start();
             Thread.sleep(300);
-            Assertions.assertArrayEquals(new boolean[]{true, true, false, false, true}, qm.whoIsWaiting());
+            Assertions.assertArrayEquals(new boolean[]{true, false, false, false, true}, qm.whoIsWaiting());
             (new Thread(new demoThread(true, 1, qm))).start();
             Thread.sleep(300);
-            Assertions.assertArrayEquals(new boolean[]{true, true, false, false, true}, qm.whoIsWaiting());
+            Assertions.assertArrayEquals(new boolean[]{true, false, false, false, true}, qm.whoIsWaiting());
             (new Thread(new demoThread(true, 1, qm))).start();
             Thread.sleep(300);
-            Assertions.assertArrayEquals(new boolean[]{false, true, false, false, true}, qm.whoIsWaiting());
+            Assertions.assertArrayEquals(new boolean[]{false, false, false, false, true}, qm.whoIsWaiting());
 
         } catch (Exception e) {
             Assertions.fail(e.toString());
@@ -57,7 +59,7 @@ class QueueManagementTest {
                     this.queueManagement.wakeUpTo(this.cola);
                 } else {
                     try{
-                        this.queueManagement.addMe(this.cola);
+                        this.queueManagement.addMe(this.cola,500);
                     }catch (QueueInterrupException e){
                         Assertions.fail(e.getMessage());
                     }

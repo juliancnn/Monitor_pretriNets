@@ -546,12 +546,5 @@ public class RDP {
         return this.isExtReader() ? this.raw.matrixR.clone() : null;
     }
 
-    /**
-     * Devuelve la cantidad de transiciones de la red
-     * @return int mayor a 0 con la cantidad de transiciones de la red
-     */
-    @Contract(pure = true)
-    public int getNumberOfTransitions(){return this.raw.matrixI[0].length;}
-
 
 }
