@@ -38,6 +38,7 @@ public class Logger {
 
         try {
             this.fw.write(buffer);
+            this.fw.flush();
         }catch (java.io.IOException e){
             System.out.print(e.toString());
         }

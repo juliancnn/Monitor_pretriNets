@@ -99,18 +99,21 @@ public class QueueManagement {
         --nCola; // las colas coinsiden con las tranciones arrancan en 1.
         ThreadNode tn = new ThreadNode();
         try {
-            if(log != null)
-                log.print(this, String.format("AddEvent  | c:%2d ", nCola+1));
+
             /* Mete el thread al final de la lista */
             this.colas.get(nCola).add(tn);
             /*Si tiene que esperar un tiempo y esta solo*/
             if(this.autoWakeUp[nCola]){
                 /* Si la cola esta vacia es un hilo que debe dormirse por tiempo*/
-                boolean sleeper = this.colas.get(nCola).isEmpty();
+                boolean sleeper = this.colas.get(nCola).size() == 1;
+                if(sleeper)
+                    this.timeToWakeup[nCola] = java.lang.System.currentTimeMillis() + timeToSleep;
+                if(log != null)
+                    log.print(this, String.format("AddEventT | c:%2d  | wait: %8d| Slepper: %b ",
+                            nCola+1, timeToSleep > 0 ? timeToSleep : 0, sleeper && timeToSleep != 0));
                 do{
-                    if(log != null)
-                        log.print(this, String.format("TempEvent  | c:%2d  | wait: %8d| Slepper: %b ",
-                                nCola+1, timeToSleep, sleeper));
+
+
                     tn.waitNode(timeToSleep,sleeper);
                     /* Si se levanto puede ser por tiempo o por notify,
                      Tiene que volver a dormir si todavia no entro en venatana o si se le paso*/
@@ -119,12 +122,17 @@ public class QueueManagement {
                     /* 0 > si tiene que volver a dormir Nuevo tiempo si tiene que volver a dormir */
                     timeToSleep = this.timeToWakeup[nCola] - java.lang.System.currentTimeMillis();
                     this.mutexTimeToWakeup.release();
+                    if(log != null)
+                        log.print(this, String.format("UpDateEvT | c:%2d  | wait: %8d| Slepper: %b ",
+                                nCola+1, timeToSleep > 0 ? timeToSleep : 0, sleeper && timeToSleep != 0));
                     // Se levanta solo si ya paso el tiempo para dormir o se fue de la ventana
-                }while(timeToSleep > 0);
+                }while(!sleeper || (timeToSleep > 0));
                 /* Se elimina solo de la cola */
                 this.colas.get(nCola).remove(tn);
             }
             else{
+                if(log != null)
+                    log.print(this, String.format("AddEvent  | c:%2d ", nCola+1));
                 tn.waitNode();
             }
 
@@ -177,12 +185,14 @@ public class QueueManagement {
                 if(newTimes[i] != 0){
                     // No importa que notifique antes de actualizar el tiempo por que no lo pueden leer
                     // hasta que devuelva el semoro
-                    if(timeToWakeup[i]==0 && !this.colas.get(i).isEmpty())
+                    if(!this.colas.get(i).isEmpty())
                         this.colas.get(i).get(0).notifyNode();
                     timeToWakeup[i] = timeStamp + newTimes[i];
                 }
                 else
                     timeToWakeup[i] = 0;
+                if(log != null)
+                    log.print(this, String.format("NewTimeSet| c:%2d  | WakeupTime %014d", i+1,timeToWakeup[i]));
 
             }
 
