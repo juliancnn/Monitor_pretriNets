@@ -119,7 +119,7 @@ public class RDP {
         }
         if(validShot) this.pInvariant.check(this.raw.vectorMark);
         if(this.log!=null){
-            this.log.print(this, String.format("ShotEvent | t:%2d | %6b | %s", tDisp,validShot,getStringMark()));
+            this.log.print(this, String.format("ShotEvent | t:%2d  | %6b | %s", tDisp,validShot,getStringMark()));
         }
 
         return validShot;
@@ -302,7 +302,9 @@ public class RDP {
 
     /**
      * Retorna el vector de los tiempos en milisegundos faltantes para que la transicion entre en la ventana temporal
-     * @return 0 en caso de que no sea temporal o que el alpha ya haya pasado.
+     * @return 0 en caso de que no sea temporal
+     *        -1  que el alpha ya haya pasado.
+     *        >0  Tiempo que le falta.
      */
     @NotNull
     @Contract(pure = true)
@@ -314,16 +316,18 @@ public class RDP {
             return timesToWait;
 
         long timestamp = java.lang.System.currentTimeMillis();
-
+        boolean[] sens = this.getSensitizedArray(true);
         long tempAlpha; // Tiempo que lleva sensibilizada
         for (int i = 0; i < timesToWait.length; i++) {
             /* Chequeo de la ventana de tiempo */
-            if (this.raw.tempWindowTuple[0][i] != 0) {
+            if (sens[i] && this.raw.tempWindowTuple[0][i] != 0) {
                 // Tiempo que lleva sensibilizada
                 tempAlpha = (timestamp - this.raw.vectorTimestamp[i]);
                 // Tiempo que lleva sensibilizada es menor al que necesita, calculo el tiempo que falta
                 if(tempAlpha < this.raw.tempWindowTuple[0][i])
                     timesToWait[i] =  this.raw.tempWindowTuple[0][i] - tempAlpha;
+                else
+                    timesToWait[i] = -1;
             }
         }
         return timesToWait;

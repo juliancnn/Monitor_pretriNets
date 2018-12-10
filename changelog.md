@@ -5,13 +5,38 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Proxima Version etiquetada] - 2018-XX-XX
 ### Agregado
-- [ ] Monitor con tiempo
 - [ ] Ejemplo productores/consumidores (con tiempo)
 ### Cambiado
-- [ ] Actualizar documentacion
-- [ ] Actualizar el json en el readme y doc
 ### Removido
 - 
+
+## [v2.0] - 2018-12-09
+### Agregado
+- Nuevo ejemplo lector escritor ej6 con tiempo
+- Monitor
+    - Crear Pull de dammy proces con seq de disparo para testear monitor (Test Integracion - Complex text)
+    - Monitor con tiempo okey
+- RDP
+    - Agregado metodo devuelve el tiempo para sensibilizado
+    - Documentacion de PInvariantes
+- Nuevo diagrama de secuencia con tiempo del monitor
+- QueueMagnament 
+    - Soporta hilos que se levantan solos
+    - Posibilidad de cambiar el tiempo para que se levante solo cada hilo
+    - Nuevos test para las colas que se levantan solas
+- Scripts
+    - Script en bash y perl para facilitar debuggin y control de T invariantes (P esta en el codigo)
+### Cambiado
+- RDP
+    - Nuevo formato de getMark String, imprimible
+- QueueMagnament
+    - Las colas se crean con un objeto RAW y el logger
+- Logger de eventos cambia para ajustarse a estandar    
+### Removido
+
+
+
+
 
 ## [v1.5] - 2018-12-02
 ### Agregado

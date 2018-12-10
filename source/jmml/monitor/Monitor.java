@@ -75,7 +75,7 @@ public class Monitor {
         log   = new Logger(parser.generate(LoggerRaw.class));
         petri = new RDP(parser.generate(RDPraw.class),log); // >> ConfigException
         //colas = new QueueManagement(petri.getNumberOfTransitions(),log);
-        colas = new QueueManagement(new QueueManagementRAW(),log);
+        colas = new QueueManagement(parser.generate(QueueManagementRAW.class),log);
         polyc = new Policy(colas, polPrimaria, polSecundaria, parser.generate(PolicyStaticRAW.class));//>ConfigException
 
         mutex = new Semaphore(1, true); // Binario tipo fifo
@@ -91,6 +91,9 @@ public class Monitor {
         this.mutex.acquire(); // >> InterruptExcp, Si se lo saca de la cola del monitor antes que entre
 
         boolean[] whoIsThere;
+        boolean autoWakeUp;
+        long sleeptime;
+
 
         do {
 
@@ -106,10 +109,24 @@ public class Monitor {
                     this.state.loopIn = false;
 
             } else {
+                sleeptime = petri.getWaitTime(numberOfProcedure);
+                if(sleeptime == -1){ // Cuando iba a encolarse se sensibilizo (Fk w
+                    this.state.loopIn = true;
+                    continue;
+                }
+
+
+
                 this.mutex.release();
-               // this.colas.addMe(numberOfProcedure);
+                autoWakeUp = this.colas.addMe(numberOfProcedure, sleeptime);
+                if (autoWakeUp)
+                    this.mutex.acquire();
+                this.state.loopIn = true;
+
             }
         } while (this.state.loopIn);
+
+        colas.setNewSleep(petri.getWaitTime());
 
         this.mutex.release();
 

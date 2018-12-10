@@ -74,44 +74,84 @@ Campos opcionales del JSON:
 
 ```
 {
- "brief" : "Ejemplo 1: Proceso paralelo",                      # (Opcional) breve descripcion
- "info" : "Con un arco inhibidor y un arco lector",            # (Opcional) Descripcion ampliaca
- "matrixI" :  [
-   [-1, 0, 0, 1],                                              # Matriz de doble incidencia
-   [1, -1, 0, 0],                                              # Las filas representan las plazas
-   [0, 1, 0, -1],                                              # Las columnas representan las transiciones
-   [1, 0, -1, 0],
-   [0, 0, 1, -1]
- ],
- "vectorMark"     : [3, 0, 0, 0, 0],                           # (Opcional) Vector de marcado inicial
- "vectorMaxMark" : [0, 2, 0, 0, 0],                            # (Opcional) Vector de maximos tokenes por plaza
- "matrixH" :  [
-   [0, 0, 0, 0, 0],                                            # (Opcional) Matriz de incidencia - Arcos inhibidores
-   [0, 0, 0, 0, 0],                                            # Las filas representan las transiciones
-   [0, 0, 0, 0, 0],                                            # 1 Si hay arcos inhibidores, 0 sin relacion
-   [0, 1, 0, 0, 0]
- ],
- "matrixR" :[
-   [0, 0, 0, 0, 0],                                            # (Opcional) Matriz de incidencia - Arcos Lectores
-   [0, 0, 0, 0, 0],                                            # Las filas representan las transiciones
-   [0, 1, 0, 0, 0],                                            # 1 Si hay arcos lectores, 0 sin relacion
-   [0, 0, 0, 0, 0]
- ],
- "matrixT" :[
-   [0, 0, 0, 1],                                               # (Opcional) Matriz de prioridades estaticas
-   [0, 1, 0, 0],                                               # Las columnas representan las transiciones
-   [0, 0, 1, 0],                                               # y la ubicacion del 1 en la fila prioridad
-   [1, 0, 0, 0]
- ],
- "tempWindowTuple" : [                                          # (Opcional) Tupla de tiempos en transiciones
-   [1000, 1000,    0,    0],                                    # Vector de minimo tiempo antes que se pueda disparar
-   [   0, 3000, 1000,    0]                                     # Vector de maximo timeout para disparar
- ],
- "matrixInvariantP" :[
-    [0, 0, 0, 0],                                               # (Opcional) Matriz de invariantes
-    [0, 0, 0, 0]                                                # 2 invariantes
+  "brief" : "Ejemplo 6: Un escritor Multiples lectores simultaneos",
+  "info" : "Conjunto de procesos (P0), que pueden leer (P4) simultaneamente o escribir (P3)",
+  "logFile": "log_ej6_conTiempo.txt",
+  "tempQ": [0,0,0,0,1,1],
+  "matrixI" :  [
+    [-1, -1, 0, 0, 1, 1], //P1  procesos Idle
+    [ 1,  0,-1, 0, 0, 0], //P2 Quieren escribir
+    [ 0,  0,-1, 0, 1, 0], //P3 recurso
+    [ 0,  0, 1, 0,-1, 0], //P4 escribiendo
+    [ 0,  0, 0, 1, 0,-1], //P5 leyendo
+    [ 0,  1, 0,-1, 0, 0]  //P6 quire leer
   ],
-  "vectorSumInvariantP" : [0, 0],                               # (Opcional) Vector de invariantes
+  "vectorMark"     : [7, 0, 1, 0, 0, 0], // 7 procesos
+  "matrixH" :  [ // Al revez que I, transiciones por plaza
+    [ 0,  0, 0, 0, 0, 0], //t1 Agregarse a la cola de escritura
+    [ 0,  0, 0, 0, 0, 0], //t2 Agregarse a la cola de lectura
+    [ 0,  0, 0, 0, 1, 0], //t3 Entrar a escribir (La escritura queda inhibida si hay alguien leyendo P5)
+    [ 0,  0, 0, 0, 0, 0], //t4 Entrar a leer
+    [ 0,  0, 0, 0, 0, 0], //t5 Termina de escribir
+    [ 0,  0, 0, 0, 0, 0]  //t6 Termina de leer
+  ],
+  "matrixR" :[ // Al revez que I, transiciones por plaza
+    [ 0,  0, 0, 0, 0, 0], //t1 Agregarse a la cola de escritura
+    [ 0,  0, 0, 0, 0, 0], //t2 Agregarse a la cola de lectura
+    [ 0,  0, 0, 0, 0, 0], //t3 Entrar a escribir
+    [ 0,  0, 1, 0, 0, 0], //t4 Entrar a leer Si el recurso (p3) no fue tomado para escritura
+    [ 0,  0, 0, 0, 0, 0], //t5 Termina de escribir
+    [ 0,  0, 0, 0, 0, 0]  //t6 Termina de leer
+  ],
+  "matrixT" :[
+  //t1-t2-t3-t4-t5-t6 ** Escritor
+    [0, 0, 0, 0, 0, 1],         // Un escritor con multiples lectores
+    [1, 0, 0, 0, 0, 0],         // Prioridad escritor cuando:
+    [0, 0, 1, 0, 0, 0],         // t6>t1>t3>t5>t2>t4
+    [0, 0, 0, 0, 1, 0],         // Prioridad lector cuando:
+    [0, 1, 0, 0, 0, 0],         // t5>t4>t2>t6>t1>t3
+    [0, 0, 0, 1, 0, 0]
+  ],
+  "matrixInvariantP" :[
+    [ 1,  1, 0, 1, 1, 1],
+    [ 0,  0, 1, 1, 0, 0]
+  ],
+  "vectorSumInvariantP" : [7, 1],
+  "tempWindowTuple" : [
+    [    0,    0,    0,    0, 10,  5], // Tiempo de lectura 500ms, tiempo escritura 1000
+    [    0,    0,    0,    0,    0,    0]
+  ],
+  // pull Threads
+  "pull" : [
+    // T1 - Quien escribir
+    {
+      "name": "T1, Quieren escribir",
+      "seq" : [1],
+      "sleepTime" : 50,
+      "nTimes" : 10
+    },
+    // T3-T5 - Escriben
+    {
+      "name": "T3-T5, Escriben",
+      "seq" : [3,5],
+      "sleepTime" : 0,
+      "nTimes" : 0
+    },
+    // T2 - Quien leer
+    {
+      "name": "T2, Quieren Leer",
+      "seq" : [2],
+      "sleepTime" : 20,
+      "nTimes" : 20
+    },
+    // T4-T6 - leen
+    {
+      "name": "T4-T6, leen",
+      "seq" : [4,6],
+      "sleepTime" : 0,
+      "nTimes" : 0
+    }
+  ]
 }
 ```
 ## Caracteriticas del monitor
@@ -134,6 +174,7 @@ v1.0.
 
 ### Etiquetado
 
+- v2.0 Version estable con logger del monitor con tiempo
 - v1.5 Version estable con logger del monitor sin tiempo
 - v1.0 Primera version estable del monitor sin tiempo
 - v0.2 Primera version estable de la red de petri

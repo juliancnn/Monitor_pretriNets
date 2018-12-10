@@ -51,7 +51,7 @@ public class QueueManagement {
      * @param qraw Informacion de las colas a crear, con un 1 en las colas temporales
      * @TODO Setear las colas temporales autowakeup (las que tienen alfa)
      */
-    public QueueManagement(QueueManagementRAW qraw, Logger logger) throws IllegalArgumentException {
+    public QueueManagement(@NotNull QueueManagementRAW qraw, Logger logger) throws IllegalArgumentException {
         super();
         if (qraw.tempQ.length < 1)
             throw new IllegalArgumentException("No se pueden crear colas vacias");
@@ -97,6 +97,7 @@ public class QueueManagement {
             throw new java.lang.IndexOutOfBoundsException("La cola a la que se quiere anadir no existe");
 
         --nCola; // las colas coinsiden con las tranciones arrancan en 1.
+
         ThreadNode tn = new ThreadNode();
         try {
 
@@ -176,6 +177,7 @@ public class QueueManagement {
     /**
      * Setea los nuevos tiempos para las colas temporales
      * @param newTimes vector con los nuevos alfas, tiempos que faltan para que se despierte cada hilo
+     *                 -1 en caso de que el hilo se tenga que desperar ahora
      */
     public void setNewSleep(long[] newTimes){
         long timeStamp = java.lang.System.currentTimeMillis();
@@ -187,7 +189,7 @@ public class QueueManagement {
                     // hasta que devuelva el semoro
                     if(!this.colas.get(i).isEmpty())
                         this.colas.get(i).get(0).notifyNode();
-                    timeToWakeup[i] = timeStamp + newTimes[i];
+                    timeToWakeup[i] = timeStamp + newTimes[i]; // Con un -1 es que se despierta ya
                 }
                 else
                     timeToWakeup[i] = 0;
