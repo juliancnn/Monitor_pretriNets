@@ -71,6 +71,12 @@ Campos opcionales del JSON:
      - el valor 's' del vector representa la suma invariante de plas plazas en la matriz de invariantes
    - El invariante 's' se chequea haciendo el productor interno entre la fila 's' de la matriz y el vector de marcado, 
    donde el resultado del (escalar), es el valor 's' del vector de invariantes. 
+   - Pull de procesos, opcional para pruebas, un vector que tienen los siguientes datos cada entrada:
+    - "name": "T4-T6, leen",
+    - "seq" : [4,6],
+    - "sleepTime" : 0,
+    - "nTimes" : 0
+       
 
 ```
 {
