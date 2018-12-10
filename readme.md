@@ -93,6 +93,7 @@ Campos opcionales del JSON:
     [ 0,  1, 0,-1, 0, 0]  //P6 quire leer
   ],
   "vectorMark"     : [7, 0, 1, 0, 0, 0], // 7 procesos
+  "vectorMark"     : [0, 0, 0, 0, 0, 0], // Sin max por plaza
   "matrixH" :  [ // Al revez que I, transiciones por plaza
     [ 0,  0, 0, 0, 0, 0], //t1 Agregarse a la cola de escritura
     [ 0,  0, 0, 0, 0, 0], //t2 Agregarse a la cola de lectura
