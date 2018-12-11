@@ -17,11 +17,15 @@ public class Main {
         PullDummyProcessRAW pull = dp.generate(PullDummyProcessRAW.class);
 
         Monitor monitor = new Monitor(configFile, policyType.RANDOM,policyType.STATICORDER);
-
+        // Generamos rand pol, pero forzamos parcialmente algunas transiciones (16 piso A, 18 piso B, 25 salida 2)
+        // 1 y 2 cartel
+        monitor.forceUpPol(new int[] {2,1,16}); // Punto A consigna
+        // Ingreso no entra 1/2/3, Selector de piso baja por el tema de la rampa
+        monitor.forceDownPol(new int[] {6,10,14,15,18});
 
         new jmml.monitor.complex_test.PullDummyProcess(pull,monitor);
         try{
-            Thread.sleep(10000);
+            Thread.sleep(15000);
             monitor.closeLog();
             System.exit(0);
         }catch (InterruptedException e){

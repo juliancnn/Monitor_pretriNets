@@ -119,7 +119,7 @@ public class RDP {
         }
         if(validShot) this.pInvariant.check(this.raw.vectorMark);
         if(this.log!=null){
-            this.log.print(this, String.format("ShotEvent | t:%2d  | %6b | %s", tDisp,validShot,getStringMark()));
+            this.log.print(this, String.format("ShotEvent | t:%3d | %6b | %s", tDisp,validShot,getStringMark()));
         }
 
         return validShot;

@@ -6,3 +6,4 @@ doc/covered/
 doc/srcDoc
 *.lock
 log*
+scripts/vectoresDeDisparo*

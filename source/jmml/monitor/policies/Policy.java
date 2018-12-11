@@ -55,6 +55,17 @@ public class Policy {
      * Vector en el cual se lleva la cuenta de las veces que se selecciono determinada cola
      */
     private final int [] ContSelectQueue;
+    /**
+     * Vector para forzar politicas y mezclarlas con las demas( por ejemplo random + parte estatica)
+     * Fuerza prioridad maxima
+     */
+    private int [] forceUpVector;
+    /**
+     * Vector para forzar politicas y mezclarlas con las demas( por ejemplo random + parte estatica)
+     * Fuerza prioridad minima
+     */
+    private int [] forceDownVector;
+
 
     /**
      * <pre>
@@ -183,6 +194,8 @@ public class Policy {
             who[i] = whoIsAviable[i] ? 1 : 0;
 
         this.updateMatrixOfPolicies(); // usa genMatOfPol -> The best method ever
+        this.genForceMatrix();
+
         int WhoIs = this.getFirstOnTrue(
                 this.matMulVect(
                         this.firstOnTrue(this.matMulVect(who, this.matOfPolicy, false)),
@@ -209,9 +222,9 @@ public class Policy {
 
         switch (this.mode) {
             case RANDOM:
-                return;
+                break;
             case STATICORDER:
-                return;
+                break;
             case MAXSIZEQUEUE:
                 /* Mayor tamano de la cola mayor prioridad, desempata la politica secundaria */
                 this.matOfPolicy = this.genMatOfPol(this.queue.sizeOfQueues(), true);
@@ -288,6 +301,83 @@ public class Policy {
 
     }
 
+    void genForceMatrix(){
+        // Cada columna una transicion
+        // Busca el 1 en la primera columna e intercambio por la columna que me mandaron
+        if(this.forceUpVector != null){
+
+           for(int i=0; i<this.forceUpVector.length;i++){
+               int posFilMax = this.searchF(i); // Quien tiene max prioridad
+               int posMeP  = this.searchP(this.forceUpVector[i]); // que prioridad tengo yo
+               // las intercambio
+               this.matOfPolicy[this.forceUpVector[i]][posMeP] = 0; // Me borro la p
+               this.matOfPolicy[this.forceUpVector[i]][i]     = 1; // Me asigno la max
+               this.matOfPolicy[posFilMax][i] = 0; // Borro la que le saque la p
+               this.matOfPolicy[posFilMax][posMeP] = 1; // Le asigno la mia
+           }
+
+        }
+        if(this.forceDownVector != null){
+            int j = this.matOfPolicy.length-1;
+            for(int i=this.forceDownVector.length-1 ; i>=0;i--){
+                int posFilMin = this.searchF(j); // Quien tiene minima prioridad
+                int posMe  = this.searchP(this.forceDownVector[i]); // que prioridad tengo yo
+                // las intercambio
+                this.matOfPolicy[this.forceDownVector[i]][posMe] = 0; // Me borro la p
+                this.matOfPolicy[this.forceDownVector[i]][j]     = 1; // Me asigno la max
+                this.matOfPolicy[posFilMin][j] = 0; // Borro la que le saque la p
+                this.matOfPolicy[posFilMin][posMe] = 1; // Le asigno la mia
+
+                j--;
+            }
+        }
+        /*
+        for (int[] matrix1 : this.matOfPolicy) {
+            StringBuilder vtos = new StringBuilder("[");
+            for (int e : matrix1) {
+                vtos.append(String.format("%4d", e));
+            }
+            vtos.append("]\n");
+            System.out.print(vtos.toString());
+        }*/
+
+    }
+    // Busca que fila (Trans) tiene mi prioridad
+    @Contract(pure = true)
+    private int searchP(int fil){
+        for(int i=0; i< this.matOfPolicy.length ; i++){
+            if(this.matOfPolicy[fil][i] != 0)
+                return i;
+        }
+
+
+
+        return -3;
+    }
+    // Busca quien tiene la prioridad en la fila (Trans)
+    @Contract(pure = true)
+    private int searchF(int prio){
+        for(int i=0; i< this.matOfPolicy.length ; i++){
+            if(this.matOfPolicy[i][prio] != 0)
+                return i;
+        }
+
+        return -2;
+    }
+
+    public void setForceUp(int[] forceUp){
+        this.forceUpVector = forceUp.clone();
+        if(this.forceUpVector != null)
+            for(int i=0; i<this.forceUpVector.length;i++)
+                this.forceUpVector[i]--;
+    }
+
+    public void setForceDown(int[] forceDown){
+        this.forceDownVector = forceDown;
+        if(this.forceDownVector != null)
+            for(int i=0; i<this.forceDownVector.length;i++)
+                this.forceDownVector[i]--;
+    }
 
 
     /*==================================================================================================================

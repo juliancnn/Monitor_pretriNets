@@ -99,8 +99,8 @@ public class Monitor {
             this.state.loopIn = petri.shotT(numberOfProcedure);
 
             if (this.state.loopIn) {
+                colas.setNewSleep(petri.getWaitTime());
                 whoIsThere = this.vectorAndVector(petri.getSensitizedArray(), colas.whoIsWaiting());
-
                 if (this.any(whoIsThere)) {
                     colas.wakeUpTo(polyc.tellMeWho(whoIsThere));
                     return;
@@ -125,7 +125,7 @@ public class Monitor {
             }
         } while (this.state.loopIn);
 
-        colas.setNewSleep(petri.getWaitTime());
+
 
         this.mutex.release();
 
@@ -171,6 +171,13 @@ public class Monitor {
         this.log.close();
     }
 
+    public void forceUpPol(int [] forceUp){
+        this.polyc.setForceUp(forceUp);
+    }
+
+    public void forceDownPol(int [] forceDown){
+        this.polyc.setForceDown(forceDown);
+    }
 
     /**
      * Estado del monitor
