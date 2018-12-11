@@ -29,7 +29,7 @@ public class PolicyStaticRAW {
      * @return Matriz de politica estatica
      */
     protected int[][] getMatrixT() {
-        return matrixT.clone();
+        return matrixT == null ? null : matrixT.clone();
     }
 
     /**

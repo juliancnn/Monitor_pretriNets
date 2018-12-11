@@ -99,7 +99,7 @@ public class Policy {
             this.matPRandom[i][i] = 1;
 
         /* STATIC MAT  */
-        if(staticPolicy == null)
+        if(staticPolicy == null || staticPolicy.getMatrixT() == null)
             this.matPStatic = this.matPRandom.clone();
         else{
             new checkPol(staticPolicy, size); // >> ConfigException

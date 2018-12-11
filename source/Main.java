@@ -11,7 +11,23 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException, jmml.monitor.rdp.ConfigException,
             jmml.monitor.policies.ConfigException, invariantPExecption {
 
-        ej6_conTiempo();
+        String configFile = "examples_rdp/tpfinal_config.json";
+
+        DataParser dp = new DataParser(configFile);
+        PullDummyProcessRAW pull = dp.generate(PullDummyProcessRAW.class);
+
+        Monitor monitor = new Monitor(configFile, policyType.RANDOM,policyType.STATICORDER);
+
+
+        new jmml.monitor.complex_test.PullDummyProcess(pull,monitor);
+        try{
+            Thread.sleep(10000);
+            monitor.closeLog();
+            System.exit(0);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+
 
 
     }

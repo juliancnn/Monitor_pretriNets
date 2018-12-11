@@ -33,7 +33,7 @@ public class Logger {
         String buffer;
         long timestamp = java.lang.System.currentTimeMillis();
 
-        buffer = String.format("%014d | %5d | %-20s | %-25.25s | %s\n", timestamp, Thread.currentThread().getId(),
+        buffer = String.format("%014d | %3d | %-23s | %-25.25s | %s\n", timestamp, Thread.currentThread().getId(),
                 Thread.currentThread().getName(), module.getClass().getName(),msj);
 
 

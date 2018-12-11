@@ -294,10 +294,10 @@ public class RDP {
         StringBuilder mark = new StringBuilder("[");
         int i;
         for (i=0; i < this.raw.vectorMark.length-1; i++){
-            mark.append(String.format("%3d ", this.raw.vectorMark[i]));
+            mark.append(String.format("%3d,", this.raw.vectorMark[i]));
         }
 
-        return mark+String.format("%3d ]",this.raw.vectorMark[i]);
+        return mark+String.format("%3d]",this.raw.vectorMark[i]);
     }
 
     /**
