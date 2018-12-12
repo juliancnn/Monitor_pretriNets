@@ -234,8 +234,14 @@
       "nTimes": 0
     },
     {
-      "name": "Sale por 1 cobro/salio",
-      "seq": [22, 24],
+      "name": "Sale por 1 cobro",
+      "seq": [22],
+      "sleepTime": 0,
+      "nTimes": 0
+    },
+    {
+      "name": "Sale por 1 salio",
+      "seq": [24],
       "sleepTime": 0,
       "nTimes": 0
     },
@@ -246,8 +252,14 @@
       "nTimes": 0
     },
     {
-      "name": "Sale por 2 cobro/salio",
-      "seq": [25, 26],
+      "name": "Sale por 2 cobro",
+      "seq": [25],
+      "sleepTime": 0,
+      "nTimes": 0
+    },
+    {
+      "name": "Sale por 2 salio",
+      "seq": [26],
       "sleepTime": 0,
       "nTimes": 0
     },

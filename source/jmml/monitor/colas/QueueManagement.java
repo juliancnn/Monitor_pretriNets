@@ -184,7 +184,7 @@ public class QueueManagement {
         try{
             this.mutexTimeToWakeup.acquire();
             for(int i=0; i < newTimes.length; i++){
-                if(newTimes[i] != 0){
+                if(newTimes[i] != 0 && this.autoWakeUp[i]){
                     // No importa que notifique antes de actualizar el tiempo por que no lo pueden leer
                     // hasta que devuelva el semoro
                     if(!this.colas.get(i).isEmpty())

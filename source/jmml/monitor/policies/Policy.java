@@ -309,44 +309,66 @@ public class Policy {
            for(int i=0; i<this.forceUpVector.length;i++){
                int posFilMax = this.searchF(i); // Quien tiene max prioridad
                int posMeP  = this.searchP(this.forceUpVector[i]); // que prioridad tengo yo
+
                // las intercambio
-               this.matOfPolicy[this.forceUpVector[i]][posMeP] = 0; // Me borro la p
-               this.matOfPolicy[this.forceUpVector[i]][i]     = 1; // Me asigno la max
-               this.matOfPolicy[posFilMax][i] = 0; // Borro la que le saque la p
-               this.matOfPolicy[posFilMax][posMeP] = 1; // Le asigno la mia
+               this.matOfPolicy[i][posFilMax] = 0; // Borro quien tiene la prioridad mas alta
+               this.matOfPolicy[i][this.forceUpVector[i]] = 1; // Se la seteo al nuevo
+
+               this.matOfPolicy[posMeP][this.forceUpVector[i]]    = 0; // Borro la prioridad vieja del nuevo
+               this.matOfPolicy[posMeP][posFilMax] = 1; // borro la prioridad de el
+
            }
 
         }
+
         if(this.forceDownVector != null){
             int j = this.matOfPolicy.length-1;
             for(int i=this.forceDownVector.length-1 ; i>=0;i--){
                 int posFilMin = this.searchF(j); // Quien tiene minima prioridad
                 int posMe  = this.searchP(this.forceDownVector[i]); // que prioridad tengo yo
                 // las intercambio
-                this.matOfPolicy[this.forceDownVector[i]][posMe] = 0; // Me borro la p
-                this.matOfPolicy[this.forceDownVector[i]][j]     = 1; // Me asigno la max
-                this.matOfPolicy[posFilMin][j] = 0; // Borro la que le saque la p
-                this.matOfPolicy[posFilMin][posMe] = 1; // Le asigno la mia
+                this.matOfPolicy[j][posFilMin] = 0; // Borro la prioridad de el
+                this.matOfPolicy[j][this.forceDownVector[i]] = 1; // Le asigno la mia
+                this.matOfPolicy[posMe][this.forceDownVector[i]] = 0; // Me borro la p
+                this.matOfPolicy[posMe][posFilMin]  = 1; // Me asigno la min
+
+
 
                 j--;
             }
         }
-        /*
-        for (int[] matrix1 : this.matOfPolicy) {
-            StringBuilder vtos = new StringBuilder("[");
-            for (int e : matrix1) {
-                vtos.append(String.format("%4d", e));
+
+        boolean print = false;
+        int[] sum = new int[this.matOfPolicy.length];
+        for (int i = 0 ;i<this.matOfPolicy.length ; i++) {
+            for (int j = 0 ;j<this.matOfPolicy.length ; j++) {
+                sum[i] +=   this.matOfPolicy[i][j];
             }
-            vtos.append("]\n");
-            System.out.print(vtos.toString());
-        }*/
+            if(sum[i]!=1){
+                print = true;
+            }
+        }
+
+
+        int p = 0;
+        if(print)
+            for (int[] matrix1 : this.matOfPolicy) {
+                StringBuilder vtos = new StringBuilder("[");
+                for (int e : matrix1) {
+                    vtos.append(String.format("%4d", e));
+                }
+                vtos.append("] " + sum[p]+ "\n");
+                System.out.print(vtos.toString());
+                p++;
+            }
+
 
     }
     // Busca que fila (Trans) tiene mi prioridad
     @Contract(pure = true)
     private int searchP(int fil){
         for(int i=0; i< this.matOfPolicy.length ; i++){
-            if(this.matOfPolicy[fil][i] != 0)
+            if(this.matOfPolicy[i][fil] != 0)
                 return i;
         }
 
@@ -358,7 +380,7 @@ public class Policy {
     @Contract(pure = true)
     private int searchF(int prio){
         for(int i=0; i< this.matOfPolicy.length ; i++){
-            if(this.matOfPolicy[i][prio] != 0)
+            if(this.matOfPolicy[prio][i] != 0)
                 return i;
         }
 

@@ -102,6 +102,9 @@ public class Monitor {
                 colas.setNewSleep(petri.getWaitTime());
                 whoIsThere = this.vectorAndVector(petri.getSensitizedArray(), colas.whoIsWaiting());
                 if (this.any(whoIsThere)) {
+                    // polyc.tellMeWho(whoIsThere) == 18 // Para ver por que usa el piso B
+                    // polyc.tellMeWho(whoIsThere) == 22 // por que sale por uno
+                    // polyc.tellMeWho(whoIsThere) == 17 && whoIsThere[15]
                     colas.wakeUpTo(polyc.tellMeWho(whoIsThere));
                     return;
                 } else
