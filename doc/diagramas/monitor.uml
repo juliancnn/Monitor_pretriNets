@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>jmml.monitor</OriginalElement>
+  <nodes>
+    <node x="1018.0625000000001" y="320.0">jmml.monitor.colas.QueueInterrupException</node>
+    <node x="456.0625" y="294.0">jmml.monitor.policies.ConfigException</node>
+    <node x="1911.0625" y="705.5">jmml.monitor.rdp.PInvariant</node>
+    <node x="1542.3482142857147" y="1905.0">jmml.monitor.Monitor</node>
+    <node x="2733.4625" y="705.0">jmml.monitor.rdp.ShotException</node>
+    <node x="3093.9625" y="1365.5">jmml.monitor.parser.DataParser</node>
+    <node x="2369.4625" y="731.0">jmml.monitor.rdp.checkConfig</node>
+    <node x="1694.931547619048" y="2334.0">jmml.monitor.complex_test.dummyProcess</node>
+    <node x="1242.1815476190477" y="2628.0">jmml.monitor.complex_test.PullDummyProcess</node>
+    <node x="2251.0625" y="182.0">jmml.monitor.rdp.RDPraw</node>
+    <node x="77.25" y="307.0">jmml.monitor.policies.PolicyStaticRAW</node>
+    <node x="2193.4625" y="1090.0">jmml.monitor.rdp.RDP</node>
+    <node x="68.375" y="694.0">jmml.monitor.policies.policyType</node>
+    <node x="731.0625000000001" y="219.0">jmml.monitor.colas.QueueManagement.ThreadNode</node>
+    <node x="966.4315476190478" y="2018.5">jmml.monitor.complex_test.DummyProcessRAW</node>
+    <node x="1841.0625" y="244.0">jmml.monitor.rdp.invariantPExecption</node>
+    <node x="322.9375" y="718.5">jmml.monitor.policies.checkPol</node>
+    <node x="1584.0625" y="256.5">jmml.monitor.logger.Logger</node>
+    <node x="3313.9625" y="1378.5">jmml.monitor.Monitor.Status</node>
+    <node x="161.3125" y="1065.0">jmml.monitor.policies.Policy</node>
+    <node x="2707.9625" y="281.5">jmml.monitor.rdp.ConfigException</node>
+    <node x="904.7648809523811" y="2422.5">jmml.monitor.complex_test.PullDummyProcessRAW</node>
+    <node x="1192.9315476190477" y="2346.5">jmml.monitor.complex_test.PullDummyProcess_Single</node>
+    <node x="1327.0625" y="320.0">jmml.monitor.colas.QueueManagementRAW</node>
+    <node x="781.5898896371128" y="37.5">jmml.monitor.logger.LoggerRaw</node>
+    <node x="846.9625000000001" y="605.0">jmml.monitor.colas.QueueManagement</node>
+    <node x="2757.1864544920104" y="0.0">jmml.monitor.rdp.errorTypeConfig</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.Monitor.Status">
+      <point x="144.44444444444434" y="-179.5" />
+      <point x="1886.792658730159" y="1865.0" />
+      <point x="3341.9625" y="1865.0" />
+      <point x="-56.0" y="41.5" />
+    </edge>
+    <edge source="jmml.monitor.complex_test.PullDummyProcessRAW" target="jmml.monitor.complex_test.DummyProcessRAW">
+      <point x="-62.0" y="-28.5" />
+      <point x="966.7648809523811" y="2314.0" />
+      <point x="997.5982142857143" y="2314.0" />
+      <point x="-62.333333333333485" y="66.0" />
+    </edge>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.logger.Logger">
+      <point x="-11.111111111111313" y="-179.5" />
+      <point x="1731.2371031746034" y="1885.0" />
+      <point x="1736.8482142857144" y="1885.0" />
+      <point x="1736.8482142857144" y="585.0" />
+      <point x="1702.5625" y="585.0" />
+      <point x="0.0" y="92.0" />
+    </edge>
+    <edge source="jmml.monitor.complex_test.dummyProcess" target="jmml.monitor.Monitor">
+      <point x="105.5" y="-117.0" />
+      <point x="2011.431547619048" y="2314.0" />
+      <point x="1842.3482142857147" y="2314.0" />
+      <point x="100.0" y="179.5" />
+    </edge>
+    <edge source="jmml.monitor.complex_test.PullDummyProcess" target="jmml.monitor.Monitor">
+      <point x="191.5999999999999" y="-41.5" />
+      <point x="1673.2815476190476" y="2608.0" />
+      <point x="2127.4315476190477" y="2608.0" />
+      <point x="2127.4315476190477" y="2304.0" />
+      <point x="1909.0148809523812" y="2304.0" />
+      <point x="166.66666666666652" y="179.5" />
+    </edge>
+    <edge source="jmml.monitor.colas.QueueManagement.ThreadNode" target="jmml.monitor.colas.QueueManagement">
+      <point x="106.79999999999995" y="129.5" />
+      <point x="971.3625000000001" y="555.0" />
+      <point x="1039.4625" y="555.0" />
+      <point x="-27.5" y="-180.0" />
+    </edge>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.policies.policyType">
+      <point x="-144.44444444444434" y="-179.5" />
+      <point x="1597.9037698412703" y="1865.0" />
+      <point x="87.75" y="1865.0" />
+      <point x="-58.125" y="91.0" />
+    </edge>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.colas.QueueManagementRAW">
+      <point x="-33.333333333333485" y="-179.5" />
+      <point x="1709.0148809523812" y="1815.0" />
+      <point x="1489.8125" y="1815.0" />
+      <point x="54.25" y="28.5" />
+    </edge>
+    <edge source="jmml.monitor.rdp.ConfigException" target="jmml.monitor.rdp.errorTypeConfig">
+      <point x="88.5" y="-67.0" />
+      <point x="2973.4625" y="162.0" />
+      <point x="2873.4364544920104" y="162.0" />
+      <point x="23.25" y="66.0" />
+    </edge>
+    <edge source="jmml.monitor.policies.Policy" target="jmml.monitor.policies.checkPol">
+      <point x="33.25" y="-355.0" />
+      <point x="460.5625" y="1015.0" />
+      <point x="562.1875" y="1015.0" />
+      <point x="79.75" y="66.5" />
+    </edge>
+    <edge source="jmml.monitor.colas.QueueManagement" target="jmml.monitor.colas.QueueInterrupException">
+      <point x="27.5" y="-180.0" />
+      <point x="1094.4625" y="555.0" />
+      <point x="1162.5625" y="555.0" />
+      <point x="0.0" y="28.5" />
+    </edge>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.policies.PolicyStaticRAW">
+      <point x="-166.66666666666697" y="-179.5" />
+      <point x="1575.6815476190477" y="1875.0" />
+      <point x="57.875" y="1875.0" />
+      <point x="57.875" y="585.0" />
+      <point x="151.5" y="585.0" />
+      <point x="-24.75" y="41.5" />
+    </edge>
+    <edge source="jmml.monitor.complex_test.PullDummyProcess" target="jmml.monitor.complex_test.PullDummyProcess_Single">
+      <point x="-95.80000000000018" y="-41.5" />
+      <point x="1385.8815476190475" y="2608.0" />
+      <point x="1366.1815476190477" y="2608.0" />
+      <point x="-57.75" y="104.5" />
+    </edge>
+    <edge source="jmml.monitor.rdp.RDP" target="jmml.monitor.rdp.PInvariant">
+      <point x="-90.27272727272725" y="-330.0" />
+      <point x="2268.689772727273" y="1025.0" />
+      <point x="2026.0625" y="1025.0" />
+      <point x="0.0" y="79.5" />
+    </edge>
+    <edge source="jmml.monitor.rdp.RDP" target="jmml.monitor.rdp.checkConfig">
+      <point x="30.090909090909122" y="-330.0" />
+      <point x="2389.0534090909096" y="1005.0" />
+      <point x="2541.4625" y="1005.0" />
+      <point x="0.0" y="54.0" />
+    </edge>
+    <edge source="jmml.monitor.logger.LoggerRaw" target="jmml.monitor.logger.LoggerRaw">
+      <point x="-48.0" y="28.5" />
+      <point x="805.5898896371128" y="114.5" />
+      <point x="761.5898896371128" y="114.5" />
+      <point x="761.5898896371128" y="66.0" />
+      <point x="-72.0" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.rdp.RDP" target="jmml.monitor.rdp.RDP">
+      <point x="-110.33333333333337" y="330.0" />
+      <point x="2248.6291666666666" y="1770.0" />
+      <point x="2173.4625" y="1770.0" />
+      <point x="2173.4625" y="1420.0" />
+      <point x="-165.5" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.Monitor.Status" target="jmml.monitor.Monitor">
+      <point x="56.0" y="41.5" />
+      <point x="3453.9625" y="1885.0" />
+      <point x="1931.2371031746034" y="1885.0" />
+      <point x="188.8888888888887" y="-179.5" />
+    </edge>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.logger.LoggerRaw">
+      <point x="-188.88888888888914" y="-179.5" />
+      <point x="1553.4593253968255" y="1885.0" />
+      <point x="0.0" y="1885.0" />
+      <point x="0.0" y="162.0" />
+      <point x="853.5898896371128" y="162.0" />
+      <point x="0.0" y="28.5" />
+    </edge>
+    <edge source="jmml.monitor.rdp.RDP" target="jmml.monitor.logger.Logger">
+      <point x="-120.36363636363637" y="-330.0" />
+      <point x="2238.5988636363636" y="1035.0" />
+      <point x="1769.8482142857144" y="1035.0" />
+      <point x="1769.8482142857144" y="585.0" />
+      <point x="1804.133928571429" y="585.0" />
+      <point x="101.57142857142867" y="92.0" />
+    </edge>
+    <edge source="jmml.monitor.complex_test.dummyProcess" target="jmml.monitor.complex_test.dummyProcess">
+      <point x="0.0" y="117.0" />
+      <point x="1905.931547619048" y="2588.0" />
+      <point x="1674.931547619048" y="2588.0" />
+      <point x="1674.931547619048" y="2451.0" />
+      <point x="-211.0" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.colas.QueueManagement.ThreadNode" target="jmml.monitor.colas.QueueManagement.ThreadNode">
+      <point x="-106.79999999999995" y="129.5" />
+      <point x="757.7625000000002" y="498.0" />
+      <point x="711.0625000000001" y="498.0" />
+      <point x="711.0625000000001" y="348.5" />
+      <point x="-133.5" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.policies.Policy">
+      <point x="-100.0" y="-179.5" />
+      <point x="1642.3482142857147" y="1845.0" />
+      <point x="604.6458333333335" y="1845.0" />
+      <point x="177.33333333333348" y="355.0" />
+    </edge>
+    <edge source="jmml.monitor.policies.Policy" target="jmml.monitor.policies.ConfigException">
+      <point x="99.75" y="-355.0" />
+      <point x="527.0625" y="1025.0" />
+      <point x="657.8541666666669" y="1025.0" />
+      <point x="657.8541666666669" y="585.0" />
+      <point x="651.8958333333335" y="585.0" />
+      <point x="78.33333333333348" y="54.5" />
+    </edge>
+    <edge source="jmml.monitor.policies.Policy" target="jmml.monitor.policies.PolicyStaticRAW">
+      <point x="-33.25" y="-355.0" />
+      <point x="394.0625" y="1015.0" />
+      <point x="292.4375" y="1015.0" />
+      <point x="292.4375" y="585.0" />
+      <point x="201.0" y="585.0" />
+      <point x="24.75" y="41.5" />
+    </edge>
+    <edge source="jmml.monitor.colas.QueueManagement" target="jmml.monitor.logger.Logger">
+      <point x="137.5" y="-180.0" />
+      <point x="1204.4625" y="575.0" />
+      <point x="1634.8482142857142" y="575.0" />
+      <point x="-67.71428571428578" y="92.0" />
+    </edge>
+    <edge source="jmml.monitor.complex_test.PullDummyProcess" target="jmml.monitor.complex_test.PullDummyProcess">
+      <point x="0.0" y="41.5" />
+      <point x="1481.6815476190477" y="2731.0" />
+      <point x="1222.1815476190477" y="2731.0" />
+      <point x="1222.1815476190477" y="2669.5" />
+      <point x="-239.5" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.colas.QueueManagement" target="jmml.monitor.colas.QueueManagement.ThreadNode">
+      <point x="-192.5" y="-180.0" />
+      <point x="874.4625000000001" y="585.0" />
+      <point x="811.1625" y="585.0" />
+      <point x="-53.40000000000009" y="129.5" />
+    </edge>
+    <edge source="jmml.monitor.rdp.RDP" target="jmml.monitor.rdp.ConfigException">
+      <point x="120.36363636363626" y="-330.0" />
+      <point x="2479.3261363636366" y="1035.0" />
+      <point x="3002.9625" y="1035.0" />
+      <point x="118.0" y="67.0" />
+    </edge>
+    <edge source="jmml.monitor.rdp.checkConfig" target="jmml.monitor.rdp.ConfigException">
+      <point x="114.66666666666669" y="-54.0" />
+      <point x="2656.1291666666666" y="585.0" />
+      <point x="2884.9625" y="585.0" />
+      <point x="0.0" y="67.0" />
+    </edge>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.colas.QueueManagement">
+      <point x="-77.77777777777783" y="-179.5" />
+      <point x="1664.5704365079368" y="1835.0" />
+      <point x="1193.4625" y="1835.0" />
+      <point x="1193.4625" y="1045.0" />
+      <point x="1154.9625" y="1045.0" />
+      <point x="88.0" y="180.0" />
+    </edge>
+    <edge source="jmml.monitor.colas.QueueManagement" target="jmml.monitor.colas.QueueManagementRAW">
+      <point x="82.5" y="-180.0" />
+      <point x="1149.4625" y="565.0" />
+      <point x="1381.3125" y="565.0" />
+      <point x="-54.25" y="28.5" />
+    </edge>
+    <edge source="jmml.monitor.policies.ConfigException" target="jmml.monitor.policies.ConfigException">
+      <point x="-78.33333333333326" y="54.5" />
+      <point x="495.22916666666674" y="423.0" />
+      <point x="436.0625" y="423.0" />
+      <point x="436.0625" y="348.5" />
+      <point x="-117.5" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.policies.Policy" target="jmml.monitor.colas.QueueManagement">
+      <point x="232.75" y="-355.0" />
+      <point x="660.0625" y="1045.0" />
+      <point x="1066.9625" y="1045.0" />
+      <point x="0.0" y="180.0" />
+    </edge>
+    <edge source="jmml.monitor.policies.checkPol" target="jmml.monitor.policies.PolicyStaticRAW">
+      <point x="-79.75" y="-66.5" />
+      <point x="402.6875" y="575.0" />
+      <point x="250.5" y="575.0" />
+      <point x="74.25" y="41.5" />
+    </edge>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.rdp.RDP">
+      <point x="55.55555555555566" y="-179.5" />
+      <point x="1797.9037698412703" y="1825.0" />
+      <point x="2469.2958333333336" y="1825.0" />
+      <point x="110.33333333333326" y="330.0" />
+    </edge>
+    <edge source="jmml.monitor.rdp.PInvariant" target="jmml.monitor.rdp.PInvariant">
+      <point x="-76.66666666666669" y="79.5" />
+      <point x="1949.3958333333335" y="884.5" />
+      <point x="1891.0625" y="884.5" />
+      <point x="1891.0625" y="785.0" />
+      <point x="-115.0" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.policies.checkPol" target="jmml.monitor.policies.ConfigException">
+      <point x="79.75" y="-66.5" />
+      <point x="562.1875" y="585.0" />
+      <point x="573.5625" y="585.0" />
+      <point x="0.0" y="54.5" />
+    </edge>
+    <edge source="jmml.monitor.complex_test.PullDummyProcess_Single" target="jmml.monitor.complex_test.DummyProcessRAW">
+      <point x="-154.0" y="-104.5" />
+      <point x="1269.9315476190477" y="2314.0" />
+      <point x="1122.2648809523812" y="2314.0" />
+      <point x="62.333333333333485" y="66.0" />
+    </edge>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.parser.DataParser">
+      <point x="100.0" y="-179.5" />
+      <point x="1842.3482142857147" y="1845.0" />
+      <point x="3143.9625" y="1845.0" />
+      <point x="-50.0" y="54.5" />
+    </edge>
+    <edge source="jmml.monitor.complex_test.PullDummyProcess" target="jmml.monitor.complex_test.PullDummyProcessRAW">
+      <point x="-191.5999999999999" y="-41.5" />
+      <point x="1290.0815476190478" y="2608.0" />
+      <point x="1028.7648809523812" y="2608.0" />
+      <point x="0.0" y="28.5" />
+    </edge>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.rdp.RDPraw">
+      <point x="77.77777777777783" y="-179.5" />
+      <point x="1820.1259920634925" y="1835.0" />
+      <point x="3083.4625" y="1835.0" />
+      <point x="3083.4625" y="575.0" />
+      <point x="2481.4625" y="575.0" />
+      <point x="102.39999999999998" y="166.5" />
+    </edge>
+    <edge source="jmml.monitor.rdp.ConfigException" target="jmml.monitor.rdp.ConfigException">
+      <point x="-118.0" y="67.0" />
+      <point x="2766.9625" y="435.5" />
+      <point x="2687.9625" y="435.5" />
+      <point x="2687.9625" y="348.5" />
+      <point x="-177.0" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.complex_test.PullDummyProcess_Single" target="jmml.monitor.Monitor">
+      <point x="154.0" y="-104.5" />
+      <point x="1577.9315476190477" y="2314.0" />
+      <point x="1709.0148809523812" y="2314.0" />
+      <point x="-33.333333333333485" y="179.5" />
+    </edge>
+    <edge source="jmml.monitor.rdp.RDP" target="jmml.monitor.rdp.RDPraw">
+      <point x="-30.090909090909122" y="-330.0" />
+      <point x="2328.871590909091" y="1045.0" />
+      <point x="2347.9625" y="1045.0" />
+      <point x="2347.9625" y="585.0" />
+      <point x="2327.8625" y="585.0" />
+      <point x="-51.200000000000045" y="166.5" />
+    </edge>
+    <edge source="jmml.monitor.policies.checkPol" target="jmml.monitor.policies.checkPol">
+      <point x="-79.75" y="66.5" />
+      <point x="402.6875" y="871.5" />
+      <point x="302.9375" y="871.5" />
+      <point x="302.9375" y="785.0" />
+      <point x="-159.5" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.colas.QueueManagement" target="jmml.monitor.colas.QueueManagement">
+      <point x="-176.0" y="180.0" />
+      <point x="890.9625000000001" y="985.0" />
+      <point x="826.9625000000001" y="985.0" />
+      <point x="826.9625000000001" y="785.0" />
+      <point x="-220.0" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.rdp.RDP" target="jmml.monitor.rdp.ShotException">
+      <point x="60.181818181818244" y="-330.0" />
+      <point x="2419.1443181818186" y="1015.0" />
+      <point x="2798.2125" y="1015.0" />
+      <point x="-64.75" y="80.0" />
+    </edge>
+    <edge source="jmml.monitor.Monitor" target="jmml.monitor.Monitor">
+      <point x="-166.66666666666669" y="179.5" />
+      <point x="1575.681547619048" y="2284.0" />
+      <point x="1522.3482142857147" y="2284.0" />
+      <point x="1522.3482142857147" y="2084.5" />
+      <point x="-200.0" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.rdp.checkConfig" target="jmml.monitor.rdp.RDPraw">
+      <point x="-114.66666666666669" y="-54.0" />
+      <point x="2426.7958333333336" y="585.0" />
+      <point x="2430.2625000000003" y="585.0" />
+      <point x="51.20000000000002" y="166.5" />
+    </edge>
+    <edge source="jmml.monitor.complex_test.PullDummyProcess_Single" target="jmml.monitor.complex_test.PullDummyProcess_Single">
+      <point x="-173.25" y="104.5" />
+      <point x="1250.6815476190477" y="2575.5" />
+      <point x="1172.9315476190477" y="2575.5" />
+      <point x="1172.9315476190477" y="2451.0" />
+      <point x="-231.0" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.policies.PolicyStaticRAW" target="jmml.monitor.policies.PolicyStaticRAW">
+      <point x="-74.25" y="41.5" />
+      <point x="102.0" y="410.0" />
+      <point x="57.25" y="410.0" />
+      <point x="57.25" y="348.5" />
+      <point x="-99.0" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.policies.Policy" target="jmml.monitor.policies.Policy">
+      <point x="-177.33333333333326" y="355.0" />
+      <point x="249.97916666666674" y="1795.0" />
+      <point x="141.3125" y="1795.0" />
+      <point x="141.3125" y="1420.0" />
+      <point x="-266.0" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.rdp.PInvariant" target="jmml.monitor.rdp.invariantPExecption">
+      <point x="0.0" y="-79.5" />
+      <point x="0.0" y="104.5" />
+    </edge>
+    <edge source="jmml.monitor.rdp.RDPraw" target="jmml.monitor.rdp.RDPraw">
+      <point x="-102.39999999999998" y="166.5" />
+      <point x="2276.6625000000004" y="535.0" />
+      <point x="2231.0625" y="535.0" />
+      <point x="2231.0625" y="348.5" />
+      <point x="-128.0" y="-0.0" />
+    </edge>
+    <edge source="jmml.monitor.logger.Logger" target="jmml.monitor.logger.LoggerRaw">
+      <point x="0.0" y="-92.0" />
+      <point x="1702.5625" y="162.0" />
+      <point x="901.5898896371128" y="162.0" />
+      <point x="48.0" y="28.5" />
+    </edge>
+    <edge source="jmml.monitor.policies.Policy" target="jmml.monitor.policies.policyType">
+      <point x="-99.75" y="-355.0" />
+      <point x="327.5625" y="1025.0" />
+      <point x="204.0" y="1025.0" />
+      <point x="58.125" y="91.0" />
+    </edge>
+    <edge source="jmml.monitor.rdp.checkConfig" target="jmml.monitor.rdp.errorTypeConfig">
+      <point x="0.0" y="-54.0" />
+      <point x="2541.4625" y="162.0" />
+      <point x="2780.4364544920104" y="162.0" />
+      <point x="-69.75" y="66.0" />
+    </edge>
+    <edge source="jmml.monitor.rdp.RDP" target="jmml.monitor.rdp.errorTypeConfig">
+      <point x="150.4545454545455" y="-330.0" />
+      <point x="2509.4170454545456" y="1045.0" />
+      <point x="3072.4625" y="1045.0" />
+      <point x="3072.4625" y="152.0" />
+      <point x="2919.9364544920104" y="152.0" />
+      <point x="69.75" y="66.0" />
+    </edge>
+    <edge source="jmml.monitor.logger.Logger" target="jmml.monitor.logger.Logger">
+      <point x="-101.57142857142856" y="92.0" />
+      <point x="1600.9910714285716" y="460.5" />
+      <point x="1564.0625" y="460.5" />
+      <point x="1564.0625" y="348.5" />
+      <point x="-118.5" y="-0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="1011.0" y="998.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Constructors</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
