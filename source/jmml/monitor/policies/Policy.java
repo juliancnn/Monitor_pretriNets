@@ -128,7 +128,9 @@ public class Policy {
      * la politica sera aplicada inmediatamente para la proxima seleccion de colas
      *
      * @param policy Nueva politica para toma de desiciones.
+     * @param policySec Nueva politica secundaria para toma de desiciones.
      * @throws IllegalArgumentException Politica no esperada, por inexistencia o falta de implementacion.
+     * @throws ConfigException  Si no existe, es invalida o no fue implementada la politca selecionada
      */
     public void setPolicy(policyType policy, policyType policySec) throws ConfigException {
         this.mode = policy;
@@ -301,6 +303,10 @@ public class Policy {
 
     }
 
+    /**
+     * Fuerza la matriz de prioridad a establecer maxima prioridad y minima prioridad segun los vectores
+     * forceUpVector y fordeDownVector seteados a travez de los metodos forceSetUp y forceSetDown
+     */
     void genForceMatrix(){
         // Cada columna una transicion
         // Busca el 1 en la primera columna e intercambio por la columna que me mandaron
@@ -338,33 +344,14 @@ public class Policy {
             }
         }
 
-        boolean print = false;
-        int[] sum = new int[this.matOfPolicy.length];
-        for (int i = 0 ;i<this.matOfPolicy.length ; i++) {
-            for (int j = 0 ;j<this.matOfPolicy.length ; j++) {
-                sum[i] +=   this.matOfPolicy[i][j];
-            }
-            if(sum[i]!=1){
-                print = true;
-            }
-        }
-
-
-        int p = 0;
-        if(print)
-            for (int[] matrix1 : this.matOfPolicy) {
-                StringBuilder vtos = new StringBuilder("[");
-                for (int e : matrix1) {
-                    vtos.append(String.format("%4d", e));
-                }
-                vtos.append("] " + sum[p]+ "\n");
-                System.out.print(vtos.toString());
-                p++;
-            }
-
 
     }
-    // Busca que fila (Trans) tiene mi prioridad
+
+    /**
+     * Busca la prioridad en una fila
+     * @param fil fila a buscar la prioridad
+     * @return numero de columna en la que se encuentra la prioridad
+     */
     @Contract(pure = true)
     private int searchP(int fil){
         for(int i=0; i< this.matOfPolicy.length ; i++){
@@ -376,7 +363,12 @@ public class Policy {
 
         return -3;
     }
-    // Busca quien tiene la prioridad en la fila (Trans)
+
+    /**
+     * Busca quien tiene la priridad en la fila
+     * @param prio Prioridad a buscar
+     * @return Fila que posee la prioridad
+     */
     @Contract(pure = true)
     private int searchF(int prio){
         for(int i=0; i< this.matOfPolicy.length ; i++){
@@ -387,13 +379,20 @@ public class Policy {
         return -2;
     }
 
+    /**
+     * Setea un vector de maxima prioridad estatica
+     * @param forceUp Vector con colas/transciones de maxima prioridad (Posicion mas baja mas prioridad)
+     */
     public void setForceUp(int[] forceUp){
         this.forceUpVector = forceUp.clone();
         if(this.forceUpVector != null)
             for(int i=0; i<this.forceUpVector.length;i++)
                 this.forceUpVector[i]--;
     }
-
+    /**
+     * Setea un vector de minima prioridad estatica
+     * @param forceDown Vector con colas/transciones de minimna prioridad (Posicion mas alta menos prioridad)
+     */
     public void setForceDown(int[] forceDown){
         this.forceDownVector = forceDown;
         if(this.forceDownVector != null)

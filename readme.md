@@ -1,6 +1,8 @@
 # Monitor basado en redes de petri
 
 Una descripcion del monitor, bla bla bla
+TODO, falta agregar la configuracion de los invariantes de transicion que esta andando pero no documentado
+matrixInvariantT en el archivo de configuracion del tpfinal esta.
 
 ## Getting Started
 

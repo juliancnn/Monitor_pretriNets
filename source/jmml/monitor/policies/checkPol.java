@@ -67,6 +67,7 @@ class checkPol {
     /**
      * Chequea que la matriz sea identidad con columnas cambiadas de lugares
      * @param mat Matrixz a chequear
+     * @throws ConfigException si de politicas es invarlida
      */
     private void notISwap(@NotNull int[][] mat) throws ConfigException{
         boolean cehcked = false;

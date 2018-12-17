@@ -64,6 +64,7 @@ public class Monitor {
      *                                               en la seccion que pertenece a la configuracion de la red de petri
      * @throws jmml.monitor.policies.ConfigException Lanzada por una formacion incompatible de la politica estatica
      * @throws jmml.monitor.policies.ConfigException Seleccion incompatible de politicas para el monitor
+     * @throws invariantPExecption                   Si no se cumplen los invariantes de plaza
      */
     public Monitor(String jsonConfig, policyType polPrimaria, policyType polSecundaria)
             throws FileNotFoundException, jmml.monitor.rdp.ConfigException, jmml.monitor.policies.ConfigException,
@@ -135,10 +136,11 @@ public class Monitor {
     }
 
     /**
-     * @param a
-     * @param b
-     * @return
-     * @throws ArrayIndexOutOfBoundsException
+     * And entre 2 vectores
+     * @param a Primer operando
+     * @param b Segundo operando
+     * @return Array del resultado de aplicar and entre ambos vectores
+     * @throws ArrayIndexOutOfBoundsException si los vectores son de distinta dimencion
      */
     @Contract(pure = true)
     @NotNull
@@ -156,9 +158,9 @@ public class Monitor {
     }
 
     /**
-     * @param a
-     * @return
-     * @throws ArrayIndexOutOfBoundsException
+     * Chequea si algun valor del vector es verdadero
+     * @param a Vector a chequear los valores
+     * @return verdadero si al menos un componente del vector es verdadero
      */
     @Contract(pure = true)
     private boolean any(@NotNull boolean[] a) {

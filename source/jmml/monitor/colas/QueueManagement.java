@@ -49,6 +49,7 @@ public class QueueManagement {
     /**
      * Crea la lista de colas de Threads
      * @param qraw Informacion de las colas a crear, con un 1 en las colas temporales
+     * @param logger Objeto logger, el encargado del loggeo de eventos
      * @TODO Setear las colas temporales autowakeup (las que tienen alfa)
      */
     public QueueManagement(@NotNull QueueManagementRAW qraw, Logger logger) throws IllegalArgumentException {
@@ -89,7 +90,11 @@ public class QueueManagement {
      * Anade el thread que lo llamo a la cola nCola
      *
      * @param nCola Numero de cola a anadirse
+     * @param timeToSleep Tiempo que debe dormirse el hilo si esta solo en la cola 0 para no tener en cuenta el tiempo
+     *                    Solo sera tomado el tiempo para aquellas colas que se pueden desperar solos los hilos
+     * @return Devuelve verdadero si el hilo se desperto solo
      * @throws IndexOutOfBoundsException Cuando se quiere anadir a una cola que no existe
+     * @throws QueueInterrupException si el hilo fue interrumpido de manera externa (se elimina de la cola)
      */
     @SuppressWarnings("FeatureEnvy")
     public boolean addMe(int nCola, long timeToSleep) throws QueueInterrupException{

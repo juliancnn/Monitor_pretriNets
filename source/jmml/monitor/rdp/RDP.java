@@ -304,7 +304,7 @@ public class RDP {
      * Retorna el vector de los tiempos en milisegundos faltantes para que la transicion entre en la ventana temporal
      * @return 0 en caso de que no sea temporal
      *        -1  que el alpha ya haya pasado.
-     *        >0  Tiempo que le falta.
+     *        menor a 0  Tiempo que le falta.
      */
     @NotNull
     @Contract(pure = true)
