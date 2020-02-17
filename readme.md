@@ -165,16 +165,43 @@ Campos opcionales del JSON:
 ```
 ## Caracteriticas del monitor
 
-Formado por 5 modulos independientes bla bla bla
+Formado por 5 modulos totalmente independientes entre si, excluyendo el modulo de loggeo de datos
 
-### Modulo RDP
-bla bla bla, y todas sus caracteriticas que aparecen en la documentacion
+### Modulo de colas
+ * Manejador de multiples colas (Listas FIFO) de threads.
+ * El manejador es creado con un numero de colas vacias fijo.
+ * Cuando el thread vuelve a ready sale de la lista.
+ *
+ * Posee mecanismos para Agregar/Eliminar threads de una cola y consultar informacion sobre:
+ *     - Tamano de las colas
+ *     - Tiempo de espera del primer threads en cada cola
+ *     - Puede encolar por tiempo, manejando automaticamente la concurrencia
+ *     - Los hilos pueden ser interrumpidos externamente sin problemas, generar excepciones
+ *     - Los hilos despertados sin interrupciones se desencolan automaticamente.
+ 
+### Modulo complex_test
+ * Para realizar test y pruebas complejas, hilos dummys que se crean y solo disparan transiciones
+ * permite  simular cualquier proceso de una red con el monitor, se pueden configurar numero de 
+ * repeticiones, intervalos entre disparos por cada hilo y hasta secuencias de disparo por cada hilo
 
-### Modulo RDP
-bla bla bla, y todas sus caracteriticas que aparecen en la documentacion
-
-### Modulo RDP
-bla bla bla, y todas sus caracteriticas que aparecen en la documentacion
+### Modulo logger
+ * Modulo que se podria eliminar sin cambiar el funcionamiento del proyecto, loggea todas las acciones
+ * del monitor de todos los modulos
+ 
+ ### Modulo parser
+ * Encargado de levantar toda la configuracion de un archivo JSON, hace que el monitor sea reutilizable
+ * facilmente por cualquier tipo de problema solo cambiando la configuracion
+ 
+ ### Modulo policies
+ * Toma deciciones dentro del monitor, con una politica primeria que en caso de empate aplica una politica
+ * secundaria que no puede empatar.
+ * Internamente es el encargado de manejar la politica de la cola, dando mecanimos para cambiarla y de consulta de disparos.
+ * Posee politicas random, estaticas, por tamano de colas, por tiempos de esperas, fifo, por ultima cola en disparar.
+ * Tambien se pueden cambinar y forzar algunas esaticas y otras con otro tipo de politica.
+ 
+ ### Modulo RDP
+ * Maneja completamente la red de petri, incluyendo parte temporal, no gestiona concurrencia, eso lo gestiona las colas
+ * del monitor. Transiciones temporales duermen en colas.
 
 ## Versiones 
 
@@ -201,12 +228,6 @@ git checkout -b ver1 v1.1   # Crea branch basado en el commit de la etiqeta
 
 ## @TO-DO
 
-1. Chequeo de invariantes de transicion
-2. Cambiar el estado 'saliendo' a 'ir a pagarv, esto estaba mal tenia que ir a pagar y dsp elegir o no?, no se veian las 2 salidas?`
-3. Cambiar de la red cuando se devuelve el token en la salida  (a la plaza que contiene los 60). ??
-4. Hacer la tabla de eventos
-5. Hacer la tabla de estados o actividades
-6. Determinar la cantidad de hilos necesarios (justificarlo)
-7. Armar el JSON del problema
-8. Armar el problema fuera usando el monitor
+1. Documentar el chequeo de invariantes de transicion
+2. Implementar guardas externas en la RDP.
 
